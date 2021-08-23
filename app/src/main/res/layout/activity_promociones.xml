@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Promocion">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/fondo_foto1a"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Datos Generales de la Promoción"
+                android:textColor="@color/colorFuente"
+                android:textSize="16dp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_promociones"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo1"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Nombre"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtNombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="50dp"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_promociones"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo2"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Capacidad"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtCapacidad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="50dp"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_promociones"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo3"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Canal"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtCanal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_weight="1"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textColor="@color/colorFuente"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_promociones"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo4"
+                android:layout_width="92dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:text="Alcance     "
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtAlcance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="46dp"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_promociones"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo5"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:text="Inicio"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtInicio"
+                android:layout_width="234dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="105dp"
+                android:layout_weight="1"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textColor="@color/colorFuente"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_promociones"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo6"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:text="Final"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtFinal"
+                android:layout_width="234dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="108dp"
+                android:layout_weight="1"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textColor="@color/colorFuente"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_promociones"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo7"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:text="Periodo"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtPeriodo"
+                android:layout_width="234dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="88dp"
+                android:layout_weight="1"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textColor="@color/colorFuente"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_promociones"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo8"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:text="Actividad"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtActividad"
+                android:layout_width="234dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:layout_weight="1"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textColor="@color/colorFuente"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_promociones"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo9"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:text="Precio regular"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtPrecioRegular"
+                android:layout_width="234dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="55dp"
+                android:layout_weight="1"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textColor="@color/colorFuente"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_promociones"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo10"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:text="Precio promoción"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtPrecioPromocion"
+                android:layout_width="234dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="36dp"
+                android:layout_weight="1"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textColor="@color/colorFuente"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_promociones"
+            android:orientation="horizontal">
+
+            <RadioGroup
+                android:id="@+id/opciones_sexo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/radio_aplica"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:checked="false"
+                    android:text="Aplica para esta tienda"
+                    android:textColor="@color/colorFuente"
+                    android:buttonTint="@color/cardview_dark_background" />
+
+                <RadioButton
+                    android:id="@+id/radio_noaplica"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="No aplica para esta tienda"
+                    android:textColor="@color/colorFuente"
+                    android:buttonTint="@color/cardview_dark_background"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cmdGuardarPrecio"
+                android:layout_width="140dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="0px"
+                android:background="@drawable/img_guardar"
+                android:textColor="@color/colorFuente"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/margen_promociones"
+        app:srcCompat="@drawable/regresar" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <!--
+    </LinearLayout>
+     -->

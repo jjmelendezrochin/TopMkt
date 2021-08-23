@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fondo_foto1a"
+    android:gravity="center_horizontal"
+    android:layout_gravity="center">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+
+        tools:context=".Foto">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imagenFoto"
+                android:layout_width="363dp"
+                android:layout_height="392dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="13dp"
+                android:layout_marginRight="13dp"
+                android:layout_marginBottom="5dp"
+                android:contentDescription="@string/imagenconfoto"
+                android:scaleType="centerInside"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/avatars[8]" />
+
+
+
+            <LinearLayout
+                android:id="@+id/Bloque"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@+id/imagenFoto"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/imagenFoto"
+                android:weightSum="3"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center">
+
+
+                <Button
+                    android:id="@+id/btnizquierda"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="45dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/izq"
+                    tools:visibility="invisible" />
+
+                <ImageView
+                    android:id="@+id/btnFoto"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="140dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginRight="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imagenFoto"
+                    android:background="@drawable/img_subir"/>
+
+                <Button
+                    android:id="@+id/btnderecha"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="40dp"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/der"
+                    tools:visibility="invisible" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_below="@+id/Bloque"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center">
+
+                <Button
+                    android:id="@+id/btnNoSubir"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="140dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/img_nosubi"
+                    tools:visibility="visible" />
+
+                <Button
+                    android:id="@+id/btnSubir"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="140dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/img_subir"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+
+</LinearLayout>

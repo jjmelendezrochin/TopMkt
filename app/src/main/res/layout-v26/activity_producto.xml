@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MenuTienda">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/fondo_foto1a"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Datos Generales del Producto"
+                android:textSize="16dp"
+                android:textColor="@color/colorFuente"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_productos1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo2"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Producto"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtDescripcion1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="50dp"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_productos1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo3"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="UPC"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtUpc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="50dp"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_productos1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo4"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Categoría"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtCategoria02"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_weight="1"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textColor="@color/colorFuente"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_productos1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo6"
+                android:layout_width="105dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:text="Cant. por caja"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtCantidadporCaja"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="36dp"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_productos1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo7"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:text="Precio Sugerido"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <TextView
+                android:id="@+id/txtPrecio"
+                android:layout_width="234dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="37dp"
+                android:layout_weight="1"
+                android:visibility="visible"
+                tools:visibility="visible"
+                android:textColor="@color/colorFuente"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_productos1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="20dp"
+                android:text="Precio Real"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+
+            <EditText
+                android:id="@+id/txtPrecioReal"
+                android:layout_width="80dp"
+                android:layout_height="@dimen/tamaniocajaproductos"
+                android:layout_marginLeft="65dp"
+                android:background="@drawable/caja_bordesredondeados"
+                android:paddingStart="20dp"
+                android:textColor="@color/verdeCorporativo"
+                android:ems="8"
+                android:inputType="numberDecimal" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_productos1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo8a"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:text="Invent. Inicial - Final"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <EditText
+                android:id="@+id/txtInvInicial"
+                android:layout_width="80dp"
+                android:layout_height="@dimen/tamaniocajaproductos"
+                android:background="@drawable/caja_bordesredondeados"
+                android:layout_marginLeft="5dp"
+                android:paddingStart="20dp"
+                android:textColor="@color/verdeCorporativo"
+                android:ems="8"
+                android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/txtInvFinal"
+                android:layout_width="80dp"
+                android:layout_height="@dimen/tamaniocajaproductos"
+                android:background="@drawable/caja_bordesredondeados"
+                android:layout_marginLeft="5dp"
+                android:paddingStart="20dp"
+                android:textColor="@color/verdeCorporativo"
+                android:ems="8"
+                android:inputType="numberDecimal" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="135dp"
+            android:layout_marginTop="@dimen/margen_productos1"
+            android:gravity="center_horizontal|center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imagenproducto1"
+                android:layout_width="168dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentRight="false"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/imagenconfoto"
+                android:scaleType="centerInside"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/avatars[8]" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_productos1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Titulo9"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:text="Observaciones"
+                android:textSize="@dimen/tamanioletraproductos"
+                android:textColor="@color/colorFuente"/>
+
+            <Spinner
+                android:id="@+id/spinObs"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_productos1"
+            android:gravity="center_horizontal|center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cmdGuardarPrecio"
+                android:layout_width="140dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:background="@drawable/img_guardar"
+                android:layout_marginTop="5px"
+                />
+
+            <Button
+                android:id="@+id/cmdMismoOrecio"
+                android:layout_width="140dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/img_mismoprecio"
+                android:layout_marginTop="5px"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/margen_productos"
+        app:srcCompat="@drawable/regresar" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

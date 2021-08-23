@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:layout_gravity="center"
+    android:background="@drawable/portada"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/Version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="350dp"
+        android:text="@string/Version"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/txtNombre"
+        android:layout_width="180dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="@dimen/margen_productos"
+        android:autofillHints=""
+        android:background="@drawable/img_usuario"
+        android:ems="10"
+        android:hint="Nombre"
+        android:inputType="textPersonName"
+        android:paddingStart="65dp"
+        android:text="@string/resUsuario"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/txtPwd"
+        android:layout_width="180dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="@dimen/margen_productos"
+        android:autofillHints=""
+        android:background="@drawable/img_clave"
+        android:ems="10"
+        android:hint="Clave"
+        android:inputType="textPassword"
+        android:paddingStart="65dp"
+        android:text="@string/_12345"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp" />
+
+    <Spinner
+        android:id="@+id/spinClientes"
+        android:layout_width="180dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="@dimen/margen_productos"
+        android:paddingStart="65dp"
+        android:textSize="2sp" />
+
+    <Button
+        android:id="@+id/cmdIngresar"
+        android:background="@drawable/img_entrar"
+        android:layout_width="140dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="@dimen/margen_productos"
+        android:layout_marginBottom="30dp"
+
+        android:textColor="@color/colorPrimary"/>
+
+
+</LinearLayout>

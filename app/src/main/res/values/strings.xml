@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Top+</string>
+    <string name="resume">  Actualizar datos  </string>
+    <string name="tomarfoto">Tomar foto</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCYDVCKX3ha2pr9R1uS77PM8iodtDY8ZH4</string>
+
+    <string name="imagenconfoto">Imagen con foto</string>
+    <string name="subir">Subir</string>
+    <string name="nosubir">No Subir</string>
+    <string name="izq"><![CDATA[<<]]></string>
+    <string name="der"><![CDATA[>>]]></string>
+    <string name="imagen">imagen</string>
+    <string name="check_in">Check-in</string>
+    <string name="check_out">Check-out</string>
+
+    <string name="fotoent">Foto Inv. Entrada</string>
+    <string name="fotosal">Foto Inv. Salida</string>
+    <string name="Version">Version</string>
+    <string name="buscar_tienda">"buscar tienda "</string>
+
+    <string name="resUsuario">abenitez</string>
+    <string name="_12345">12345</string>
+    <string name="fotocompetencia">Foto competencia</string>
+    <string name="fotocaducidad">Foto caducidad</string>
+    <string name="textocaducidad">Caducidad</string>
+
+</resources>

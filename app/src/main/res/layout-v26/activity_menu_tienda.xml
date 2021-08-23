@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MenuTienda">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/fondo_foto"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/TituloMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Titulo del Menú"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_productos"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imgUbicacion"
+                android:layout_width="@dimen/tamaniobotonmenu1"
+                android:layout_height="@dimen/tamaniobotonmenu1"
+                android:layout_marginStart="@dimen/marginstarmenu"
+                android:contentDescription="Imagen de ubicación de tienda"
+                app:srcCompat="@drawable/ubicacion_tienda" />
+
+            <ImageView
+                android:id="@+id/imgcheckin"
+                android:layout_width="@dimen/tamaniobotonmenu1"
+                android:layout_height="@dimen/tamaniobotonmenu1"
+                android:layout_marginLeft="30dp"
+                android:contentDescription="Imagen para checkin"
+                app:srcCompat="@drawable/check_in" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_productos"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imganaquelin"
+                android:layout_width="@dimen/tamaniobotonmenu1"
+                android:layout_height="@dimen/tamaniobotonmenu1"
+                android:layout_marginLeft="@dimen/marginstarmenu"
+                app:srcCompat="@drawable/icono_anaq_entrada_gris" />
+
+            <ImageView
+                android:id="@+id/imagnaquelout"
+                android:layout_width="@dimen/tamaniobotonmenu1"
+                android:layout_height="@dimen/tamaniobotonmenu1"
+                android:layout_marginLeft="30dp"
+                app:srcCompat="@drawable/icono_anaq_salida_gris" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_productos"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/checkout"
+                android:layout_width="@dimen/tamaniobotonmenu1"
+                android:layout_height="@dimen/tamaniobotonmenu1"
+                android:layout_marginLeft="@dimen/marginstarmenu"
+                app:srcCompat="@drawable/check_out" />
+
+            <ImageView
+                android:id="@+id/imgevidenciaexhibicion"
+                android:layout_width="@dimen/tamaniobotonmenu1"
+                android:layout_height="@dimen/tamaniobotonmenu1"
+                android:layout_marginLeft="30dp"
+                app:srcCompat="@drawable/icono_promociones_gris" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/margen_productos"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imgproductomenu"
+                android:layout_width="@dimen/tamaniobotonmenu1"
+                android:layout_height="@dimen/tamaniobotonmenu1"
+                android:layout_marginLeft="@dimen/marginstarmenu"
+                app:srcCompat="@drawable/icono_producto_gris" />
+
+            <ImageView
+                android:id="@+id/imgreporteresurtido"
+                android:layout_width="@dimen/tamaniobotonmenu1"
+                android:layout_height="@dimen/tamaniobotonmenu1"
+                android:layout_marginLeft="30dp"
+                app:srcCompat="@drawable/icono_competencia_gris" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margen_productos"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imgCaducidad"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    app:srcCompat="@drawable/caducidad" />
+            </LinearLayout>
+        </FrameLayout>
+
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@drawable/regresar" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="@dimen/appbar_padding"
+        app:srcCompat="@drawable/alerta" />
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

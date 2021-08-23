@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:id="@+id/imagenproducto"
+            android:layout_marginTop="30px"
+            android:layout_marginStart="1px"
+            android:layout_marginLeft="1px"
+            android:layout_width="70px"
+            android:layout_height="70px"
+            android:layout_weight="1"
+            android:contentDescription="@string/imagen"
+            android:visibility="visible"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="120px">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/txtPromocion"
+                android:layout_width="184dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="left"
+                android:layout_weight="1.9"
+                android:text="TextView"
+                android:textColor="@color/grisOscuro"
+                android:textSize="12dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="1dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/txtDatosPromocion"
+                android:layout_width="112dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="left"
+                android:layout_weight="1.9"
+                android:text="TextView"
+                android:textColor="@color/grisOscuro"
+                android:textSize="12dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/cajaidpromocion"
+        android:layout_width="142dp"
+        android:layout_height="1dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:visibility="gone" />
+    <TextView
+        android:id="@+id/cajaidpromotor"
+        android:layout_width="142dp"
+        android:layout_height="1dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:visibility="gone" />
+    <TextView
+        android:id="@+id/cajaidruta"
+        android:layout_width="142dp"
+        android:layout_height="1dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:visibility="gone" />
+    <TextView
+        android:id="@+id/cajaurl"
+        android:layout_width="142dp"
+        android:layout_height="1dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:visibility="gone" />
+</LinearLayout>
+
+

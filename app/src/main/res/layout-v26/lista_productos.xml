@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+            android:layout_width="100px"
+            android:layout_height="100px"
+            android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/idproducto"
+            android:layout_width="142dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="20dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/idruta"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/upc_producto"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            tools:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/imagenproducto"
+            android:layout_marginTop="30px"
+            android:layout_marginStart="1px"
+            android:layout_marginLeft="1px"
+            android:layout_width="70px"
+            android:layout_height="70px"
+            android:layout_weight="1"
+            android:contentDescription="@string/imagen"
+            android:visibility="visible"/>
+        </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="120px">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/txtProducto"
+                android:layout_width="184dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="left"
+                android:layout_weight="1.9"
+                android:text="TextView"
+                android:textColor="@color/grisOscuro"
+                android:textSize="12dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/txtCategoria"
+                android:layout_width="112dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="left"
+                android:layout_weight="1.9"
+                android:text="TextView"
+                android:textColor="@color/grisOscuro"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+

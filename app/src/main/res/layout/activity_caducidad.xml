@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Caducidad"
+    android:background="@drawable/fondo_foto1a">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        tools:context=".Caducidad">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imagenFoto"
+                android:layout_width="match_parent"
+                android:layout_height="210dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginBottom="5dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/imagenconfoto"
+                android:gravity="center_horizontal|center_vertical"
+                android:scaleType="centerInside"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/avatars[8]" />
+
+            <LinearLayout
+                android:id="@+id/Bloque"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_horizontal|center_vertical"
+                android:layout_below="@+id/imagenFoto">
+
+                <Button
+                    android:id="@+id/btnFoto"
+                    android:layout_width="140dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/img_caducidad"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imagenFoto"
+                    app:srcCompat="@android:drawable/ic_menu_camera"
+                    android:textColor="@color/colorFuente"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque1a"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margen_productos"
+                android:orientation="horizontal"
+                android:layout_below="@+id/Bloque">
+
+                <TextView
+                    android:id="@+id/Titulo1a"
+                    android:layout_width="92dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:text="Producto."
+                    android:textSize="@dimen/tamanioletraproductos"
+                    android:textColor="@color/colorFuente"/>
+
+                <Spinner
+                    android:id="@+id/spinProducto"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="2sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margen_competencia"
+                android:orientation="horizontal"
+                android:layout_below="@+id/Bloque1a">
+
+                <TextView
+                    android:id="@+id/Titulo1"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Lote"
+                    android:textSize="@dimen/tamanioletraproductos"
+                    android:textColor="@color/colorFuente"/>
+
+                <EditText
+                    android:id="@+id/txtLote"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/caja_bordesredondeados"
+                    android:paddingStart="20dp"
+                    android:textColor="@color/verdeCorporativo"
+                    android:ems="10"
+                    android:inputType="" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margen_competencia"
+                android:orientation="horizontal"
+                android:layout_below="@+id/Bloque1">
+
+                <Button
+                    android:id="@+id/cmdCaducidad"
+                    android:background="@drawable/boton_caducidad"
+                    android:layout_width="140dp"
+                    android:layout_height="35dp"
+                    android:textColor="@color/colorFuente"/>
+
+                <TextView
+                    android:id="@+id/txtFechaCaducidad"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text=""
+                    android:textSize="@dimen/tamanioletraproductos"
+                    android:textColor="@color/colorFuente"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margen_competencia"
+                android:orientation="horizontal"
+                android:layout_below="@+id/Bloque2">
+
+                <TextView
+                    android:id="@+id/Titulo2"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Piezas"
+                    android:textSize="@dimen/tamanioletraproductos"
+                    android:textColor="@color/colorFuente"/>
+
+                <EditText
+                    android:id="@+id/txtPiezas"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/caja_bordesredondeados"
+                    android:paddingStart="20dp"
+                    android:textColor="@color/verdeCorporativo"
+                    android:ems="10"
+                    android:inputType="numberDecimal" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/Bloque4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margen_competencia"
+                android:gravity="center_horizontal|center_vertical"
+                android:orientation="horizontal"
+                android:layout_below="@+id/Bloque3">
+
+                <Button
+                    android:id="@+id/cmdGuardar"
+                    android:layout_width="140dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5px"
+                    android:background="@drawable/img_guardar"
+                    android:textColor="@color/colorFuente" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="@dimen/fab_margin"
+        android:visibility="visible"
+        app:srcCompat="@drawable/alerta" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/margen_productos"
+        app:srcCompat="@drawable/regresar" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
