@@ -41,6 +41,7 @@ public class MenuTienda extends AppCompatActivity
     int idformato = 0;
     AlmacenaImagen almacenaImagen;
     private Funciones funciones = new Funciones();
+    private final Usuario usr = new Usuario();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,17 +57,32 @@ public class MenuTienda extends AppCompatActivity
         direccion = i.getStringExtra(TAG_DIRECCION);
         almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
         idformato = almacenaImagen.ObtenFormato(idruta);
+        TextView txtTipoconexion = findViewById(R.id.formaConexion);
 
-        // Log.e(TAG_ERROR,  " ** idruta " + idruta);
-        // Log.e(TAG_ERROR,  " ** pidpromotor " + pidpromotor);
-        // Log.e(TAG_ERROR,  " ** tienda " + tienda);
-        // Log.e(TAG_ERROR,  " ** idformato " + idformato);
+        if (pidpromotor == 0){
+            pidpromotor = usr.getid();
+        }
 
+        //****************************
+        // Revisa el tipo de conexión
+        if (funciones.RevisarConexion(getApplicationContext())) {
+            // Si esta conectado, verificar el tipo de conexion
+            if (!funciones.RevisarTipoConexion(getApplicationContext())) {
+                txtTipoconexion.setText("Se detectó señal Wifi, tus imágenes podrian no subirse correctamente");
+            }
+            else{
+                txtTipoconexion.setText("");
+            }
+        }
+        else{
+            txtTipoconexion.setText("");
+        }
 
         TextView txtTituloTienda = findViewById(R.id.TituloMenu);
         txtTituloTienda.setText(tienda.toUpperCase());
 
         //****************************
+        // Lista de tiendas
         FloatingActionButton fab = findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -101,54 +117,87 @@ public class MenuTienda extends AppCompatActivity
         });
 
         //****************************
-        // Check in
+        // Botones
         ImageView imgcheckin = findViewById(R.id.imgcheckin);
+        ImageView imgcheckout = findViewById(R.id.checkout);
+        ImageView imganaquelin = findViewById(R.id.imganaquelin);
+        ImageView imagnaquelout = findViewById(R.id.imagnaquelout);
 
+        // *****************************
+        // Verifica si tiene un servicio GPS fake
+        Funciones funciones = new Funciones();
+        boolean bResp = funciones.areThereMockPermissionApps(this.getApplicationContext());
+        String sResultado =  "Se esta utilizando una aplicación no permitida en su teléfono, favor de contactar al área de sistemas para mayor información, esta información se va a grabar en la bitácora para seguimiento";
+        /*
+        if(bResp){
+            AlmacenaImagen almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
+            String sMotivo = "Fake GPS";
+            Exception exp = new Exception(sMotivo,null);
+            almacenaImagen.inserta_error1(usr.getnombre() , exp, sMotivo);
+            Toast.makeText(getApplicationContext(), sResultado , Toast.LENGTH_LONG).show();
+            imgcheckin.setVisibility(View.GONE);
+            imgcheckout.setVisibility(View.GONE);
+            imganaquelin.setVisibility(View.GONE);
+            imagnaquelout.setVisibility(View.GONE);
+            return;
+        }
+        else{
+            imgcheckin.setVisibility(View.VISIBLE);
+            imgcheckout.setVisibility(View.VISIBLE);
+            imganaquelin.setVisibility(View.VISIBLE);
+            imagnaquelout.setVisibility(View.VISIBLE);
+        }
+        */
+
+        imgcheckin.setVisibility(View.VISIBLE);
+        imgcheckout.setVisibility(View.VISIBLE);
+        imganaquelin.setVisibility(View.VISIBLE);
+        imagnaquelout.setVisibility(View.VISIBLE);
+
+        //****************************
+        // Check in
         imgcheckin.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent Foto = new Intent(getApplicationContext(),Foto.class);
                 Foto.putExtra(TAG_IDRUTA, Integer.valueOf(idruta));
                 Foto.putExtra(TAG_OPERACION, 1);    // Checkin
+                Foto.putExtra(TAG_IDPROMOTOR, pidpromotor); // idpromotor
                 startActivity(Foto);
             }
         });
 
         //****************************
         // Check out
-        ImageView imgcheckout = findViewById(R.id.checkout);
-
         imgcheckout.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent Foto = new Intent(getApplicationContext(),Foto.class);
                 Foto.putExtra(TAG_IDRUTA, Integer.valueOf(idruta));
                 Foto.putExtra(TAG_OPERACION, 2);    // Checkin
+                Foto.putExtra(TAG_IDPROMOTOR, pidpromotor); // idpromotor
                 startActivity(Foto);
             }
         });
 
         // ****************************
         // Inventario Entrada
-        ImageView imganaquelin = findViewById(R.id.imganaquelin);
-
         imganaquelin.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent Foto = new Intent(getApplicationContext(), com.topmas.top.Foto.class);
                 Foto.putExtra(TAG_IDRUTA, Integer.valueOf(idruta));   // Inventario Entrada
                 Foto.putExtra(TAG_OPERACION, 3);
+                Foto.putExtra(TAG_IDPROMOTOR, pidpromotor); // idpromotor
                 startActivity(Foto);
             }
         });
 
-
-       // ****************************
+        // ****************************
         // Inventario Salida
-        ImageView imagnaquelout = findViewById(R.id.imagnaquelout);
-
         imagnaquelout.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent Foto = new Intent(getApplicationContext(), com.topmas.top.Foto.class);
                 Foto.putExtra(TAG_IDRUTA, Integer.valueOf(idruta));
                 Foto.putExtra(TAG_OPERACION, 4);    // Inventario Salida
+                Foto.putExtra(TAG_IDPROMOTOR, pidpromotor); // idpromotor
                 startActivity(Foto);
             }
         });
@@ -172,14 +221,14 @@ public class MenuTienda extends AppCompatActivity
         });
 
         //****************************
-        // Reporte Inventario
+        // Imagen Lista de productos
         ImageView imgproductomenu = findViewById(R.id.imgproductomenu);
         imgproductomenu.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
 
-                // Log.e(TAG_ERROR,  " ** idruta " + idruta);
-                // Log.e(TAG_ERROR,  " ** pidpromotor " + pidpromotor);
-                // Log.e(TAG_ERROR,  " ** tienda " + tienda);
+                //Log.e(TAG_ERROR,  " ** idruta " + idruta);
+                //Log.e(TAG_ERROR,  " ** pidpromotor " + pidpromotor);
+                //Log.e(TAG_ERROR,  " ** tienda " + tienda);
 
                 Intent ListaProductos = new Intent(getApplicationContext(), listaproductos.class);
                 ListaProductos.putExtra(TAG_IDRUTA, idruta);
@@ -193,7 +242,7 @@ public class MenuTienda extends AppCompatActivity
         });
 
         //****************************
-        // Reporte Resurtido
+        // Imagen Competencia
         ImageView imgreporteresurtido = findViewById(R.id.imgreporteresurtido);
         imgreporteresurtido.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
@@ -215,6 +264,7 @@ public class MenuTienda extends AppCompatActivity
         });
 
         //****************************
+        // Muestra datos almacenados
         FloatingActionButton fab1 = findViewById(R.id.fab1);
 
         fab1.setOnClickListener(new View.OnClickListener() {

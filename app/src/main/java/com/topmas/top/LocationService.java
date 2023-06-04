@@ -116,14 +116,6 @@ public class LocationService extends Service implements LocationListener {
         }
         // **********************
 
-        //Calling AsyncTask for upload latitude and longitude
-        /*
-        ProcesoColocaUbicacion procesoColocaUbicacion = new ProcesoColocaUbicacion();
-        procesoColocaUbicacion.setsLatitud(lat);
-        procesoColocaUbicacion.setsLongitud(lon);
-        procesoColocaUbicacion.setIdPromotor(pidPromotor);
-        procesoColocaUbicacion.execute();
-        */
     }
 
     @Override

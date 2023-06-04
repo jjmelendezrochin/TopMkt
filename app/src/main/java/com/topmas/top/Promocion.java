@@ -2,10 +2,12 @@ package com.topmas.top;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +34,7 @@ import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
 import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
+import static com.topmas.top.Constants.TAG_USUARIO;
 import static com.topmas.top.Constants.TAG_url;
 
 public class Promocion extends AppCompatActivity {
@@ -49,6 +52,8 @@ public class Promocion extends AppCompatActivity {
     int iAplica = 0;
     String url = null;
     private Funciones funciones = new Funciones();
+    private final Usuario usr = new Usuario();
+    String pName = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,14 @@ public class Promocion extends AppCompatActivity {
         idpromotor = i.getIntExtra(TAG_IDPROMOTOR, 0);
         idruta = i.getIntExtra(TAG_IDRUTA, 0);
         url = i.getStringExtra(TAG_url);
+        // pName = usr.getnombre();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        pName = preferences.getString(TAG_USUARIO, pName);
+
+        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
+            //log(throwable.getMessage(), thread.getId());
+            funciones.RegistraError(pName, "Promocion setDefaultUncaughtExceptionHandler", (Exception) throwable, Promocion.this, getApplicationContext());
+        });
 
         //Log.e(TAG_ERROR, " Url obtenido " + url);
 
@@ -71,7 +84,8 @@ public class Promocion extends AppCompatActivity {
                 try  {
                     imagenespromo = downloadFile(url);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    funciones.RegistraError(pName, "Promocion,OnCreate", e, Promocion.this, getApplicationContext());
+                    // e.printStackTrace();
                 }
             }
         });
@@ -161,7 +175,8 @@ public class Promocion extends AppCompatActivity {
                 try {
                     finish();
                 } catch (Throwable throwable) {
-                    throwable.printStackTrace();
+                    funciones.RegistraError(pName, "Promocion,OnCreate", (Exception) throwable, Promocion.this, getApplicationContext());
+                    //throwable.printStackTrace();
                 }
             }
         });
@@ -209,7 +224,8 @@ public class Promocion extends AppCompatActivity {
 
 
                 } catch (Throwable throwable) {
-                    throwable.printStackTrace();
+                    funciones.RegistraError(pName, "Promocion, Guardar Precio", (Exception) throwable, Promocion.this, getApplicationContext());
+                    // throwable.printStackTrace();
                 }
             }
         });
@@ -273,6 +289,7 @@ public class Promocion extends AppCompatActivity {
             //Fija el valor obtenido en la caja de texto
             ep.execute();
         } catch (java.lang.NullPointerException e) {
+            // funciones.RegistraError(pName, "Promocion, establecepromocion", e, Promocion.this, getApplicationContext());
             Toast.makeText(getApplicationContext(), "Error al tratar de establecer la promocion", Toast.LENGTH_LONG).show();
         }
     }
@@ -287,7 +304,8 @@ public class Promocion extends AppCompatActivity {
             loadedImage = BitmapFactory.decodeStream(conn.getInputStream());
             return loadedImage;
         } catch (IOException e) {
-            e.printStackTrace();
+            funciones.RegistraError(pName, "Promocion, downloadFile", e, Promocion.this, getApplicationContext());
+            // e.printStackTrace();
             return null;
         }
     }

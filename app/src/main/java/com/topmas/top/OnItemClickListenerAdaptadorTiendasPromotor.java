@@ -26,9 +26,24 @@ public class OnItemClickListenerAdaptadorTiendasPromotor implements AdapterView.
         TextView txtDireccionCompleta = ( view.findViewById(R.id.txtDireccionCompleta));
         TextView cajatextoruta = ( view.findViewById(R.id.cajatextoruta));
 
+        double latitud;
         // get the clicked item name
-        final double latitud = Double.parseDouble( txtlatitud.getText().toString());
-        final double longitud = Double.parseDouble( txtlongitud.getText().toString());
+        if (txtlatitud.getText().toString() == "" || txtlatitud.getText().toString() == null  || txtlatitud.getText().toString() == "null")
+        {
+            latitud = 0;
+        }
+        else{
+            latitud = Double.parseDouble( txtlatitud.getText().toString());
+        }
+
+        double longitud;
+        if (txtlongitud.getText().toString() == "" || txtlongitud.getText().toString() == null ){
+            longitud = 0;
+        }
+        else{
+            longitud = Double.parseDouble( txtlongitud.getText().toString());
+        }
+
         final String tienda = txtTienda.getText().toString();
         final String DireccionCompleta = txtDireccionCompleta.getText().toString();
         final String idruta = cajatextoruta.getText().toString();

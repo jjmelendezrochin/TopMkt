@@ -1,7 +1,9 @@
 package com.topmas.top;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,9 +11,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.icu.text.DecimalFormat;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,6 +26,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -56,7 +65,20 @@ import static com.topmas.top.Constants.TAG_PRECIO;
 import static com.topmas.top.Constants.TAG_PRESENTACION;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
 import static com.topmas.top.Constants.TAG_producto;
+import static com.topmas.top.Foto.UPLOAD_ANDROID_ID;
+import static com.topmas.top.Foto.UPLOAD_API_VALUE;
+import static com.topmas.top.Foto.UPLOAD_BOARD;
+import static com.topmas.top.Foto.UPLOAD_BOOTLOADER;
+import static com.topmas.top.Foto.UPLOAD_BUILD_ID;
+import static com.topmas.top.Foto.UPLOAD_BUILD_TIME;
+import static com.topmas.top.Foto.UPLOAD_DENSIDAD;
+import static com.topmas.top.Foto.UPLOAD_ERROR;
+import static com.topmas.top.Foto.UPLOAD_ERRORES;
+import static com.topmas.top.Foto.UPLOAD_FABRICANTE;
 import static com.topmas.top.Foto.UPLOAD_FECHAHORA;
+import static com.topmas.top.Foto.UPLOAD_FINGERPRINT;
+import static com.topmas.top.Foto.UPLOAD_HARDWARE;
+import static com.topmas.top.Foto.UPLOAD_HOST_VALUE;
 import static com.topmas.top.Foto.UPLOAD_IDOPERACION;
 import static com.topmas.top.Foto.UPLOAD_IDPROMOTOR;
 import static com.topmas.top.Foto.UPLOAD_IDRUTA;
@@ -64,20 +86,33 @@ import static com.topmas.top.Foto.UPLOAD_IDUSUARIO;
 import static com.topmas.top.Foto.UPLOAD_IMAGEN;
 import static com.topmas.top.Foto.UPLOAD_LATITUD;
 import static com.topmas.top.Foto.UPLOAD_LONGITUD;
+import static com.topmas.top.Foto.UPLOAD_MARCA;
+import static com.topmas.top.Foto.UPLOAD_MODELO;
+import static com.topmas.top.Foto.UPLOAD_RESOLUCION;
+import static com.topmas.top.Foto.UPLOAD_SECCION;
+import static com.topmas.top.Foto.UPLOAD_SERIE;
 import static com.topmas.top.Foto.UPLOAD_SINDATOS;
+import static com.topmas.top.Foto.UPLOAD_TAMANIOPANTALLA;
+import static com.topmas.top.Foto.UPLOAD_UID;
 import static com.topmas.top.Foto.UPLOAD_URL;
+import static com.topmas.top.Foto.UPLOAD_USER_VALUE;
+import static com.topmas.top.Foto.UPLOAD_USUARIO;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
 import static com.topmas.top.Promocion.PROMOCION_URL;
+import static com.topmas.top.oInfoDispositivo._seccion;
 
 @SuppressWarnings("WeakerAccess") // Suprime error ACCESS CAN BE PRIVATE
 
 public class AlmacenaImagen extends SQLiteOpenHelper {
     Context contexto = null;
     public String databasePath = "";
+    Funciones funciones = new Funciones();
+    Usuario usr = new Usuario();
+    String pName = null;
 
     oTiendasPromotor[] Tiendas = null;
-    //oTiendasPromotor Tienda=null;
 
+    // **********************************
     // Constuctor
     public AlmacenaImagen(Context context) {
         super(context,
@@ -86,6 +121,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 DATABASE_VERSION);
         this.contexto = context;
         databasePath = context.getDatabasePath(DATABASE_NAME).getPath();
+        pName = usr.getnombre();
     }
 
     // **********************************
@@ -359,11 +395,46 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 "alias TEXT" +
                 ")";
         db.execSQL(sSql19);
+
+        // ************************************
+        // Tabla cat_empresa
+        String sSql20 = "Create table errores" +
+                "(" +
+                "_id INTEGER PRIMARY KEY," +
+                "fabricante TEXT," +
+                "marca TEXT," +
+                "modelo TEXT," +
+                "board TEXT," +
+                "hardware TEXT," +
+                "serie TEXT," +
+                "uid TEXT," +
+                "android_id TEXT," +
+                "resolucion TEXT," +
+                "tamaniopantalla TEXT," +
+                "densidad TEXT," +
+                "bootloader TEXT," +
+                "user_value TEXT," +
+                "host_value TEXT," +
+                "version TEXT," +
+                "api_value TEXT," +
+                "build_id TEXT," +
+                "build_time TEXT," +
+                "fingerprint TEXT," +
+                "usuario TEXT," +
+                "seccion TEXT," +
+                "error TEXT," +
+                "fechahora TEXT," +
+                "procesado INTEGER " +
+                ")";
+        db.execSQL(sSql20);
     }
 
+    // **********************************
+    // Actualizar base de datos
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
+
     // **********************************
     // Método para insertar promotor
     public int insertaoactualiza_act(
@@ -383,19 +454,20 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                     "values ('" + fecha + "'," + _valor + ");";
         }
         // Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
             // Log.e(TAG_INFO, sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
             String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la actualizacion " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(pName, e, "insertaoactualiza_act" );
+            // Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la actualizacion " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -409,7 +481,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         ) {
         String sSql = null;
         Cursor cursor = null;
-        Cursor cursor1 = null;
         int cta = 0;
         int aplica = -1;
         SQLiteDatabase db = getReadableDatabase();
@@ -422,25 +493,26 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 " limit 1";
 
         //Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             cursor = db.rawQuery(sSql, null);
             while (cursor.moveToNext()) {
                 aplica = cursor.getInt(0);
             }
-
+            cursor.close();
             //Log.e(TAG_INFO, sSql);
             //Log.e(TAG_INFO, "Valor obtenido de aplica " + aplica);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return aplica;
         } catch (Exception e) {
             String Resultado = e.getMessage();
+            this.inserta_error1(pName, e, "consulta_promocion_tienda" );
             //Log.e(TAG_ERROR, Resultado);
             // Toast.makeText(this.contexto, ERROR_FOTO + " Error al consultar+ en la actualizacion " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -458,6 +530,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         Cursor cursor = null;
         int cta = 0;
         SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db1 = getReadableDatabase();
 
         sSql = "Select count(*) from promociones_tiendas " +
                 "  where idpromocion = '" + _idpromocion +
@@ -466,13 +539,14 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 "' and cast(fecha as date)  = cast(CURRENT_DATE as date);";
 
         // Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
 
-            cursor = db.rawQuery(sSql, null);
+            cursor = db1.rawQuery(sSql, null);
             while (cursor.moveToNext()) {
                 cta = cursor.getInt(0);
             }
+            cursor.close();
 
             if (cta > 0) {
                 sSql = "  Update promociones_tiendas " +
@@ -486,16 +560,17 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             }
 
             db.execSQL(sSql);
-            // Log.e(TAG_INFO, sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
+            this.inserta_error1(pName, e, "inserta_promocion_tienda" );
             String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la actualizacion " + Resultado, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la actualizacion " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
+            db1.close();
             db.close();
         }
     }
@@ -515,25 +590,25 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         Cursor cursor = null;
         int cta = 0;
         SQLiteDatabase db = getWritableDatabase();
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             sSql = "   Insert into caducidad(idproducto, lote, caducidad, piezas, idruta, idpromotor, idfoto)" +
                     " values ('" + _idproducto + "','" +  _lote + "','" + _caducidad + "', '" + _piezas +
                     "','" + _idruta +"','" + _idpromotor +"','" + _idfoto + "');";
 
-
             db.execSQL(sSql);
             //Log.e(TAG_INFO, sSql);
             //Log.e(TAG_INFO, "insercion en la tabla caducidad");
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
             String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la tabla caducidad " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(pName, e, "inserta_caducidad" );
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la tabla caducidad " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -558,6 +633,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         Cursor cursor = null;
         int cta = 0;
         SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db1 = getReadableDatabase();
 
         sSql = "Select count(*) from competencia " +
                 "  where idfoto = '" + _idfoto +
@@ -567,10 +643,11 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.beginTransaction();
         try {
 
-            cursor = db.rawQuery(sSql, null);
+            cursor = db1.rawQuery(sSql, null);
             while (cursor.moveToNext()) {
                 cta = cursor.getInt(0);
             }
+            cursor.close();
 
             if (cta > 0) {
                 sSql = "  Update competencia " +
@@ -587,17 +664,17 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             }
 
             db.execSQL(sSql);
-            //Log.e(TAG_INFO, sSql);
-            //Log.e(TAG_INFO, "insercion en la tabla competencia");
             db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
+            this.inserta_error1(pName, e, "inserta_competencia" );
             String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la tabla competencia " + Resultado, Toast.LENGTH_LONG).show();
+            // Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la tabla competencia " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
             db.endTransaction();
+            db1.close();
             db.close();
         }
     }
@@ -618,19 +695,21 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         Cursor cursor = null;
         int cta = 0;
         SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db1 = getReadableDatabase();
 
         sSql = "Select count(*) from vw_producto_ruta_fecha " +
                 "  where idproducto = '" + _idproducto +
                 "' and idruta = '" + _idruta + "' and DATE(fda) = DATE(CURRENT_DATE)";
 
         // Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
 
-            cursor = db.rawQuery(sSql, null);
+            cursor = db1.rawQuery(sSql, null);
             while (cursor.moveToNext()) {
                 cta = cursor.getInt(0);
             }
+            cursor.close();
 
             if (cta > 0) {
                 sSql = "  Update vw_producto_ruta_fecha " +
@@ -648,16 +727,16 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             }
 
             db.execSQL(sSql);
-            // Log.e(TAG_INFO, sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
             String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la actualizacion " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(pName, e, "actualiza_precioproducto" );
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la actualizacion " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -684,19 +763,20 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                     "values (" + _idpromotor + ",'" + _idusuario + "','" + _pwd + "','" + _idempresa + "');";
         }
         // Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
             // Log.e(TAG_INFO, sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
             String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en el catalogo del promotor " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(pName, e, "insertaoactualizapromotor" );
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en el catalogo del promotor " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -717,19 +797,20 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql = "Insert into listatiendas(idpromotor, idruta, determinante, tienda, direccioncompleta, latitud, longitud)" +
                 "values (" + _idpromotor + "," + _idruta + "," + _determinante + ",'" + _tienda + "','" + _direccioncompleta + "'," + _latitud + "," + _longitud + ");";
         // Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
             // Log.e(TAG_INFO, "insercion en la tabla listatiendas");
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
             String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la lista de tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(pName, e, "insertatienda" );
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la lista de tiendas " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -763,19 +844,20 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _cantidadcaja + "','" + _cantidadkgs + "','" + _idempresa + "','" + _categoria1 + "','" + _categoria2 + "','" +
                 _udc + "','" + _fdc + "','" + _uda + "','" + _fda + "','1','" + _ruta + "',null);";
         //Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
             // Log.e(TAG_INFO, "insercion en la tabla listatiendas");
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
             String Resultado = e.getMessage();
+            this.inserta_error1(pName, e, "inserta_producto" );
             // Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en cat_productos " +  Resultado,Toast.LENGTH_LONG).show();
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -791,21 +873,22 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         Cursor cursor = null;
         int cta = 0;
         SQLiteDatabase db = getWritableDatabase();
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             sSql = "   Insert into cat_empresa(_id, nombreempresa, alias)" +
                     " values ('" + _idempresa + "','" +  _nombreempresa + "','" + _alias + "');";
 
             //Log.e(TAG_ERROR, sSql);
             db.execSQL(sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
+            this.inserta_error1(pName, e, "inserta_empresa" );
             String Resultado = e.getMessage();
             // Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la tabla cat_empresa " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -823,7 +906,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             Bitmap myBitmap = BitmapFactory.decodeStream(input);
             return myBitmap;
         } catch (IOException e) {
-            e.printStackTrace();
+            this.inserta_error1(pName, e, "AlmacenaImagen.getBitmapFromURL" );
+            // e.printStackTrace();
             return null;
         }
     }
@@ -849,7 +933,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         return imagen;
     }
 
-
     // **********************************
     // Metodo para insertar producto_formato_precio
     public int inserta_productoformatoprecio(
@@ -869,11 +952,10 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 "values ('" + _idproductoformatoprecio + "','" + _idproducto + "','" + _idformato + "','" + _idempresa + "','" + _precio + "','" +
                 _udc + "','" + _fdc + "','" + _uda + "','" + _fda + "');";
         // Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
-            // Log.e(TAG_INFO, "insercion en la tabla listatiendas");
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
             String Resultado = e.getMessage();
@@ -881,7 +963,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -904,19 +986,20 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 "values ('" + _idruta + "','" + _idcadena + "','" + _idformato + "','" + _idempresa + "','" +
                 _udc + "','" + _fdc + "','" + _uda + "','" + _fda + "');";
         // Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
             // Log.e(TAG_INFO, "insercion en la tabla listatiendas");
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
+            this.inserta_error1(pName, e, "AlmacenaImagen.InsertaRutas" );
             String Resultado = e.getMessage();
             // Log.e(TAG_INFO, Resultado);
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -934,19 +1017,20 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql = "Insert into vw_producto_ruta_fecha(idproducto, idruta, precioreal, fda, mod)" +
                 "values ('" + _idproducto + "','" + _idruta + "','" + _precioreal + "','" + _fda + "',0);";
         // Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
             // Log.e(TAG_INFO, "insercion en la tabla listatiendas");
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
-            String Resultado = e.getMessage();
+            this.inserta_error1(pName, e, "AlmacenaImagen.inserta_vista" );
+            //String Resultado = e.getMessage();
             // Log.e(TAG_INFO, Resultado);
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -963,19 +1047,20 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql = "Insert into cat_cadena(idcadena, idempresa, nombrecorto)" +
                 "values ('" + _idcadena + "','" + _idempresa + "','" + _nombrecorto + "');";
         // Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
             // Log.e(TAG_INFO, "insercion en la tabla listatiendas");
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
-            String Resultado = e.getMessage();
+            this.inserta_error1(pName, e, "AlmacenaImagen.inserta_cadena" );
+            //String Resultado = e.getMessage();
             // Log.e(TAG_INFO, Resultado);
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -990,16 +1075,17 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String sSql = "Insert into cat_observa_precios(_id, observaciones)" +
                 "values ('" + _idobs + "','" + _observaciones + "');";
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
-            String Resultado = e.getMessage();
+            this.inserta_error1(pName, e, "AlmacenaImagen.inserta_obs" );
+            //String Resultado = e.getMessage();
             return 0;
         } finally {
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -1014,16 +1100,17 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String sSql = "Insert into cat_actividad(_id, actividad)" +
                 "values ('" + _idactividad + "','" + _actividad + "');";
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
-            String Resultado = e.getMessage();
+            this.inserta_error1(pName, e, "AlmacenaImagen.inserta_actividad" );
+            //String Resultado = e.getMessage();
             return 0;
         } finally {
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -1039,16 +1126,17 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql = "Insert into cat_empaque(_id, empaque)" +
                 "values ('" + _idempaque + "','" + _empaque + "');";
         // Log.e(TAG_ERROR, sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
-            String Resultado = e.getMessage();
+            this.inserta_error1(pName, e, "AlmacenaImagen.inserta_empaque" );
+            //String Resultado = e.getMessage();
             return 0;
         } finally {
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -1063,16 +1151,17 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql = "Insert into configuracion(solicitainventario)" +
                 "values ('" + _solicita + "');";
         // Log.e(TAG_ERROR, sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
-            String Resultado = e.getMessage();
+            this.inserta_error1(pName, e, "AlmacenaImagen.inserta_configuracion" );
+            // String Resultado = e.getMessage();
             return 0;
         } finally {
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -1088,20 +1177,22 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
         // Log.e(TAG_INFO, "sSql " + sSql);
         int solicitainventario = 0;
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
 
             Cursor cursor = db.rawQuery(sSql, null);
             while (cursor.moveToNext()) {
                 solicitainventario = cursor.getInt(0);
             }
-
+            cursor.close();
+            // db.setTransactionSuccessful();
             return solicitainventario;
         } catch (Exception e) {
-            String Resultado = e.getMessage();
+            this.inserta_error1(pName, e, "AlmacenaImagen.consulta_configuracion" );
+            // String Resultado = e.getMessage();
             return 0;
         } finally {
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -1132,19 +1223,20 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _alcance + "','" + _inicio + "','" + _final + "','" + _periodo + "', '" +
                 _actividad + "','" + _precioregular + "','" + _preciopromocion + "','" + _idformato + "','" + _idproducto + "','" + _ruta + "');";
         // Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
             // Log.e(TAG_INFO, "insercion en la vista de promociones");
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
-            String Resultado = e.getMessage();
-            Log.e(TAG_INFO, "**** Error aqui " + Resultado);
+            // String Resultado = e.getMessage();
+            this.inserta_error1(pName, e, "AlmacenaImagen.inserta_promo" );
+            // Log.e(TAG_INFO, "**** Error aqui " + Resultado);
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -1165,6 +1257,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         Bitmap bitmap = funciones.Compacta(imagen);
         String uploadImage = getStringImage(bitmap);
         SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db1 = getReadableDatabase();
         int cta = 0;
 
         // ********************************
@@ -1173,7 +1266,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             sSql = "Select count(*) from almacenfotos where idpromotor = " + pidpromotor + " and idruta = " + pidruta +
                     " and DATE(fechahora) = DATE(CURRENT_DATE) and idoperacion = " + pidoperacion;
 
-            cursor = db.rawQuery(sSql, null);
+            cursor = db1.rawQuery(sSql, null);
             while (cursor.moveToNext()) {
                 cta = cursor.getInt(0);
             }
@@ -1194,27 +1287,30 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 "values (" + pidpromotor + "," + platitud + "," + plongitud +
                 ",'" + pfechahora.trim() + "'," + pidoperacion + ",'" + pidusuario + "'," + pidruta + ",'" +
                 getStringImage(imagen) + "');";
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             // Log.e (TAG_ERROR, "Insercion de foto " +  sSql);
-
+            db1 = getReadableDatabase();
             int id = 0;
             sSql = "Select max(id) from almacenfotos;";
-            cursor = db.rawQuery(sSql, null);
+            cursor = db1.rawQuery(sSql, null);
             while (cursor.moveToNext()) {
                 id = cursor.getInt(0);
             }
             cursor.close();
             return id;
         } catch (Exception e) {
-            String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en el almacen de fotos " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(pName, e, "AlmacenaImagen.guardaFotos" );
+            //String Resultado = e.getMessage();
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en el almacen de fotos " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
-            db.endTransaction();
+            // db.endTransaction();
+            db1.close();
             db.close();
+
         }
     }
 
@@ -1241,6 +1337,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 iResultado = cursor.getInt(0);
             }
+            cursor.close();
 
             // Si el resultado es uno entonces debe indicar el valor de actualizacion
             if (iResultado == 0) {
@@ -1251,11 +1348,13 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 while (cursor.moveToNext()) {
                     valor = cursor.getInt(0);
                 }
+                cursor.close();
             }
-
+            db.close();
         } catch (Exception e) {
-            String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las actualizaciones de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(pName, e, "AlmacenaImagen.ObtenRegistrosActualización" );
+            // String Resultado = e.getMessage();
+            // Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las actualizaciones de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
             cursor.close();
@@ -1289,12 +1388,13 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 retorno[i] = iruta;
                 i++;
             }
+            cursor.close();
         } catch (Exception e) {
-            String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las rutas de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(pName, e, "AlmacenaImagen.ObtenRutas" );
+            //String Resultado = e.getMessage();
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las rutas de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -1325,8 +1425,9 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 i++;
             }
         } catch (Exception e) {
-            String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las determinantes de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(pName, e, "AlmacenaImagen.ObtenDeterminantes" );
+            //String Resultado = e.getMessage();
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las determinantes de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
             cursor.close();
@@ -1360,8 +1461,9 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 i++;
             }
         } catch (Exception e) {
-            String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener los nombres  de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(pName, e, "AlmacenaImagen.ObtenTiendas" );
+            //String Resultado = e.getMessage();
+            // Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener los nombres  de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
             cursor.close();
@@ -1395,12 +1497,13 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 retorno[i] = direccion;
                 i++;
             }
+            cursor.close();
         } catch (Exception e) {
-            String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las direcciones de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(pName, e, "AlmacenaImagen.ObtenRegistrosTiendas" );
+            //String Resultado = e.getMessage();
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las direcciones de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -1430,12 +1533,13 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 retorno[i] = latitud;
                 i++;
             }
+            cursor.close();
         } catch (Exception e) {
-            String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las latitudes de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(pName, e, "AlmacenaImagen.ObtenLatitudes" );
+            // String Resultado = e.getMessage();
+            // Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las latitudes de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -1465,14 +1569,15 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 retorno[i] = longitud;
                 i++;
             }
+            cursor.close();
         } catch (Exception e) {
-            String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener los registros de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(pName, e, "AlmacenaImagen.ObtenLongitudes" );
+            // String Resultado = e.getMessage();
+            // Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener los registros de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
             // Por si hay una excepcion
             // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -1494,6 +1599,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 iResultado = cursor.getInt(0);
             }
+            cursor.close();
             // Log.e(TAG_INFO,"Resultado " + iResultado);
 
             // Si el resultado es mayor a uno entonces debe obtener y retornar el idpromotor
@@ -1505,13 +1611,13 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 idpromotor = cursor.getInt(0);
             }
+            cursor.close();
         } catch (Exception e) {
-            String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener registros del promotor " + Resultado, Toast.LENGTH_LONG).show();
-            // Por si hay una excepcion
+            this.inserta_error1(pName, e, "AlmacenaImagen.ObtenRegistrosPromotor" );
+            //String Resultado = e.getMessage();
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener registros del promotor " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         return (idpromotor > 0) ? idpromotor : iResultado;
@@ -1530,14 +1636,14 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 iResultado = cursor.getInt(0);
             }
+            cursor.close();
             // Log.e(TAG_INFO,"Resultado " + iResultado);
         } catch (Exception e) {
-            String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener el numero de promociones del formato " + Resultado, Toast.LENGTH_LONG).show();
-            // Por si hay una excepcion
+            this.inserta_error1(pName, e, "AlmacenaImagen.ObtenPromocionesFormato" );
+            // String Resultado = e.getMessage();
+            // Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener el numero de promociones del formato " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         return iResultado;
@@ -1559,15 +1665,15 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 iResultado = cursor.getInt(0);
             }
+            cursor.close();
             // Log.e(TAG_INFO,"Resultado " + iResultado);
         } catch (Exception e) {
-            String Resultado = e.getMessage();
+            this.inserta_error1(pName, e, "AlmacenaImagen.ObtenFotosTienda" );
+            // String Resultado = e.getMessage();
             // Log.e(TAG_ERROR, sSql);
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener registros " + Resultado, Toast.LENGTH_LONG).show();
-            // Por si hay una excepcion
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         return iResultado;
@@ -1629,6 +1735,9 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             case 15:
                 sSql = "Select count(*) from cat_empresa;";
                 break;
+            case 16:
+                sSql = "Select count(*) from errores where procesado = 0;";
+                break;
         }
 
         Cursor cursor = null;
@@ -1637,6 +1746,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 iResultado = cursor.getInt(0);
             }
+            cursor.close();
             // Log.e(TAG_INFO,"Resultado " + iResultado);
         } catch (Exception e) {
             String Resultado = e.getMessage();
@@ -1645,7 +1755,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // Por si hay una excepcion
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         return iResultado;
@@ -1668,13 +1777,13 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 iResultado = cursor.getInt(0);
             }
+            cursor.close();
         } catch (Exception e) {
             String Resultado = e.getMessage();
             Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener el formato de una ruta " + Resultado, Toast.LENGTH_LONG).show();
             // Por si hay una excepcion
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         return iResultado;
@@ -1692,7 +1801,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         } else {
             sSql = "Select count(*)  from listatiendas where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
         }
-        //Log.e(TAG_INFO, "Consulta promotor "  +sSql);
+        // Log.e(TAG_INFO, "Consulta lista tiendas "  +sSql);
         Cursor cursor = null;
         try {
 
@@ -1700,13 +1809,14 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 iResultado = cursor.getInt(0);
             }
+            cursor.close();
         } catch (Exception e) {
             String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener registros de lista de tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener registros de lista de tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            // funciones.RegistraError(pName, "AlmacenaImagen, downloadFile", e,  (Activity) AlmacenaImagen.this.contexto , AlmacenaImagen.this.contexto);
             // Por si hay una excepcion
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         return iResultado;
@@ -1724,11 +1834,11 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         sSql = "insert into versionapp (version) values('" + _version + "')";
 
         // Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
+        // db.beginTransaction();
         try {
             db.execSQL(sSql);
             // Log.e(TAG_INFO, sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
             String Resultado = e.getMessage();
@@ -1736,70 +1846,10 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
-
-    /*
-    // **********************************
-    // Función que consulta el número de registros existentes
-    // que no se subieron
-    public int ObtenRegistros() {
-        int iResultado = 0;
-        SQLiteDatabase db = getReadableDatabase();
-        String sSql = "Select count(*) from almacenfotos;";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(sSql, null);
-            while (cursor.moveToNext()) {
-                iResultado = cursor.getInt(0);
-            }
-        } catch (Exception e) {
-            // Por si hay una excepcion
-            String Resultado = e.getMessage();
-            assert Resultado != null;
-            Log.e(TAG_ERROR, Resultado);
-            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener registros del almacen de fotos " +  Resultado,Toast.LENGTH_LONG).show();
-        } finally {
-            assert cursor != null;
-            cursor.close();
-            db.close();
-        }
-        return iResultado;
-    }
-    */
-
-
-    /*
-    // **********************************
-    // Función que consulta el número de precios cambiados en modo fuera de linea para colocarlos en plataforma
-    // que no se subieron
-    public int ObtenPreciosCambiados() {
-        int iResultado = 0;
-        SQLiteDatabase db = getReadableDatabase();
-        String sSql = "Select count(*) from vw_producto_ruta_fecha where Mod = 1;";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(sSql, null);
-            while (cursor.moveToNext()) {
-                iResultado = cursor.getInt(0);
-            }
-        } catch (Exception e) {
-            // Por si hay una excepcion
-            String Resultado = e.getMessage();
-            assert Resultado != null;
-            Log.e(TAG_ERROR, Resultado);
-        } finally {
-            assert cursor != null;
-            cursor.close();
-            db.close();
-        }
-        return iResultado;
-    }
-    */
 
     // **********************************
     // Función que consulta la version de la app
@@ -1834,7 +1884,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 versionapp = cursor.getString(0);
             }
-
+            cursor.close();
             // Log.e(TAG_ERROR, "valor obtenido en consulta " + versionapp);
         } catch (Exception e) {
             // Por si hay una excepcion
@@ -1842,33 +1892,31 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener la versión de la app " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         return versionapp;
     }
-
 
     // **********************************
     // Borra la foto de la tabla de fotos si se pudo enviar correctamente la imagen
     public int BorraFotoEnviada(int idfoto) {
         String sSql;
         SQLiteDatabase db = getWritableDatabase();
-        db.beginTransaction();
+        // db.beginTransaction();
         sSql = "Delete from almacenfotos where id = " + idfoto;
 
         try {
             db.execSQL(sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
+            return 0;
         } catch (Exception ex) {
             String Resultado = ex.getMessage();
             Toast.makeText(this.contexto, ERROR_FOTO + " Error al borrar la foto " + Resultado, Toast.LENGTH_LONG).show();
             return idfoto;
             // Log.e(TAG_ERROR, ex.getMessage());
         } finally {
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
-            return 0;
         }
     }
 
@@ -1877,18 +1925,18 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     public void TruncarTablaTiendas(int idpromotor) {
         String sSql;
         SQLiteDatabase db = getWritableDatabase();
-        db.beginTransaction();
+        // db.beginTransaction();
         sSql = "Delete from listatiendas where idpromotor = " + idpromotor;
 
         try {
             db.execSQL(sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
         } catch (Exception ex) {
             String Resultado = ex.getMessage();
             Toast.makeText(this.contexto, ERROR_FOTO + " Error al truncar tablas tiendas " + Resultado, Toast.LENGTH_LONG).show();
             // Log.e(TAG_ERROR, ex.getMessage());
         } finally {
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -1898,7 +1946,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     public void TruncarTabla(int iTabla) {
         String sSql = null;
         SQLiteDatabase db = getWritableDatabase();
-        db.beginTransaction();
+        // db.beginTransaction();
         switch (iTabla) {
             case 1:
                 sSql = "Delete from cat_productos;";
@@ -1937,13 +1985,13 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
         try {
             db.execSQL(sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
         } catch (Exception ex) {
             String Resultado = ex.getMessage();
             Toast.makeText(this.contexto, ERROR_FOTO + " Error al truncar tablas " + Resultado, Toast.LENGTH_LONG).show();
             // Log.e(TAG_ERROR, ex.getMessage());
         } finally {
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -1953,19 +2001,19 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     public void TruncarTablaFotos() {
         String sSql;
         SQLiteDatabase db = getWritableDatabase();
-        db.beginTransaction();
+        // db.beginTransaction();
         sSql = "Delete from almacenfotos";
 
         try {
             db.execSQL(sSql);
-            db.setTransactionSuccessful();
+            // db.setTransactionSuccessful();
         } catch (Exception ex) {
             String Resultado = ex.getMessage();
             Toast.makeText(this.contexto, ERROR_FOTO + " Error al truncar tablas " + Resultado, Toast.LENGTH_LONG).show();
             //Error in between database transaction
             // Log.e(TAG_ERROR, ex.getMessage());
         } finally {
-            db.endTransaction();
+            // db.endTransaction();
             db.close();
         }
     }
@@ -1991,12 +2039,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 retorno[i] = idproducto;
                 i++;
             }
+            cursor.close();
         } catch (Exception e) {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las rutas de las tiendas " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -2011,7 +2059,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String descripcionproducto;
         SQLiteDatabase db = getReadableDatabase();
         String sSql;
-        sSql = "Select descripcion from cat_productos  order by descripcion asc;";
+        sSql = "Select (descripcion || ' ' || descripcion1 || ' ' || cantidad_kgs) as descripcion from cat_productos  order by descripcion asc;";
 
         // Log.e(TAG_ERROR, "Consulta " + sSql);
 
@@ -2024,12 +2072,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 retorno[i] = descripcionproducto;
                 i++;
             }
+            cursor.close();
         } catch (Exception e) {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las descripciones de los prouductos " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -2057,12 +2105,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 retorno[i] = categoriaproducto;
                 i++;
             }
+            cursor.close();
         } catch (Exception e) {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las categorias de las productos " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -2089,12 +2137,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 retorno[i] = upcproducto;
                 i++;
             }
+            cursor.close();
         } catch (Exception e) {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las categorias de las productos " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -2152,7 +2200,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         }
         catch ( SQLException e)
         {
-            // Log.e(TAG_ERROR, e.getMessage());
+            Log.e(TAG_ERROR, e.getMessage());
             return null;
         }
     }
@@ -2170,7 +2218,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             return null;
         }
     }
-
 
     // **********************************
     // Función que obtiene las promociones de un formato
@@ -2252,18 +2299,17 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 promociones[i] = promocion;
                 i++;
             }
+            cursor.close();
         } catch (Exception e) {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las promociones " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
         return promociones;
     }
-
 
     // **********************************
     // Función que obtiene las promociones de un formato
@@ -2341,12 +2387,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         _idproducto, _descripcion, _upc, _ruta);
                 i++;
             }
+            cursor.close();
         } catch (Exception e) {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener la promocion " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -2377,12 +2423,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 arrobs[i] = oobs;
                 i++;
             }
+            cursor.close();
         } catch (Exception e) {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las categorias de las productos " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
         return arrobs;
@@ -2434,6 +2480,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 // p1precioreal = cursor.getDouble(7);
                 cursor.moveToNext();
             }
+            cursor.close();
             // ************************************
             cursor1 = db.rawQuery(sSql1, null);
             cursor1.moveToFirst();
@@ -2441,6 +2488,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 p1precio = cursor1.getDouble(0);
                 cursor1.moveToNext();
             }
+            cursor1.close();
             // ************************************
             cursor2 = db.rawQuery(sSql2, null);
             cursor2.moveToFirst();
@@ -2448,6 +2496,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 p1precioreal = cursor2.getDouble(0);
                 cursor2.moveToNext();
             }
+            cursor2.close();
             // ************************************
             ProductoResultado = new oProducto(p1upc, pidproducto, p1descripcion, p1descripcion1, p1cantidadcaja, p1categoria1, p1categoria2, p1precio, p1precioreal, pidruta);
             return ProductoResultado;
@@ -2461,10 +2510,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             assert cursor != null;
             assert cursor1 != null;
             assert cursor2 != null;
-            cursor.close();
-            cursor1.close();
-            cursor2.close();
-
             db.close();
         }
     }
@@ -2525,15 +2570,30 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         String.valueOf(_idruta),
                         String.valueOf(_imagen)
                 );
+/*
+                Log.e(TAG_ERROR, "*******************");
+                Log.e(TAG_ERROR, "Cargando datos consultados");
+                Log.e(TAG_ERROR, String.valueOf(_idpromotor));
+                Log.e(TAG_ERROR, String.valueOf(_latitud));
+                Log.e(TAG_ERROR, String.valueOf(_longitud));
+                Log.e(TAG_ERROR, String.valueOf(_fechahora));
+                Log.e(TAG_ERROR, String.valueOf(_idoperacion));
+                Log.e(TAG_ERROR, String.valueOf(_idusuario));
+                Log.e(TAG_ERROR, String.valueOf(_idruta));
+                // Log.e(TAG_ERROR, String.valueOf(_imagen));
+                Log.e(TAG_ERROR, "*******************");
+*/
                 i++;
                 // *****************************
                 // Borrando el registro recien colocado
+                SQLiteDatabase db1 = getReadableDatabase();
                 String sBorrado = "Delete from almacenfotos where id = " + _id + ";";
-                db.execSQL(sBorrado);
-                Log.e("Borrado", sBorrado);
+                db1.execSQL(sBorrado);
+                // Log.e("Borrado", sBorrado);
                 // *****************************
                 cursor.moveToNext();
             }
+            cursor.close();
             return i;
         } catch (Exception e) {
             String Resultado = e.getMessage();
@@ -2543,7 +2603,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // Por si hay una excepcion
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
     }
@@ -2614,7 +2673,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         ui.execute(_idpromotor, _latitud, _longitud, _fechahora, _idoperacion, _idusuario, _idruta, _imagen);
     }
 
-
     // **********************************
     // Obtiene datos para subir foto de la tabla almacenfotos
     public int ColocaPreciosCambiados()
@@ -2628,8 +2686,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int _idobs;
         int i = 0;
 
-
         SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db1 = getWritableDatabase();
         String sSql = "   Select distinct idruta, idproducto, idpromotor,  precioreal, invinicial, invfinal, idobs " +
                         " from vw_producto_ruta_fecha " +
                         " where mod = 1 order by fda asc limit 1;";
@@ -2673,11 +2731,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 String sAct = "  Delete from  vw_producto_ruta_fecha " +
                         " where  idproducto = '" + _idproducto + "' " + " and idpromotor = '" + _idpromotor + "' " +
                        " and idruta = '" + _idruta + "' and DATE(fda) = DATE(CURRENT_DATE)";
-                db.execSQL(sAct);
+                db1.execSQL(sAct);
                 // Log.e("Borrado", sAct);
                 // *****************************
                 cursor.moveToNext();
             }
+            cursor.close();
             return i;
         } catch (Exception e) {
             String Resultado = e.getMessage();
@@ -2687,7 +2746,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // Por si hay una excepcion
         } finally {
             assert cursor != null;
-            cursor.close();
+            db1.close();
             db.close();
         }
     }
@@ -2802,7 +2861,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         }
     }
 
-
     // **********************************
     // Obtiene imágen producto con el idproducto
     public Bitmap obtenerImagenProducto(int idproducto){
@@ -2864,6 +2922,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String _canjes;
 
         SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db1 = getReadableDatabase();
+
         String sSql = "Select distinct af.id, af.idpromotor, af.latitud, af.longitud, af.fechahora, af.idoperacion, af.idusuario, af.idruta, af.imagen  " +
                 " , c.producto, c.precio, c.presentacion, c.idempaque, c.demostrador, " +
                 " c.exhibidor, c.emplaye, c.actividadbtl, c.canjes, c.idcompetencia " +
@@ -2931,14 +2991,16 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 // *****************************
                 // Borrando el registro recien colocado
                 String sBorrado = "Delete from almacenfotos where id = " + _id + ";";
-                db.execSQL(sBorrado);
+                db1.execSQL(sBorrado);
                 // Log.e(TAG_ERROR, sBorrado);
                 sBorrado = "Delete from competencia where idcompetencia = " + _idcompetencia + ";";
-                db.execSQL(sBorrado);
+                db1.execSQL(sBorrado);
+
                 //Log.e(TAG_ERROR, sBorrado);
                 // *****************************
                 cursor.moveToNext();
             }
+            cursor.close();
             return i;
         } catch (Exception e) {
             String Resultado = e.getMessage();
@@ -2948,7 +3010,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // Por si hay una excepcion
         } finally {
             assert cursor != null;
-            cursor.close();
+            db1.close();
             db.close();
         }
     }
@@ -2961,12 +3023,14 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int iCuentaRegistrosCompetencia = this.ObtenRegistros(10);
         int iCuentaPromociones = this.ObtenRegistros(12);
         int iCuentaCaducidad = this.ObtenRegistros(14);
+        int iCuentaErrores = this.ObtenRegistros(16);
 
         String sMensaje = "Usted tiene " + String.valueOf(iCuenta) + " imágenes almacenadas y/o " +
                 iCuentaPreciosCambiados + " precios cambiados, y/o " +
                 iCuentaPromociones + " promociones, y/o " +
                 iCuentaRegistrosCompetencia + " registros de competencia, y/o " +
-                iCuentaCaducidad  + " registros de caducidad";
+                iCuentaCaducidad  + " registros de caducidad , y/o " +
+                iCuentaErrores  + " registros de errores";
 
         Toast.makeText(this.contexto, sMensaje, Toast.LENGTH_LONG).show();
     }
@@ -3068,6 +3132,155 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     }
 
     // **********************************
+    // Obtiene datos para subir la tabla errores
+    public int ColocaErrores()
+    {
+        int i = 0;
+        String _fabricante;
+        String _marca;
+        String _modelo;
+        String _board;
+        String _hardware;
+        String _serie;
+        String _uid;
+        String _android_id;
+        String _resolucion;
+        String _tamaniopantalla;
+        String _densidad;
+        String _bootloader;
+        String _user_value;
+        String _host_value;
+        String _version;
+        String _api_value;
+        String _build_id;
+        String _build_time;
+        String _fingerprint;
+        String _usuario;
+        String _seccion;
+        String _error;
+        String _fechahora;
+
+        SQLiteDatabase db = getReadableDatabase();
+        String sSql = "Select fabricante, marca, modelo, board ,hardware ,serie ,uid ,android_id ,resolucion ,tamaniopantalla ,densidad ,bootloader ,user_value ,host_value ,version ,api_value ,build_id ,build_time ,fingerprint ,usuario, seccion, error ,fechahora from errores where procesado = 0;";
+
+        Log.e(TAG_ERROR, sSql);
+        Cursor cursor;
+        cursor = db.rawQuery(sSql, null);
+        try {
+            // ************************************
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                _fabricante= cursor.getString(0);
+                _marca= cursor.getString(1);
+                _modelo= cursor.getString(2);
+                _board= cursor.getString(3);
+                _hardware= cursor.getString(4);
+                _serie= cursor.getString(5);
+                _uid= cursor.getString(6);
+                _android_id= cursor.getString(7);
+                _resolucion= cursor.getString(8);
+                _tamaniopantalla= cursor.getString(9);
+                _densidad= cursor.getString(10);
+                _bootloader= cursor.getString(11);
+                _user_value= cursor.getString(12);
+                _host_value= cursor.getString(13);
+                _version= cursor.getString(14);
+                _api_value= cursor.getString(15);
+                _build_id= cursor.getString(16);
+                _build_time= cursor.getString(17);
+                _fingerprint= cursor.getString(18);
+                _usuario= cursor.getString(19);
+                _seccion= cursor.getString(20);
+                _error= cursor.getString(21);
+                _fechahora= cursor.getString(22);
+
+                // Espera un segundo
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        // yourMethod();
+                    }
+                }, 1000);   //1 second
+
+                // *******************
+                // Subir errores
+                Log.e(TAG_ERROR, "****************************");
+                Log.e(TAG_ERROR, "Llamando al proceso de carga de errores");
+                Log.e(TAG_ERROR,   _fabricante);
+                Log.e(TAG_ERROR,   _marca);
+                Log.e(TAG_ERROR,   _modelo);
+                Log.e(TAG_ERROR,   _board);
+                Log.e(TAG_ERROR,   _hardware);
+                Log.e(TAG_ERROR,   _serie);
+                Log.e(TAG_ERROR,   _uid);
+                Log.e(TAG_ERROR,   _android_id);
+                Log.e(TAG_ERROR,   _resolucion);
+                Log.e(TAG_ERROR,   _tamaniopantalla);
+                Log.e(TAG_ERROR,   _densidad);
+                Log.e(TAG_ERROR,   _bootloader);
+                Log.e(TAG_ERROR,   _user_value);
+                Log.e(TAG_ERROR,   _host_value);
+                Log.e(TAG_ERROR,   _version);
+                Log.e(TAG_ERROR,   _api_value);
+                Log.e(TAG_ERROR,   _build_id);
+                Log.e(TAG_ERROR,   _build_time);
+                Log.e(TAG_ERROR,   _fingerprint);
+                Log.e(TAG_ERROR,   "usuario " + _usuario);
+                Log.e(TAG_ERROR,   "seccion " + _seccion);
+                Log.e(TAG_ERROR,   "error "  +_error);
+                Log.e(TAG_ERROR,   "fechahora " + _fechahora);
+                Log.e(TAG_ERROR, "****************************");
+
+                cargaErrores(
+                        _fabricante,
+                        _marca,
+                        _modelo,
+                        _board,
+                        _hardware,
+                        _serie,
+                        _uid,
+                        _android_id,
+                        _resolucion,
+                        _tamaniopantalla,
+                        _densidad,
+                        _bootloader,
+                        _user_value,
+                        _host_value,
+                        _version,
+                        _api_value,
+                        _build_id,
+                        _build_time,
+                        _fingerprint,
+                        _usuario,
+                        _seccion,
+                        _error,
+                        _fechahora
+                );
+                i++;
+
+                cursor.moveToNext();
+            }
+            cursor.close();
+            // *****************************
+            // Borrando el registro recien colocado
+            SQLiteDatabase db1 = getReadableDatabase();
+            String sBorrado = "Delete from errores where procesado = 0;";
+            db1.execSQL(sBorrado);
+            db1.close();
+            Log.e(TAG_ERROR, sBorrado);
+            // *****************************
+            return i;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar errores " + Resultado, Toast.LENGTH_LONG).show();
+            return 0;
+        } finally {
+            assert cursor != null;
+            db.close();
+        }
+    }
+
+    // **********************************
     // Obtiene datos para subir foto de la tabla caducidad
     public int ColocaCaducidad()
     {
@@ -3128,27 +3341,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                     }
                 }, 1000);   //1 second
 
-/*
-                Log.e(TAG_ERROR, "*******************");
-                Log.e(TAG_ERROR, "Cargando datos almacenados");
-                Log.e(TAG_ERROR, String.valueOf(_id));
-                Log.e(TAG_ERROR, String.valueOf(_idpromotor));
-                Log.e(TAG_ERROR, String.valueOf(_latitud));
-                Log.e(TAG_ERROR, String.valueOf(_longitud));
-                Log.e(TAG_ERROR, String.valueOf(_fechahora));
-                Log.e(TAG_ERROR, String.valueOf(_idoperacion));
-                Log.e(TAG_ERROR, String.valueOf(_idusuario));
-                Log.e(TAG_ERROR, String.valueOf(_idruta));
-                Log.e(TAG_ERROR, String.valueOf(_idproducto));
-                Log.e(TAG_ERROR, String.valueOf(_lote));
-                Log.e(TAG_ERROR, String.valueOf(_caducidad));
-                Log.e(TAG_ERROR, String.valueOf(_piezas));
-                Log.e(TAG_ERROR, String.valueOf(_idcaducidad));
-                Log.e(TAG_ERROR, "*******************");
-
- */
-
-
                 // *******************
                 // Subir imagen
                 cargaCaducidad(
@@ -3175,6 +3367,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 // *****************************
                 cursor.moveToNext();
             }
+            cursor.close();
             return i;
         } catch (Exception e) {
             String Resultado = e.getMessage();
@@ -3182,7 +3375,121 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             return 0;
         } finally {
             assert cursor != null;
-            cursor.close();
+            db.close();
+        }
+    }
+
+    // **********************************
+    // Método para insertar competencia
+    public int inserta_error(oInfoDispositivo oinfo) {
+        String sSql = null;
+        Cursor cursor = null;
+        int cta = 0;
+
+        Date fechahora = Calendar.getInstance().getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String fechahora1 = sdf.format(fechahora);
+
+        SQLiteDatabase db = getWritableDatabase();
+        // db.beginTransaction();
+        try {
+            sSql = "Insert into errores (fabricante, marca, modelo ,board ,hardware ,serie ,uid ,android_id ,resolucion ,tamaniopantalla ,densidad ," +
+                    "bootloader ,user_value ,host_value ,version ,api_value ,build_id ,build_time ,fingerprint ,usuario, seccion, error ,fechahora , procesado ) " +
+            " values ('" + oinfo.get_fabricante() + "','" +  oinfo.get_marca() + "','" + oinfo.get_modelo() + "', '" + oinfo.get_board() +
+                    "', '" + oinfo.get_hardware() +"','" + oinfo.get_serie() +"','" + oinfo.get_uid() +
+                    "', '" + oinfo.get_android_id() + "','" +  oinfo.get_resolucion() + "','" + oinfo.get_tamaniopantalla() +
+                    "', '" + oinfo.get_densidad() + "','" + oinfo.get_bootloader() +"','" + oinfo.get_user_value() +"','" + oinfo.get_host_value() +
+                    "', '" + oinfo.get_version() + "','" +  oinfo.get_api_level() + "','" + oinfo.get_build_id() +
+                    "', '" + oinfo.get_build_time() + "','" + oinfo.get_fingerprint() +"','" + oinfo.get_usuario() +"','" + oinfo.get_seccion()
+                    +"','" + oinfo.get_error() + "', '" + fechahora1 + "','0');";
+            db.execSQL(sSql);
+            // db.setTransactionSuccessful();
+            return 1;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la tabla error " + Resultado, Toast.LENGTH_LONG).show();
+            return 0;
+        } finally {
+            // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
+            // db.endTransaction();
+            db.close();
+        }
+    }
+
+    // **********************************
+    // Método para insertar error1 sin datos de actividad ni contexto
+    public int inserta_error1(String sUsuario, Exception e, String sSeccion) {
+        String sSql = null;
+        Cursor cursor = null;
+        int cta = 0;
+
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String sStackTrace = sw.toString();
+
+
+        Date fechahora = Calendar.getInstance().getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String fechahora1 = sdf.format(fechahora);
+
+        //TelephonyManager tManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+        oInfoDispositivo oinfo = new oInfoDispositivo();
+        DisplayMetrics dm = new DisplayMetrics();
+        //activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+        double x = Math.pow(Resources.getSystem().getDisplayMetrics().widthPixels / dm.xdpi, 2);
+        double y = Math.pow(Resources.getSystem().getDisplayMetrics().heightPixels / dm.ydpi, 2);
+        double screenInches = Math.sqrt(x + y);
+        DecimalFormat df2 = new DecimalFormat("#,###,###,##0");
+        String rounded = df2.format((double) screenInches);
+        double densityDpi = (int) (dm.density * 160f);
+
+        oinfo.set_fabricante(Build.MANUFACTURER);
+        oinfo.set_marca(Build.BRAND);
+        oinfo.set_modelo(Build.MODEL);
+        oinfo.set_board(Build.BOARD);
+        oinfo.set_hardware(Build.HARDWARE);
+        oinfo.set_serie(Build.SERIAL);
+        oinfo.set_android_id(Settings.Secure.getString(contexto.getContentResolver(),
+                Settings.Secure.ANDROID_ID));
+        oinfo.set_resolucion(Resources.getSystem().getDisplayMetrics().heightPixels + " * " + Resources.getSystem().getDisplayMetrics().widthPixels + " Pixels");
+        oinfo.set_tamaniopantalla(rounded + " Inches");
+        oinfo.set_densidad(String.valueOf(densityDpi) + " dpi");
+        oinfo.set_bootloader(Build.BOOTLOADER);
+        oinfo.set_user_value(Build.USER);
+        oinfo.set_host_value(Build.HOST);
+        oinfo.set_version(Build.VERSION.RELEASE);
+        oinfo.set_api_value(Build.VERSION.SDK_INT + "");
+        oinfo.set_build_id(Build.ID);
+        oinfo.set_build_time(Build.TIME + "");
+        oinfo.set_fingerprint(Build.FINGERPRINT);
+        oinfo.set_usuario(sUsuario);
+        oinfo.set_seccion(sSeccion);
+        oinfo.set_error(sStackTrace);
+
+        SQLiteDatabase db = getWritableDatabase();
+        // db.beginTransaction();
+        try {
+            sSql = "Insert into errores (fabricante, marca, modelo ,board ,hardware ,serie ,uid ,android_id ,resolucion ,tamaniopantalla ,densidad ," +
+                    "bootloader ,user_value ,host_value ,version ,api_value ,build_id ,build_time ,fingerprint ,usuario, seccion, error ,fechahora , procesado ) " +
+                    " values ('" + oinfo.get_fabricante() + "','" +  oinfo.get_marca() + "','" + oinfo.get_modelo() + "', '" + oinfo.get_board() +
+                    "', '" + oinfo.get_hardware() +"','" + oinfo.get_serie() +"','" + oinfo.get_uid() +
+                    "', '" + oinfo.get_android_id() + "','" +  oinfo.get_resolucion() + "','" + oinfo.get_tamaniopantalla() +
+                    "', '" + oinfo.get_densidad() + "','" + oinfo.get_bootloader() +"','" + oinfo.get_user_value() +"','" + oinfo.get_host_value() +
+                    "', '" + oinfo.get_version() + "','" +  oinfo.get_api_level() + "','" + oinfo.get_build_id() +
+                    "', '" + oinfo.get_build_time() + "','" + oinfo.get_fingerprint() +"','" + oinfo.get_usuario() +"','" + oinfo.get_seccion()
+                    +"','" + oinfo.get_error() + "', '" + fechahora1 + "','0');";
+            db.execSQL(sSql);
+            // db.setTransactionSuccessful();
+            return 1;
+        } catch (Exception e1) {
+            String Resultado = e1.getMessage();
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la tabla error " + Resultado, Toast.LENGTH_LONG).show();
+            return 0;
+        } finally {
+            // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
+            // db.endTransaction();
             db.close();
         }
     }
@@ -3242,6 +3549,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 // *****************************
                 cursor.moveToNext();
             }
+            cursor.close();
             return i;
         } catch (Exception e) {
             String Resultado = e.getMessage();
@@ -3251,7 +3559,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // Por si hay una excepcion
         } finally {
             assert cursor != null;
-            cursor.close();
             db.close();
         }
     }
@@ -3305,7 +3612,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     }
 
     //***********************
-    // Función utilizada para guardar el precio del producto
+    // Función utilizada para guardar la caducidad del producto
     private void cargaCaducidad(
             String _id,
             String _idpromotor,
@@ -3389,4 +3696,160 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
     }
 
+    //***********************
+    // Función utilizada para guardar los errores de la App
+    private void cargaErrores(
+            String _fabricante,
+            String _marca,
+            String _modelo,
+            String _board,
+            String _hardware,
+            String _serie,
+            String _uid,
+            String _android_id,
+            String _resolucion,
+            String _tamaniopantalla,
+            String _densidad,
+            String _bootloader,
+            String _user_value,
+            String _host_value,
+            String _version,
+            String _api_value,
+            String _build_id,
+            String _build_time,
+            String _fingerprint,
+            String _usuario,
+            String _seccion,
+            String _error,
+            String _fechahora
+    )
+    {
+        class EstableceErrores extends AsyncTask<String, Void, String> {
+
+            private RequestHandler rh = new RequestHandler();
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                HashMap<String, String> data = new HashMap<>();
+                String  fabricante= params[0];
+                String  marca= params[1];
+                String  modelo= params[2];
+                String  board= params[3];
+                String  hardware= params[4];
+                String  serie= params[5];
+                String  uid= params[6];
+                String  android_id= params[7];
+                String  resolucion= params[8];
+                String  tamaniopantalla= params[9];
+                String  densidad= params[10];
+                String  bootloader= params[11];
+                String  user_value= params[12];
+                String  host_value= params[13];
+                String  version= params[14];
+                String  api_value= params[15];
+                String  build_id= params[16];
+                String  build_time= params[17];
+                String  fingerprint= params[18];
+                String  usuario= params[19];
+                String  seccion = params[20];
+                String  error= params[21];
+                String  fechahora= params[22];
+
+                // *******************
+                // Subir errores
+                Log.e(TAG_ERROR, "****************************");
+                Log.e(TAG_ERROR, "Llamando al proceso de carga de errores");
+                Log.e(TAG_ERROR,   fabricante);
+                Log.e(TAG_ERROR,   marca);
+                Log.e(TAG_ERROR,   modelo);
+                Log.e(TAG_ERROR,   board);
+                Log.e(TAG_ERROR,   hardware);
+                Log.e(TAG_ERROR,   serie);
+                Log.e(TAG_ERROR,   uid);
+                Log.e(TAG_ERROR,   android_id);
+                Log.e(TAG_ERROR,   resolucion);
+                Log.e(TAG_ERROR,   tamaniopantalla);
+                Log.e(TAG_ERROR,   densidad);
+                Log.e(TAG_ERROR,   bootloader);
+                Log.e(TAG_ERROR,   user_value);
+                Log.e(TAG_ERROR,   host_value);
+                Log.e(TAG_ERROR,   version);
+                Log.e(TAG_ERROR,   api_value);
+                Log.e(TAG_ERROR,   build_id);
+                Log.e(TAG_ERROR,   build_time);
+                Log.e(TAG_ERROR,   fingerprint);
+                Log.e(TAG_ERROR,   "usuario " +  usuario);
+                Log.e(TAG_ERROR,   "seccion "  + seccion);
+                Log.e(TAG_ERROR,   "error "  + error);
+                Log.e(TAG_ERROR,   "fechahora "  + fechahora);
+                Log.e(TAG_ERROR, "****************************");
+
+                data.put(UPLOAD_FABRICANTE, fabricante);
+                data.put(UPLOAD_MARCA,marca);
+                data.put(UPLOAD_MODELO,modelo);
+                data.put(UPLOAD_BOARD,board);
+                data.put(UPLOAD_HARDWARE,hardware);
+                data.put(UPLOAD_SERIE,serie);
+                data.put(UPLOAD_UID,uid);
+                data.put(UPLOAD_ANDROID_ID,android_id);
+                data.put(UPLOAD_RESOLUCION,resolucion);
+                data.put(UPLOAD_TAMANIOPANTALLA,tamaniopantalla);
+                data.put(UPLOAD_DENSIDAD,densidad);
+                data.put(UPLOAD_BOOTLOADER,bootloader);
+                data.put(UPLOAD_USER_VALUE,user_value);
+                data.put(UPLOAD_HOST_VALUE,host_value);
+                data.put(UPLOAD_VERSION,version);
+                data.put(UPLOAD_API_VALUE,api_value);
+                data.put(UPLOAD_BUILD_ID,build_id);
+                data.put(UPLOAD_BUILD_TIME,build_time);
+                data.put(UPLOAD_FINGERPRINT,fingerprint);
+                data.put(UPLOAD_USUARIO,usuario);
+                data.put(UPLOAD_SECCION,seccion);
+                data.put(UPLOAD_ERROR,error);
+                data.put(UPLOAD_FECHAHORA,fechahora);
+
+                Log.e(TAG_ERROR, "*************");
+                Log.e(TAG_ERROR, "Llamando al proceso que guarda los errores");
+                Log.e(TAG_ERROR, UPLOAD_ERRORES);
+                Log.e(TAG_ERROR, "*************");
+                return rh.sendPostRequest(UPLOAD_ERRORES,data);
+            }
+        }
+
+        EstableceErrores ui = new EstableceErrores();
+        ui.execute(
+                _fabricante,
+                _marca,
+                _modelo,
+                _board,
+                _hardware,
+                _serie,
+                _uid,
+                _android_id,
+                _resolucion,
+                _tamaniopantalla,
+                _densidad,
+                _bootloader,
+                _user_value,
+                _host_value,
+                _version,
+                _api_value,
+                _build_id,
+                _build_time,
+                _fingerprint,
+                _usuario,
+                _seccion,
+                _error,
+                _fechahora);
+    }
 }

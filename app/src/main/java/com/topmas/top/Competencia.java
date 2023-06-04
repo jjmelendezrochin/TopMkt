@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -11,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -52,6 +54,7 @@ import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_PRECIO;
 import static com.topmas.top.Constants.TAG_PRESENTACION;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
+import static com.topmas.top.Constants.TAG_USUARIO;
 import static com.topmas.top.Constants.TAG_empaque;
 import static com.topmas.top.Constants.TAG_producto;
 import static com.topmas.top.Foto.UPLOAD_FECHAHORA;
@@ -97,7 +100,7 @@ public class Competencia extends AppCompatActivity {
     int iemplaye = 0;
 
     Usuario usr = new Usuario();
-    Funciones funcs = new Funciones();
+    Funciones funciones = new Funciones();
     AlmacenaImagen almacenaImagen;
 
     @Override
@@ -110,6 +113,17 @@ public class Competencia extends AppCompatActivity {
         idRuta =  i.getIntExtra(TAG_IDRUTA,0);
         idoperacion =  5;       // OPERACIÓN FOTO COMPETENCIA
         almacenaImagen = new AlmacenaImagen(getApplicationContext());
+        idpromotor = usr.getid();
+        pLatitud = usr.getLatitud();
+        pLongitud = usr.getLongitud();
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        pName = preferences.getString(TAG_USUARIO, pName);
+
+        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
+            //log(throwable.getMessage(), thread.getId());
+            funciones.RegistraError(pName, "Competencia setDefaultUncaughtExceptionHandler", (Exception) throwable, Competencia.this, getApplicationContext());
+        });
 
         //****************************
         FloatingActionButton fab1 = findViewById(R.id.fab1);
@@ -137,6 +151,7 @@ public class Competencia extends AppCompatActivity {
                     photoFile = createImageFile();
                     // Log.e("Mensaje", "archivo creado" + photoFile.getAbsolutePath());
                 } catch (IOException ex) {
+                    // funciones.RegistraError(pName, "Competencia, btnFoto.setOnClickListener 1", ex, Competencia.this, getApplicationContext());
                     Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al crear archivo de foto " +  ex.getMessage(),Toast.LENGTH_LONG).show();
                 }
 
@@ -152,6 +167,7 @@ public class Competencia extends AppCompatActivity {
 
                     }
                 } catch (Exception ex) {
+                    // funciones.RegistraError(pName, "Competencia, btnFoto.setOnClickListener 2", ex, Competencia.this, getApplicationContext());
                     Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al tomar la foto " +  ex.getMessage(),Toast.LENGTH_LONG).show();
                     // Log.e(ERROR_FOTO, ex.getMessage());
                 }
@@ -178,8 +194,6 @@ public class Competencia extends AppCompatActivity {
                 iexhibidor = (chkExhibidor.isChecked()?1:0);
                 iemplaye = (chkEmplayes.isChecked()?1:0);
 
-
-
                 try {
                     producto = cajaproducto.getText().toString();
                     precio = Double.parseDouble(cajaprecio.getText().toString());
@@ -189,12 +203,12 @@ public class Competencia extends AppCompatActivity {
 
                     // *****************************
                     // Verifica la forma en que subirá los datos
-                    if (funcs.RevisarConexion(getApplicationContext())) {
+                    if (funciones.RevisarConexion(getApplicationContext())) {
                         uploadImageCompetencia();
                     } else {
                         AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
                         int iResultado = almacenaImagen.inserta_competencia(producto,precio,presentacion,idEmpaque, idRuta, idpromotor, idemostrador, iexhibidor, iemplaye, actividadbtl,canjes,iFoto);
-                        //Log.e(TAG_INFO, "Valor de resultado de inserción " + iResultado);
+                        Log.e(TAG_INFO, "* Valor de resultado de inserción  de competencia" + iResultado);
                         if (iResultado>0)
                         {
                             Toast.makeText(getApplicationContext(), "Dato almacenado",Toast.LENGTH_LONG);
@@ -202,6 +216,7 @@ public class Competencia extends AppCompatActivity {
                         }
                     }
                 } catch (NumberFormatException ex) {
+                    // funciones.RegistraError(pName, "Competencia, cmdGuardar.setOnClickListener", ex, Competencia.this, getApplicationContext());
                     Toast.makeText( getApplicationContext(),"Todos los campos deben tener datos",
                             Toast.LENGTH_LONG).show();
                 }
@@ -269,12 +284,7 @@ public class Competencia extends AppCompatActivity {
         imagenFoto = findViewById(R.id.imagenFoto);
         try {
             if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-                funcs.grabImage(this, photoURI, imagenFoto);
-
-                idpromotor = usr.getid();
-                pName = usr.getnombre();
-                pLatitud = usr.getLatitud();
-                pLongitud = usr.getLongitud();
+                funciones.grabImage(this, photoURI, imagenFoto);
 
                 // **********************
                 Calendar c = Calendar.getInstance();
@@ -304,6 +314,7 @@ public class Competencia extends AppCompatActivity {
         }
         catch( java.lang.NullPointerException e)
         {
+            // unciones.RegistraError(pName, "Competencia, onActivityResult", e, Competencia.this, getApplicationContext());
             // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
             Toast.makeText(getApplicationContext(), "Error al colocar una foto de competencia", Toast.LENGTH_LONG).show();
         }
@@ -402,6 +413,7 @@ public class Competencia extends AppCompatActivity {
         }
         catch( java.lang.NullPointerException e)
         {
+            // funciones.RegistraError(pName, "Competencia, uploadImageCompetencia", e, Competencia.this, getApplicationContext());
             // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
             Toast.makeText(getApplicationContext(), "Error al cargar una foto de competencia", Toast.LENGTH_LONG).show();
         }

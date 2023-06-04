@@ -3,11 +3,13 @@ package com.topmas.top;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -56,6 +58,7 @@ import static com.topmas.top.Constants.TAG_PRODUCTO;
 import static com.topmas.top.Constants.TAG_RESPUESTA;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
 import static com.topmas.top.Constants.TAG_UPC;
+import static com.topmas.top.Constants.TAG_USUARIO;
 import static com.topmas.top.Constants.TAG_imagen;
 
 public class Producto extends AppCompatActivity {
@@ -85,6 +88,8 @@ public class Producto extends AppCompatActivity {
 
     ProgressDialog pDialog;
     final Funciones funciones = new Funciones();
+    private final Usuario usr = new Usuario();
+    String pName = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +100,14 @@ public class Producto extends AppCompatActivity {
         pidproducto = i.getIntExtra(TAG_IDPRODUCTO, pidproducto);
         pidruta = i.getIntExtra(TAG_IDRUTA, pidruta);
         pUpc = i.getStringExtra(TAG_UPC);
+        // pName = usr.getnombre();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        pName = preferences.getString(TAG_USUARIO, pName);
+
+        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
+            //log(throwable.getMessage(), thread.getId());
+            funciones.RegistraError(pName, "Producto setDefaultUncaughtExceptionHandler", (Exception) throwable, Producto.this, getApplicationContext());
+        });
 
         imagenProducto = findViewById(R.id.imagenproducto1);
 
@@ -147,7 +160,8 @@ public class Producto extends AppCompatActivity {
                     miprecioreal = Double.parseDouble(cajaPrecioReal.getText().toString());
                     invinicial = Integer.parseInt(cajainvinicial.getText().toString());
                     invfinal = Integer.parseInt(cajainvfinal.getText().toString());
-                } catch (NumberFormatException nfe) {
+                } catch (Exception e) {
+                    // funciones.RegistraError(pName, "Producto ,cmdGuardarPrecio.setOnClickListener", e, Producto.this,getApplicationContext());
                     Toast.makeText(getApplicationContext(), "Solo se permiten valores numéricos en el precio e inventario", Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -202,7 +216,8 @@ public class Producto extends AppCompatActivity {
                 TextView cajaPrecioReal = findViewById(R.id.txtPrecioReal);
                 try {
                     miprecioreal = Double.parseDouble(cajaPrecio.getText().toString());
-                } catch (NumberFormatException nfe) {
+                } catch (Exception e) {
+                    // funciones.RegistraError(pName, "Producto ,cmdMismoPrecio.setOnClickListener", e, Producto.this,getApplicationContext());
                     cajaPrecioReal.setText("0");
                     return;
                 }
@@ -224,7 +239,7 @@ public class Producto extends AppCompatActivity {
                 //if (funciones.ObtenImagen(pposicion) == null)
                 {
                    // Log.e(TAG_ERROR, "1. No Hay imagen " + (pposicion));
-                    sRutaImagen = "https://www.topmas.mx/TopMas/ImagenesProductos/" + String.valueOf(pidproducto) + "_" + pUpc + ".png";
+                    sRutaImagen = TAG_SERVIDOR + "/ImagenesProductos/" + String.valueOf(pidproducto) + "_" + pUpc + ".png";
                     // Log.e(TAG_ERROR, "Ruta imagen " + sRutaImagen);
                     MuestraImagen(sRutaImagen,
                             imagenProducto,
@@ -239,11 +254,13 @@ public class Producto extends AppCompatActivity {
                 }*/
             } catch (NullPointerException e) {
                 // Log.e(TAG_ERROR, "1a. No Hay imagen "+ ( pposicion));
-                sRutaImagen = "https://www.topmas.mx/TopMas/ImagenesProductos/" + String.valueOf(pidproducto) + "_" + pUpc + ".png";
+                // funciones.RegistraError(pName, "Producto ,cmdGuardarPrecio.setOnClickListener", e, Producto.this,getApplicationContext());
+                sRutaImagen = TAG_SERVIDOR + "/ImagenesProductos/" + String.valueOf(pidproducto) + "_" + pUpc + ".png";
                 MuestraImagen(sRutaImagen,
                         imagenProducto,
                         almacenaImagen,
                         pidproducto);
+
             }
         } else {
             // Colocar los productos en la pantalla obtenidos de la base de datos local
@@ -331,12 +348,14 @@ public class Producto extends AppCompatActivity {
                 sRespusta = sb.toString();
 
             } catch (Exception ex) {
+                funciones.RegistraError(pName, "Producto ,ConsultaProducto 1", ex, Producto.this,getApplicationContext());
                 Error = ex.getMessage();
             } finally {
                 try {
                     assert reader != null;
                     reader.close();
                 } catch (Exception ex) {
+                    funciones.RegistraError(pName, "Producto ,ConsultaProducto 2", ex, Producto.this,getApplicationContext());
                     Error = ex.getMessage();
                 }
             }
@@ -375,6 +394,7 @@ public class Producto extends AppCompatActivity {
                     }
 
                 } catch (JSONException e) {
+                    funciones.RegistraError(pName, "Producto ,ConsultaProducto 3", e, Producto.this,getApplicationContext());
                     String Resultado = "Se generó el siguiente error : " + e.toString();
                     // Log.e(TAG_ERROR, Resultado);
                 }
@@ -515,6 +535,7 @@ public class Producto extends AppCompatActivity {
             precioreal = miprecioreal;
             fp.execute();
         } catch (java.lang.NullPointerException e) {
+            // funciones.RegistraError(pName, "Producto ,estableceprecio", e, Producto.this,getApplicationContext());
             Toast.makeText(getApplicationContext(), "Error al tratar de establecer el precio", Toast.LENGTH_LONG).show();
         }
     }
@@ -560,7 +581,8 @@ public class Producto extends AppCompatActivity {
                     InputStream input = connection.getInputStream();
                     return BitmapFactory.decodeStream(input);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    funciones.RegistraError(pName, "Producto,MuestraImagen", e, Producto.this,getApplicationContext());
+                    // e.printStackTrace();
                 }
                 return null;
             }

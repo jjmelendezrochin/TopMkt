@@ -5,12 +5,12 @@
     "kind": "Directory"
   },
   "applicationId": "com.topmas.top",
-  "variantName": "processReleaseResources",
+  "variantName": "release",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 22,
+      "versionCode": 28,
       "versionName": "2",
       "outputFile": "app-release.apk"
     }

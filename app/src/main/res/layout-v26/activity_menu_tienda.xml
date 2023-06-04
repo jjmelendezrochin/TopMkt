@@ -136,6 +136,23 @@
             </LinearLayout>
         </FrameLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/margen_productos"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/formaConexion"
+                android:layout_width="match_parent"
+                android:layout_height="47dp"
+                android:gravity="center"
+                android:text="Forma Conexión"
+                android:textColor="@color/grisOscuro"
+                android:textSize="16dp" />
+        </LinearLayout>
+
 
     </LinearLayout>
 

@@ -1,5 +1,22 @@
 package com.topmas.top;
 
+import static com.topmas.top.Constants.TAG_ACCESSTOKEN;
+import static com.topmas.top.Constants.TAG_CONSULTAENWEB;
+import static com.topmas.top.Constants.TAG_EMAIL;
+import static com.topmas.top.Constants.TAG_EMPRESA;
+import static com.topmas.top.Constants.TAG_ERROR;
+import static com.topmas.top.Constants.TAG_EXPIRESIN;
+import static com.topmas.top.Constants.TAG_ID;
+import static com.topmas.top.Constants.TAG_IDEMPRESA;
+import static com.topmas.top.Constants.TAG_IDPROMOTOR;
+import static com.topmas.top.Constants.TAG_INFO;
+import static com.topmas.top.Constants.TAG_NAME;
+import static com.topmas.top.Constants.TAG_RESPUESTA;
+import static com.topmas.top.Constants.TAG_SERVIDOR;
+import static com.topmas.top.Constants.TAG_USUARIO;
+import static com.topmas.top.Constants.TAG_alias;
+import static com.topmas.top.Constants.TAG_nombreempresa;
+
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,10 +30,8 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
@@ -35,42 +50,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import static com.topmas.top.Constants.TAG_ACCESSTOKEN;
-import static com.topmas.top.Constants.TAG_CONSULTAENWEB;
-import static com.topmas.top.Constants.TAG_DETERMINANTE;
-import static com.topmas.top.Constants.TAG_DIRECCION;
-import static com.topmas.top.Constants.TAG_EMAIL;
-import static com.topmas.top.Constants.TAG_EMPRESA;
-import static com.topmas.top.Constants.TAG_ERROR;
-import static com.topmas.top.Constants.TAG_EXPIRESIN;
-import static com.topmas.top.Constants.TAG_ID;
-import static com.topmas.top.Constants.TAG_IDEMPRESA;
-import static com.topmas.top.Constants.TAG_IDPROMOTOR;
-import static com.topmas.top.Constants.TAG_IDRUTA;
-import static com.topmas.top.Constants.TAG_INFO;
-import static com.topmas.top.Constants.TAG_LATITUD;
-import static com.topmas.top.Constants.TAG_LONGITUD;
-import static com.topmas.top.Constants.TAG_NAME;
-import static com.topmas.top.Constants.TAG_OBSERVACIONES;
-import static com.topmas.top.Constants.TAG_RESPUESTA;
-import static com.topmas.top.Constants.TAG_RUTA;
-import static com.topmas.top.Constants.TAG_SERVIDOR;
-import static com.topmas.top.Constants.TAG_TIENDA;
-import static com.topmas.top.Constants.TAG_VERSIONAPP;
-import static com.topmas.top.Constants.TAG_alias;
-import static com.topmas.top.Constants.TAG_nombreempresa;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button b1;
     private EditText txtUsuario;
     private EditText txtPwd;
-    private int    pid = 0;
+    private int pid = 0;
     private String pName = "";
     private String pEmail = "";
     private String pToken = "";
@@ -92,77 +79,93 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        almacenaImagen = new AlmacenaImagen(getApplicationContext());
-        versionapp = almacenaImagen.ConsultaVersionApp();
 
-        // *******************************
-        // Inicia la verificación de activación del GPS
-        funciones.locationStart(this);
-        // *******************************
+        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
+            //log(throwable.getMessage(), thread.getId());
+            funciones.RegistraError(pName, "MainActivity setDefaultUncaughtExceptionHandler", (Exception) throwable, MainActivity.this, getApplicationContext());
+        });
 
-        b1 = findViewById(R.id.cmdIngresar);
-        txtUsuario =  findViewById(R.id.txtNombre);
-        txtPwd = findViewById(R.id.txtPwd);
-        spCliente = findViewById(R.id.spinClientes);
+        try {
+            almacenaImagen = new AlmacenaImagen(getApplicationContext());
+            versionapp = almacenaImagen.ConsultaVersionApp();
 
-        // *****************************
-        // llenando los datos de la lista de catalogo empresas
-        SharedPreferences preferencias =
-                PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-        SharedPreferences.Editor editor = preferencias.edit();
-        String pidEmpresaSel = preferencias.getString(TAG_IDEMPRESA, "1");
 
-        almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
-        int iCtaEmpresas = almacenaImagen.ObtenRegistros(15);
+            // *******************************
+            // Obteniendo la versión de android
+            int iVersion = android.os.Build.VERSION.SDK_INT;
+            // Api 29 Android 10
+            // *******************************
+            // Inicia la verificación de activación del GPS
+            funciones.locationStart(this);
+            // *******************************
 
-        // Log.e(TAG_ERROR, String.valueOf(iCtaEmpresas));
+            b1 = findViewById(R.id.cmdIngresar);
+            txtUsuario = findViewById(R.id.txtNombre);
+            txtPwd = findViewById(R.id.txtPwd);
+            spCliente = findViewById(R.id.spinClientes);
 
-        if(iCtaEmpresas==0){
-            // Verifica si hay conexión para descargar las empresas
-            if (!funciones.RevisarConexion(getApplicationContext())){
-                Toast.makeText(MainActivity.this, "No hay conexión a internet y/o no se encontró la lista de empresas, " +
-                        " favor de verificar (Debe ingresar al menos una vez a la plataforma para poder visualizar los datos en modo desconectado)", Toast.LENGTH_LONG).show();
+            // *****************************
+            // llenando los datos de la lista de catalogo empresas
+            SharedPreferences preferencias =
+                    PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+            SharedPreferences.Editor editor = preferencias.edit();
+            String pidEmpresaSel = preferencias.getString(TAG_IDEMPRESA, "1");
+
+            int iCtaEmpresas = 0;
+
+            almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
+            iCtaEmpresas = almacenaImagen.ObtenRegistros(15);
+            //Log.e("Empresas", Integer.toString(iCtaEmpresas));
+
+            if (iCtaEmpresas == 0) {
+                // Verifica si hay conexión para descargar las empresas
+                String sMensaje = "No hay conexión a internet y/o el usuario no se encontro, favor de verificar (Debe ingresar al menos una vez a la plataforma para poder visualizar los datos en modo desconectado)";
+                if (!funciones.RevisarConexion(getApplicationContext())) {
+                    Toast.makeText(MainActivity.this, sMensaje, Toast.LENGTH_LONG).show();
+                    //funciones.RegistraLog(sMensaje, txtUsuario.toString());
+                } else {
+                    // **************************
+                    // Descarga las empresas
+                    CargaEmpresas cargaEmpresas = new CargaEmpresas();
+                    cargaEmpresas.execute(pidEmpresaSel);
+                    // *****************************
+                }
+            } else {
+                // Consulta las empresas del catálogo y las pone en el spinner
+                if (pidEmpresaSel == "") {
+                    pidEmpresaSel = "1";
+                }
+                LlenaSpinnerEmpresas(Integer.valueOf(pidEmpresaSel));
             }
-            else{
-                // **************************
-                // Descarga las empresas
-                CargaEmpresas cargaEmpresas = new CargaEmpresas();
-                cargaEmpresas.execute(pidEmpresaSel);
-                // *****************************
-            }
 
-        }
-        else{
-            // Consulta las empresas del catálogo y las pone en el spinner
-            if (pidEmpresaSel=="")
-                pidEmpresaSel = "1";
-            LlenaSpinnerEmpresas(Integer.valueOf(pidEmpresaSel));
+        } catch (Exception e) {
+            //e.printStackTrace();
+            funciones.RegistraError("", "MainActivity_OnCreate", e, MainActivity.this, getApplicationContext());
         }
 
-        final Spinner spinClientes = (Spinner) findViewById( R.id.spinClientes );
-       /* CmbEmpresas[] strClientes;
-        List<CmbEmpresas> listaEmpresas;
-        ArrayAdapter<CmbEmpresas> comboAdapter;
-        String nombreFruta;
-        //Convierto la variable List<> en un ArrayList<>()
-        listaEmpresas = new ArrayList<>();
-        //Arreglo con nombre de frutas
-        strClientes = new CmbEmpresas[] {
-                new CmbEmpresas(1,"CAL"),
-                new CmbEmpresas(2,"ALU")};
-        //Agrego las frutas del arreglo `strFrutas` a la listaEmpresas
-        Collections.addAll(listaEmpresas, strClientes);
-        //Implemento el adapter con el contexto, layout, listaEmpresas
-        comboAdapter = new ArrayAdapter<CmbEmpresas>(this,android.R.layout.simple_spinner_dropdown_item, listaEmpresas);
-        comboAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //Cargo el spinner con los datos
-        spinClientes.setAdapter(comboAdapter);
-        spinClientes.setSelection(Integer.valueOf(pidEmpresaSel)-1);
-        */
-
+        final Spinner spinClientes = (Spinner) findViewById(R.id.spinClientes);
         // *******************************
         b1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+
+                String pNombre = txtUsuario.getText().toString();
+                String pClave = txtPwd.getText().toString();
+
+                /*
+                // *****************************
+                // Verifica si tiene un servicio GPS fake
+                Funciones funciones = new Funciones();
+                boolean bResp = funciones.areThereMockPermissionApps(view.getContext());
+                String sResultado =  "Se esta utilizando una aplicación no permitida en su teléfono, favor de contactar al área de sistemas para mayor información, esta información se va a grabar en la bitácora para seguimiento";
+                if(bResp){
+                    AlmacenaImagen almacenaImagen = new AlmacenaImagen(view.getContext());
+                    String sMotivo = "Fake GPS";
+                    Exception exp = new Exception(sMotivo,null);
+                    almacenaImagen.inserta_error1(pNombre, exp, sMotivo);
+                    Toast.makeText(getApplicationContext(), sResultado , Toast.LENGTH_LONG).show();
+                    return;
+                }
+                */
 
                 // **************************************
                 /* Alamcena en la variable idempresa el valor seleccionado en el spinner */
@@ -175,13 +178,10 @@ public class MainActivity extends AppCompatActivity {
 
                 // **************************************
                 // Verifica si no hay conexión para consultar en la base de datos de Sqlite
-                if (!funciones.RevisarConexion(getApplicationContext())){
-                    String pNombre  = txtUsuario.getText().toString();
-                    String pClave   = txtPwd.getText().toString();
-
+                if (!funciones.RevisarConexion(getApplicationContext())) {
                     int idpromotor = almacenaImagen.ObtenRegistrosPromotor(pNombre, pClave, idEmpresa);
-                    // Log.e(TAG_INFO,"Promotor " + idpromotor );
-                    if (idpromotor>0){
+                    Log.e(TAG_INFO,"Promotor " + idpromotor );
+                    if (idpromotor > 0) {
                         // ***************************
                         // Inicio de lista de tiendas
                         Intent listatiendas = new Intent(getApplicationContext(), listatiendas.class);
@@ -195,18 +195,15 @@ public class MainActivity extends AppCompatActivity {
                         listatiendas.putExtra(TAG_EXPIRESIN, "null");
                         listatiendas.putExtra(TAG_CONSULTAENWEB, 1);    // Indica que debe buscar en la lista de tiendas en web
 
-                        Usuario usr = new Usuario(idpromotor,pName, pEmail, pToken, pExpira, idEmpresa);
+                        Usuario usr = new Usuario(idpromotor, pName, pEmail, pToken, pExpira, idEmpresa);
                         startActivity(listatiendas);
                         // ***************************
+                    } else {
+                        String sMensaje = "No hay conexión a internet y/o el usuario no se encontro, favor de verificar (Debe ingresar al menos una vez a la plataforma para poder visualizar los datos en modo desconectado)";
+                        Toast.makeText(MainActivity.this, sMensaje, Toast.LENGTH_LONG).show();
                     }
-                    else
-                    {
-                        Toast.makeText(MainActivity.this, "No hay conexión a internet y/o el usuario no se encontro, favor de verificar (Debe ingresar al menos una vez a la plataforma para poder visualizar los datos en modo desconectado)", Toast.LENGTH_LONG).show();
-                    }
-
                     return;
-                }
-                else {
+                } else {
                     // **************************************
                     // Llamado a la consulta del servicio web por si hay conexión
                     ConsultaWebService consulta = new ConsultaWebService();
@@ -217,12 +214,14 @@ public class MainActivity extends AppCompatActivity {
 
         // ******************************
         spinClientes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 idEmpresa = String.valueOf(id);
                 //         idEmpresa = String.valueOf(id+1);
                 //Toast.makeText(getApplicationContext(),"Empresa " + idEmpresa, Toast.LENGTH_SHORT);
             }
-            public void onNothingSelected(AdapterView<?> parent) {}
+
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         // ***********************************
@@ -266,44 +265,54 @@ public class MainActivity extends AppCompatActivity {
         TextView version = findViewById(R.id.Version);
         String sVersionApp = versionName.trim() + ":" + String.valueOf(versionCode).trim();
 
-         if(versionapp.length()==0)
-            versionapp=sVersionApp;
+        if (versionapp.length() == 0)
+            versionapp = sVersionApp;
 
         // **********************************
         // Evita el texto null
-        if(versionName==null)
-        {
+        if (versionName == null) {
             versionName = "nueva";
         }
-        if(versionapp=="")
-        {
+        if (versionapp == "") {
             versionapp = "nueva";
         }
 
-        if(sVersionApp.equals(versionapp))
-        {
+        if (sVersionApp.equals(versionapp)) {
             version.setText(String.format("Versión %s:%d", versionName, versionCode));
-        }
-        else
-        {
+        } else {
             version.setTextColor(Color.BLUE);
             version.setText("Versión " + versionapp + " disponible");
         }
     }
 
 
-    protected void LlenaSpinnerEmpresas(int pidEmpresaSel){
+    protected void LlenaSpinnerEmpresas(int pidEmpresaSel) {
         // *****************************
         // llenando los datos de la lista de empresas
-        Cursor c = almacenaImagen.CursorEmpresas();
-        String[] from = new String[]{TAG_alias};
-        int[] to = new int[]{android.R.id.text1};
-        // This is your simple cursor adapter
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, c, from, to );
-        adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
-        Spinner s = findViewById( R.id.spinClientes );
-        s.setAdapter(adapter);
-        s.setSelection(Integer.valueOf(pidEmpresaSel)-1);
+        try {
+            Cursor c = almacenaImagen.CursorEmpresas();
+            if (c==null)
+            {
+                Log.e("Cursor", "nulo" );
+            }
+            else{
+                Log.e("Cursor", "No nulo" );
+            }
+            String[] from = new String[]{TAG_alias};
+            int[] to = new int[]{android.R.id.text1};
+            // This is your simple cursor adapter
+            SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, c, from, to);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            Spinner s = findViewById(R.id.spinClientes);
+
+            s.setAdapter(adapter);
+            /*
+            Aqui se genera un error no des comentar
+            s.setSelection(Integer.valueOf(pidEmpresaSel) - 1);
+            */
+        } catch (Exception e) {
+            funciones.RegistraError("","MainActivity,LlenaSpinnerEmpresas", e, MainActivity.this, getApplicationContext());
+        }
     }
 
     class ConsultaWebService extends AsyncTask<Void, Void, String> {
@@ -371,15 +380,17 @@ public class MainActivity extends AppCompatActivity {
                 sRespusta = sb.toString();
                 // Log.e(TAG_RESPUESTA, sRespusta);
 
-            } catch (Exception ex) {
-                Error = ex.getMessage();
-               // Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al obtener los datos del promotor " +  Error,Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                Error = e.getMessage();
+                funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService", e, MainActivity.this, getApplicationContext());
+                Toast.makeText(getApplicationContext(), " Error al obtener los datos del promotor " +  Error,Toast.LENGTH_LONG).show();
                 // Log.e("Ruta", Error);
             } finally {
                 try {
                     reader.close();
                 } catch (Exception ex) {
                     Error = ex.getMessage();
+                    funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService", ex, MainActivity.this, getApplicationContext());
                     //Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al obtener los datos del promotor 1" +  Error,Toast.LENGTH_LONG).show();
                     // Log.e("Ruta", Error);
                 }
@@ -397,8 +408,7 @@ public class MainActivity extends AppCompatActivity {
 
                     int iResp = jsonResponse.getInt(TAG_ID);
                     // Log.e("RESPUESTA", String.valueOf( iResp));
-                    if (iResp>0)
-                    {
+                    if (iResp > 0) {
                         // ******************************
                         // Obtención de variables y acceso al sistema
                         id = jsonResponse.getInt(TAG_ID);
@@ -412,17 +422,15 @@ public class MainActivity extends AppCompatActivity {
                         pEmail = email;
                         pToken = token;
                         pExpira = expira;
-
-
                         // ******************************
-                    }
-                    else {
-                        id=0;
-                        pid=0;
+                    } else {
+                        id = 0;
+                        pid = 0;
                     }
 
                 } catch (JSONException e) {
                     String Resultado = "Se generó el siguiente error : " + e.toString();
+                    funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService Proceso de lectura de datos", e, MainActivity.this, getApplicationContext());
                     // Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al obtener las variables de tiendas " +  Resultado,Toast.LENGTH_LONG).show();
                 }
             }
@@ -440,7 +448,7 @@ public class MainActivity extends AppCompatActivity {
     protected void Verifica() {
         // *********************************************************
         // Proceso que verifica el resultado para ingresar
-        if (pid>0) {
+        if (pid > 0) {
 
             // ******************************
             // Aqui se inicia el servicio
@@ -450,7 +458,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             int iServicioIniciado = preferences.getInt("ServicioIniciado", 0);
-            if (iServicioIniciado==0) {
+            if (iServicioIniciado == 0) {
                 editor.putInt("ServicioIniciado", 1);
                 editor.apply();
 
@@ -466,7 +474,14 @@ public class MainActivity extends AppCompatActivity {
 
             // ***************************
             // Inserta o actualiza promotor en la tabla cat_promotores
-            almacenaImagen.insertaoactualizapromotor(pid,nombre,pwd, idEmpresa);
+            almacenaImagen.insertaoactualizapromotor(pid, nombre, pwd, idEmpresa);
+
+            // Establece el nombre del usuario en las preferencias
+            SharedPreferences preferencias =
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            editor = preferencias.edit();
+            editor.putString(TAG_USUARIO, nombre);
+            editor.commit();
 
             // ***************************
             // Inicio de lista de tiendas
@@ -481,13 +496,10 @@ public class MainActivity extends AppCompatActivity {
             listatiendas.putExtra(TAG_EXPIRESIN, pExpira);
             listatiendas.putExtra(TAG_CONSULTAENWEB, 1);    // Indica que debe buscar en la lista de tiendas en web
 
-            Usuario usr = new Usuario(pid,pName, pEmail, pToken, pExpira, idEmpresa);
+            Usuario usr = new Usuario(pid, pName, pEmail, pToken, pExpira, idEmpresa);
             startActivity(listatiendas);
             // ***************************
-
-        }
-       else
-           {
+        } else {
             Toast toast2 = Toast.makeText(getApplicationContext(),
                     "Acceso no permitido", Toast.LENGTH_SHORT);
             toast2.show();
@@ -521,23 +533,23 @@ public class MainActivity extends AppCompatActivity {
         String sRuta = null;
         String Error = null;
         String data = "";
-        int jj=0;
+        int jj = 0;
         int[] idEmpresa = new int[100];
         String[] nombreEmpresa = new String[100];
         String[] aliasEmpresa = new String[100];
         String pidEmpresaSel = "1";
 
 
-        int i =0;
+        int i = 0;
+
         @Override
-        protected void onPreExecute()
-        {
+        protected void onPreExecute() {
             sRuta = TAG_SERVIDOR + "/Promotor/obtenerempresas.php";
             // Log.e(TAG_ERROR, sRuta);
 
             super.onPreExecute();
             pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Consultando en el empresas Web  ...");
+            pDialog.setMessage("Consultando las empresas en Web  ...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(false);
             pDialog.show();
@@ -588,7 +600,7 @@ public class MainActivity extends AppCompatActivity {
                         jsonResponse = new JSONObject(sRespuesta);
                         jsonarray = jsonResponse.getJSONArray(TAG_RESPUESTA);       // Arreglo
                         int iLongitudArreglo = jsonarray.length();
-                        if (iLongitudArreglo>0){
+                        if (iLongitudArreglo > 0) {
                             almacenaImagen.TruncarTabla(15);
                         }
 
@@ -609,18 +621,21 @@ public class MainActivity extends AppCompatActivity {
 
                     } catch (JSONException e) {
                         String Resultado = "Se generó el siguiente error : " + e.toString();
+                        funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService Cargar Empresas", e, MainActivity.this, getApplicationContext());
                         // Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al obtener las variables de tiendas " +  Resultado,Toast.LENGTH_LONG).show();
                     }
                 }
 
             } catch (Exception ex) {
                 Error = ex.getMessage();
+                funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService Cargar Empresas 1", ex, MainActivity.this, getApplicationContext());
                 Log.e(TAG_ERROR, Error);
             } finally {
                 try {
                     reader.close();
                 } catch (Exception ex) {
                     Error = ex.getMessage();
+                    funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService Cargar Empresas 2", ex, MainActivity.this, getApplicationContext());
                     Log.e(TAG_ERROR, Error);
                 }
             }
@@ -629,9 +644,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String file_url)
-        {
-            LlenaSpinnerEmpresas(Integer.valueOf(pidEmpresaSel));
+        protected void onPostExecute(String file_url) {
+            // Verificando si tiene un dato
+            if (pidEmpresaSel != "") {
+                LlenaSpinnerEmpresas(Integer.valueOf(pidEmpresaSel));
+            }
             pDialog.dismiss();
         }
 

@@ -115,6 +115,7 @@ public class listatiendas extends AppCompatActivity {
     String pToken = "";
     String pExpira = "";
     EditText txtBuscar ;
+    String sMensaje="";
 
     private static Activity context;
     private ProgressDialog pDialog;
@@ -221,16 +222,6 @@ public class listatiendas extends AppCompatActivity {
         LayoutProgreso = findViewById(R.id.LayoutProgreso);
         LayoutProgreso1 = findViewById(R.id.LayoutProgreso1);
 
-        final AdaptadorTiendasPromotor adaptador =
-                new AdaptadorTiendasPromotor(listatiendas.this,
-                ruta,
-                determinante,
-                tienda,
-                direccion,
-                latitud,
-                longitud);
-        lista.setAdapter(adaptador);
-
         Intent i = getIntent();
         pidPromotor = i.getIntExtra(TAG_IDPROMOTOR,pidPromotor );
         pIdempresa = i.getStringExtra(TAG_IDEMPRESA);
@@ -240,11 +231,58 @@ public class listatiendas extends AppCompatActivity {
         pToken = i.getStringExtra(TAG_ACCESSTOKEN);
         pExpira = i.getStringExtra(TAG_EXPIRESIN);
         pConsultaenWeb = i.getIntExtra(TAG_CONSULTAENWEB, pConsultaenWeb);
-
-        pidPromotor = usr.getid();
-
+        // Obtiene el idpromotor si no trae este valor
+        Log.e(TAG_ERROR, "* Promotor " + pidPromotor);
+        if (pidPromotor==0)
+        {
+            pidPromotor = usr.getid();
+            Log.e(TAG_ERROR, "* Promotor " + pidPromotor);
+        }
+        // Si no hay promotor debe de mandar un mensaje de error y solicitar ingresar
+        if(pidPromotor==0)
+        {
+            sMensaje = "No se pudo obtener la información del promotor favor de salir e ingresar nuevamente";
+            AlertDialog.Builder alerta = new AlertDialog.Builder(listatiendas.this);
+            alerta.setMessage(sMensaje)
+                    .setCancelable(false)
+                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent main = new Intent(getApplicationContext(),
+                                    MainActivity.class);
+                            startActivity(main);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+            alerta.show();
+            return;
+        }
         // Establece el idusuario
         usr.setidusuario(pName);
+
+        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
+            funciones.RegistraError(pName, "listatiendas setDefaultUncaughtExceptionHandler", (Exception) throwable, listatiendas.this, getApplicationContext());
+        });
+
+        try {
+            final AdaptadorTiendasPromotor adaptador =
+                    new AdaptadorTiendasPromotor(listatiendas.this,
+                    ruta,
+                    determinante,
+                    tienda,
+                    direccion,
+                    latitud,
+                    longitud);
+            lista.setAdapter(adaptador);
+        } catch (Exception e) {
+            funciones.RegistraError(pName, "MainActivity,ConsultaWebService", e, listatiendas.this, getApplicationContext());
+            //e.printStackTrace();
+        }
 
         // *****************************
         // En este proceso se verifica si existen registros en la tabla de almacenfotos
@@ -252,12 +290,19 @@ public class listatiendas extends AppCompatActivity {
         // para finalmente truncar la tabla y continuar el proceso
 
         almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
-        int iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
-        int iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
-        int iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
-        int iPromociones = almacenaImagen.ObtenRegistros(12);
-        int iCaducidad = almacenaImagen.ObtenRegistros(14);
-        int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad);
+        int iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);       // Obtiene la lista de imagenes guardadas
+        int iPreciosCambiados = almacenaImagen.ObtenRegistros(9);       // Obtiene la lista de precios cambiados
+        int iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);  // Obtiene la lista de registros competencia
+        int iPromociones = almacenaImagen.ObtenRegistros(12);           // Obtiene la lista de promociones
+        int iCaducidad = almacenaImagen.ObtenRegistros(14);             // Obtiene la lista de caducidades
+        int iErrores = almacenaImagen.ObtenRegistros(16);               // Obtiene la lista de los errores
+
+        int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores);
+
+        // Log.e(TAG_ERROR, "* Imagenes " + iMagenesGuardadas);
+        // Log.e(TAG_ERROR, "* Pendientes " + iPendientes);
+        // Log.e(TAG_ERROR, "* Errores " + iErrores);
+        // Log.e(TAG_ERROR, "* Conexión " + funciones.RevisarConexion(this.getApplicationContext()));
 
         if ((iPendientes>0) && funciones.RevisarConexion(this.getApplicationContext())){
             // **************************
@@ -285,6 +330,7 @@ public class listatiendas extends AppCompatActivity {
         // Numero de tiendas en la tabla
         iNumTiendas = almacenaImagen.ObtenRegistrosTiendas(pidPromotor, sTienda);
         iLongitudArregloTiendas= iNumTiendas;
+        // Log.e(TAG_ERROR,"** Número de tiendas " + iLongitudArregloTiendas );
 
         // *****************************
         // Inicia Geolocalizaciòn
@@ -303,15 +349,17 @@ public class listatiendas extends AppCompatActivity {
                 int iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
                 int iPromociones = almacenaImagen.ObtenRegistros(12);
                 int iCaducidad = almacenaImagen.ObtenRegistros(14);
-                int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad);
+                int iErrores = almacenaImagen.ObtenRegistros(16);
+                int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores);
 
                 if (iPendientes>0) {
                     AlertDialog.Builder alerta = new AlertDialog.Builder(listatiendas.this);
-                    String sMensaje = "Usted tiene " + String.valueOf(iMagenesGuardadas) + " imágenes almacenadas y/o " +
+                    sMensaje = "Usted tiene " + String.valueOf(iMagenesGuardadas) + " imágenes almacenadas y/o " +
                             iPreciosCambiados + " precios cambiados, y/o " +
                             iPromociones + " promociones, y/o " +
                             iRegistrosCompetencia + " fotos competencia, , y/o " +
-                            iCaducidad + " registros de caducidad" +
+                            iCaducidad + " registros de caducidad y/o " +
+                            iErrores + " registros de errores " +
                             " no olvide conectarse en cuanto tenga señal suficiente, para colocar sus fotos en plataforma (pulsar SI para salir)";
 
                     alerta.setMessage(sMensaje)
@@ -358,6 +406,7 @@ public class listatiendas extends AppCompatActivity {
 
         // *****************************
         // Si hay conexion a internet obtiene los datos
+        //Log.e(TAG_ERROR, "pConsultaenWeb " + pConsultaenWeb);
         if (funciones.RevisarConexion(getApplicationContext()) && pConsultaenWeb>0)
         {
             // **************************
@@ -370,6 +419,7 @@ public class listatiendas extends AppCompatActivity {
             // ******************************************
             // Si hay tiendas en la tabla de tiendas entonces debe de leerlas y colocarlas
             // en los arreglos
+            Log.e(TAG_ERROR, "iNumTiendas " + iNumTiendas);
             if (iNumTiendas > 0) {
                 sTienda= txtBuscar.getText().toString().trim();
                 MuestraTiendasTelefono(sTienda);
@@ -408,6 +458,9 @@ public class listatiendas extends AppCompatActivity {
         iNumTiendas = almacenaImagen.ObtenRegistrosTiendas(pidPromotor, sTienda);
         iLongitudArreglo = iNumTiendas;
 
+        // Log.e(TAG_ERROR, "** Dentro de MuestraTiendasTelefono ");
+        // Log.e(TAG_ERROR, "** iNumTiendas " + iNumTiendas);
+
         int[] Rutas = almacenaImagen.ObtenRutas(pidPromotor, sTienda);
         String[] Determinantes = almacenaImagen.ObtenDeterminantes(pidPromotor, sTienda);
         String[] Tiendas = almacenaImagen.ObtenTiendas(pidPromotor, sTienda);
@@ -431,13 +484,14 @@ public class listatiendas extends AppCompatActivity {
     }
 
     //************************************
-    // Clase que carga las fotos guardadas
+    // Clase que carga las fotos guardadas, precios, competencia, promoción, caducidad, errores
     class CargaFotos extends AsyncTask<Void, Void, String> {
         int iMagenesGuardadas = 0;
         int iPreciosCambiados = 0;
         int iRegistrosCompetencia = 0;
         int iPromociones = 0;
         int iCaducidad = 0;
+        int iErrores = 0;
 
         int i =0;
         @Override
@@ -453,8 +507,9 @@ public class listatiendas extends AppCompatActivity {
             iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
             iPromociones = almacenaImagen.ObtenRegistros(12);
             iCaducidad = almacenaImagen.ObtenRegistros(14);
+            iErrores = almacenaImagen.ObtenRegistros(16);
 
-            int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad);
+            int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores);
 
             LayoutProgreso.setVisibility(View.VISIBLE);
             LayoutProgreso1.setVisibility(View.VISIBLE);
@@ -462,7 +517,6 @@ public class listatiendas extends AppCompatActivity {
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setMax(iSumaCuentas);
             progressBar.setProgress(0);
-
 
             while (progressStatus < iSumaCuentas) {
                 progressStatus += 1;
@@ -480,9 +534,11 @@ public class listatiendas extends AppCompatActivity {
                         iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
                         iPromociones = almacenaImagen.ObtenRegistros(12);
                         iCaducidad = almacenaImagen.ObtenRegistros(14);
+                        iErrores = almacenaImagen.ObtenRegistros(16);
 
                         if (iMagenesGuardadas>0){
                             i = almacenaImagen.Colocarfoto();
+                            // Log.e(TAG_ERROR, "Fotos Cargadas " + String.valueOf(i));
                             textoAvance.setText("Cargando fotos " + progressStatus + "/" + progressBar.getMax());
                             textoAvance.setGravity(Gravity.CENTER);
                         }
@@ -506,12 +562,20 @@ public class listatiendas extends AppCompatActivity {
                             textoAvance.setText("Cargando caducidad " + progressStatus + "/" + progressBar.getMax());
                             textoAvance.setGravity(Gravity.CENTER);
                         }
+                        else if(iErrores>0){
+                            i = almacenaImagen.ColocaErrores();
+                            textoAvance.setText("Cargando errores " + progressStatus + "/" + progressBar.getMax());
+                            textoAvance.setGravity(Gravity.CENTER);
+                        }
 
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            funciones.RegistraError(pName, "listatiendas, CargaFotos 1", e, listatiendas.this, getApplicationContext());
+                            // e.printStackTrace();
                         }
+
+
                     }
                 });
 
@@ -526,11 +590,11 @@ public class listatiendas extends AppCompatActivity {
                 // Sleep for 5000 milliseconds.
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                funciones.RegistraError(pName, "listatiendas, CargaFotos 2", e, listatiendas.this, getApplicationContext());
+                // e.printStackTrace();
             }
             OcultaProgress();
         }
-
     }
 
     //************************************
@@ -551,9 +615,7 @@ public class listatiendas extends AppCompatActivity {
             else{
                 sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor5.php?idpromotor=" + pidPromotor + "&tienda=" + sTienda + "&idempresa=" + pIdempresa;
             }
-
-            // Log.e(TAG_ERROR,"{idpromotor: " + pidPromotor + ", empresa: " + pIdempresa + ", tienda: " + sTienda +"}");
-            // Log.e("Ruta", sRuta);
+            Log.e(TAG_ERROR, "Consulta Tiendas " + sRuta);
 
             super.onPreExecute();
             pDialog = new ProgressDialog(listatiendas.this);
@@ -600,6 +662,7 @@ public class listatiendas extends AppCompatActivity {
             } catch (Exception ex) {
                 Error = ex.getMessage();
                 // Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al obtener los datos del promotor " +  ex.getMessage(),Toast.LENGTH_LONG).show();
+                funciones.RegistraError(pName, "listatiendas,ConsultaTiendas", ex, listatiendas.this, getApplicationContext());
                  Log.e("Error al procesar api: ", Error);
             } finally {
                 try {
@@ -607,19 +670,19 @@ public class listatiendas extends AppCompatActivity {
                     reader.close();
                 } catch (Exception ex) {
                     Error = ex.getMessage();
+                    funciones.RegistraError(pName, "listatiendas,ConsultaTiendas 1", ex, listatiendas.this, getApplicationContext());
                     //Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error en el proceso de lectura de datos " +  Error,Toast.LENGTH_LONG).show();
-                     Log.e("Error al procesar api: ", Error);
+                    Log.e("Error al procesar api: ", Error);
                 }
             }
-
-            //Log.e(TAG_ERROR,"Error: " + Error);
 
             // **************************
             // Proceso de lectura de datos
             if (Error != null) {
-                //String Resultado = "Se generó el siguiente error : " + Error;
+                String Resultado = "Se generó el siguiente error : " + Error;
+                //funciones.RegistraError(pName, "listatiendas,ConsultaTiendas 1", Error, listatiendas.this, getApplicationContext());
                 //Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error en el proceso de lectura de datos " +  Resultado,Toast.LENGTH_LONG).show();
-                 //Log.e(TAG_ERROR, Resultado);
+                 Log.e(TAG_ERROR, Resultado);
             } else {
                 try {
                     JSONObject jsonResponse, jsonChidNode, jsonObjRuta, jsonObjProd, jsonObjProdFto;
@@ -637,8 +700,9 @@ public class listatiendas extends AppCompatActivity {
                     for (int i = 0; i < iLongitudArreglo; i++) {
                         jsonChidNode = jsonarray.getJSONObject(i);
                         if (jsonChidNode.has(TAG_RUTA)){
+                            // solicita información de rutas
                             jsonObjRuta = jsonChidNode.getJSONObject(TAG_RUTA);
-                            // Colocacion de datos en los arreglos
+                            // Colocacion de datos en los arreglos de la lista de rutas
                             ruta[jj] = Integer.parseInt(jsonObjRuta.getString(TAG_IDRUTA));
                             determinante[jj] = jsonObjRuta.getString(TAG_DETERMINANTE);
                             tienda[jj] = jsonObjRuta.getString(TAG_TIENDA);
@@ -649,8 +713,9 @@ public class listatiendas extends AppCompatActivity {
                             jj++;
                         }
                         else if(jsonChidNode.has(TAG_PROD)){
+                            // Solicita información de productos
                             jsonObjProd = jsonChidNode.getJSONObject(TAG_PROD);
-                            // Colocacion de datos en los arreglos
+                            // Colocacion de datos en los arreglos de la lista de productos
                             idproducto[k] = Integer.parseInt(jsonObjProd.getString(TAG_IDPRODUCTO));
                             upc[k] = jsonObjProd.getString(TAG_UPC);
                             descripcion[k] = jsonObjProd.getString(TAG_DESCRIPCION);
@@ -670,6 +735,7 @@ public class listatiendas extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_PROD_FTO))
                         {
+                            // solicita información de formatos
                             jsonObjProdFto = jsonChidNode.getJSONObject(TAG_PROD_FTO);
                             idproductoformatoprecio[l] =  Integer.parseInt(jsonObjProdFto.getString(TAG_IDPRODUCTOFORMATOPRECIO));
                             idproducto1[l] = Integer.parseInt(jsonObjProdFto.getString(TAG_IDPRODUCTO));
@@ -684,6 +750,7 @@ public class listatiendas extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_RUTA_CAT))
                         {
+                            // Solicita información de catálogos
                             jsonObjRutaCat = jsonChidNode.getJSONObject(TAG_RUTA_CAT);
                             idruta[m] = Integer.parseInt(jsonObjRutaCat.getString(TAG_IDRUTA));
                             idformato1[m] = Integer.parseInt(jsonObjRutaCat.getString(TAG_IDFORMATO));
@@ -692,6 +759,7 @@ public class listatiendas extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_VISTA))
                         {
+                            // Solicita información de vistas
                             jsonObjVista = jsonChidNode.getJSONObject(TAG_VISTA);
                             idproducto2[n] = Integer.parseInt(jsonObjVista.getString(TAG_IDPRODUCTO));
                             idruta2[n] = Integer.parseInt(jsonObjVista.getString(TAG_IDRUTA));
@@ -701,6 +769,7 @@ public class listatiendas extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_CADENA))
                         {
+                            // Solicita información de cadenas
                             jsonObjCadena = jsonChidNode.getJSONObject(TAG_CADENA);
                             idcadena[o] = Integer.parseInt(jsonObjCadena.getString(TAG_IDCADENA));
                             idempresa[o] = Integer.parseInt(jsonObjCadena.getString(TAG_IDEMPRESA));
@@ -709,6 +778,7 @@ public class listatiendas extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_OBSERV))
                         {
+                            // Solicita información de observaciones
                             jsonObjObs = jsonChidNode.getJSONObject(TAG_OBSERV);
                             idobs[p] = Integer.parseInt(jsonObjObs.getString(TAG_IDOBS));
                             observaciones[p] = jsonObjObs.getString(TAG_OBSERVACIONES);
@@ -716,6 +786,7 @@ public class listatiendas extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_PROMO))
                         {
+                            // Solicita infomración de promo
                             jsonObjProm = jsonChidNode.getJSONObject(TAG_PROMO);
                             idpromocion[q] = jsonObjProm.getInt(TAG_IDPROMOCION);
                             idempresa1[q] = jsonObjProm.getInt(TAG_IDEMPRESA);
@@ -736,6 +807,7 @@ public class listatiendas extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_ACTIV))
                         {
+                            // Solicita informacion de activ
                             jsonObjAct = jsonChidNode.getJSONObject(TAG_ACTIV);
                             idactividad[r] = Integer.parseInt(jsonObjAct.getString(TAG_IDACTIVIDAD));
                             actividad[r] = jsonObjAct.getString(TAG_ACTIVIDAD);
@@ -743,6 +815,7 @@ public class listatiendas extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_EMPAQUE))
                         {
+                            // Obtiene la información de los empaques
                             jsonObjEmp = jsonChidNode.getJSONObject(TAG_EMPAQUE);
                             idempaque[s] = Integer.parseInt(jsonObjEmp.getString(TAG_IDEMPAQUE));
                             empaque[s] = jsonObjEmp.getString(TAG_empaque);
@@ -750,6 +823,7 @@ public class listatiendas extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_SOLICITAINV))
                         {
+                            // Obtiene información de solicita inv
                             jsonObjConf = jsonChidNode.getJSONObject(TAG_SOLICITAINV);
                             solicita[t] = Integer.parseInt(jsonObjConf.getString(TAG_solicita));
                             t++;
@@ -760,8 +834,6 @@ public class listatiendas extends AppCompatActivity {
                     int iCuenta = almacenaImagen.ObtenRegistrosTiendas(pidPromotor,sTienda);
                     iLongitudArregloTiendas = iCuenta;
                     int iCuentaProductos  = almacenaImagen.ObtenRegistros(1);
-                    // Log.e(TAG_ERROR, " xxxxx Valor de k " + k );
-
                     int iCuentaProFtoPrecio  = almacenaImagen.ObtenRegistros(2);
                     int iCuentaRutas  = almacenaImagen.ObtenRegistros(3);
                     int iCuentaVista  = almacenaImagen.ObtenRegistros(4);
@@ -872,12 +944,12 @@ public class listatiendas extends AppCompatActivity {
                         almacenaImagen.inserta_configuracion(solicita[0]);
                     }
 
-                    //final int e9 = Log.e(TAG_ERROR, " conteo de empaques " + s);
                     // Obtiene la version aunque las tablas sean iguales
                     almacenaImagen.insertaversion_app(versionapp);
                     // ******************************************
                     tiendasCargadas=true;
                 } catch (JSONException e) {
+                    funciones.RegistraError(pName, "ListaTiendas,ConsultaTiendas2", e, listatiendas.this, getApplicationContext());
                     String Resultado = "Se generó el siguiente error : " + e.toString();
                      Log.e(TAG_ERROR,Resultado);
                 }
@@ -893,7 +965,6 @@ public class listatiendas extends AppCompatActivity {
             formaacceso.EstableceAcceso(CONST_ACCESORED);
             pDialog.dismiss();
             MuestraLista();
-
         }
     }
 
@@ -925,17 +996,21 @@ public class listatiendas extends AppCompatActivity {
                     Toast.LENGTH_LONG).show();
         }
 
-        // Llamada al proceso de asignacion del adaptador a la lista
-        AdaptadorTiendasPromotor adaptador = new AdaptadorTiendasPromotor(
-                this,
-                ruta1,
-                determinante1,
-                tienda1,
-                direccion1,
-                latitud1,
-                longitud1);
-        lista.setAdapter(adaptador);
-        tiendasCargadas = true;
+        try {
+            // Llamada al proceso de asignacion del adaptador a la lista
+            AdaptadorTiendasPromotor adaptador = new AdaptadorTiendasPromotor(
+                    this,
+                    ruta1,
+                    determinante1,
+                    tienda1,
+                    direccion1,
+                    latitud1,
+                    longitud1);
+            lista.setAdapter(adaptador);
+            tiendasCargadas = true;
+        } catch (Exception e) {
+            funciones.RegistraError(pName, "ListaTiendas,ConsultaTiendas 3 AdaptadorTiendasPromo", e, listatiendas.this, getApplicationContext());
+        }
     }
 
     // **********************************
@@ -945,11 +1020,11 @@ public class listatiendas extends AppCompatActivity {
             // Sleep for 500 milliseconds.
             Thread.sleep(500);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            funciones.RegistraError(pName, "ListaTiendas, OcultaProgress", e, listatiendas.this, getApplicationContext());
+            // e.printStackTrace();
         }
         progressBar.setVisibility(View.GONE);
         LayoutProgreso.setVisibility(View.GONE);
         LayoutProgreso1.setVisibility(View.GONE);
     }
-
 }

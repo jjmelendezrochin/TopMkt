@@ -2,10 +2,12 @@ package com.topmas.top;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -29,6 +31,7 @@ import static com.topmas.top.Constants.TAG_IDRUTA;
 import static com.topmas.top.Constants.TAG_LATITUD;
 import static com.topmas.top.Constants.TAG_LONGITUD;
 import static com.topmas.top.Constants.TAG_TIENDA;
+import static com.topmas.top.Constants.TAG_USUARIO;
 
 
 public class listapromociones extends AppCompatActivity {
@@ -41,6 +44,7 @@ public class listapromociones extends AppCompatActivity {
     String pdireccion = "";
     String ptienda = "";
 
+    String pName = "";
     EditText txtBuscar ;
 
     private Usuario usr = new Usuario();
@@ -69,6 +73,9 @@ public class listapromociones extends AppCompatActivity {
         //View view = this.findViewById(R.id.LinearLayout);
         lista =  findViewById(R.id.lista1);
         txtBuscar = (findViewById(R.id.txtBuscar));
+        // pName = usr.getnombre();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        pName = preferences.getString(TAG_USUARIO, pName);
 
         Intent i = getIntent();
         pidRuta = i.getIntExtra(TAG_IDRUTA, pidRuta );
@@ -79,6 +86,11 @@ public class listapromociones extends AppCompatActivity {
         pidPromotor = usr.getid();
         almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
         pidformato = i.getIntExtra(TAG_IDFORMATO, pidformato);
+
+        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
+            //log(throwable.getMessage(), thread.getId());
+            funciones.RegistraError(pName, "listapromociones setDefaultUncaughtExceptionHandler", (Exception) throwable, listapromociones.this, getApplicationContext());
+        });
 
         // Log.e(TAG_ERROR,  " ** idformato " + pidformato);
 
@@ -149,7 +161,8 @@ public class listapromociones extends AppCompatActivity {
                     try  {
                         imagenespromo[finalK] = downloadFile(Urls[finalK]);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        funciones.RegistraError(pName, "listapromociones, MuestraListaPromociones", e, listapromociones.this, getApplicationContext());
+                        // e.printStackTrace();
                     }
                 }
             });
@@ -188,6 +201,7 @@ public class listapromociones extends AppCompatActivity {
             loadedImage = BitmapFactory.decodeStream(conn.getInputStream());
             return loadedImage;
         } catch (IOException e) {
+            funciones.RegistraError(pName, "listapromociones, downloadFile", e, listapromociones.this, getApplicationContext());
             e.printStackTrace();
             return null;
         }

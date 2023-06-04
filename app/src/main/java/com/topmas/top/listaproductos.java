@@ -57,7 +57,7 @@ public class listaproductos extends AppCompatActivity {
     Double plongitud = 0.0;
     String pdireccion = "";
     String ptienda = "";
-
+    String pName = "";
     EditText txtBuscar;
 
     private Usuario usr = new Usuario();
@@ -81,6 +81,7 @@ public class listaproductos extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listaproductos);
+        pName = usr.getnombre();
 
         //View view = this.findViewById(R.id.LinearLayout);
         lista = findViewById(R.id.lista1);
@@ -96,10 +97,16 @@ public class listaproductos extends AppCompatActivity {
         pidEmpresa = usr.getidempresa();
         almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
 
+        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
+            //log(throwable.getMessage(), thread.getId());
+            funciones.RegistraError(pName, "listaproductos setDefaultUncaughtExceptionHandler", (Exception) throwable, listaproductos.this, getApplicationContext());
+        });
+
         //****************************
         // Evento click al adaptador
         lista.setOnItemClickListener(new OnItemClickListenerAdaptadorProductosTiendas());
 
+        /*
         // *****************************
         // Si hay conexion a internet obtiene los datos
         if (funciones.RevisarConexion(getApplicationContext())) {
@@ -112,7 +119,9 @@ public class listaproductos extends AppCompatActivity {
             // Llamado a la consulta del servicio desde una consulta local
             MuestraProductosTelefono(pidRuta);
         }
+        */
 
+        MuestraProductosTelefono(pidRuta);
         //****************************
         // Icono de salir de lista productos
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -173,7 +182,9 @@ public class listaproductos extends AppCompatActivity {
             } else {
                 sRuta = TAG_SERVIDOR + "/CatalogoProductos/obtenerproductostienda1.php?idruta=" + pidRuta + "&producto=" + sProducto + "&idempresa=" + pidEmpresa;
             }
-            // Log.e("Error", "La ruta de la api usada es:" + sRuta);
+            Log.e(TAG_ERROR,  "La ruta de la api usada es:" + sRuta);
+
+            //Log.e("Error", "La ruta de la api usada es:" + sRuta);
             super.onPreExecute();
             pDialog = new ProgressDialog(listaproductos.this);
             pDialog.setMessage("Consultando en el servicio Web ...");
@@ -215,19 +226,20 @@ public class listaproductos extends AppCompatActivity {
                 sRespusta = sb.toString();
 
             } catch (Exception ex) {
+                funciones.RegistraError(pName, "listaproductos ,MuestraImagen 1", ex, listaproductos.this,getApplicationContext());
                 Error = ex.getMessage();
             } finally {
                 try {
                     assert reader != null;
                     reader.close();
                 } catch (Exception ex) {
+                    funciones.RegistraError(pName, "listaproductos ,MuestraImagen 2", ex, listaproductos.this,getApplicationContext());
                     Error = ex.getMessage();
                 }
             }
 
 
             // **************************
-
             // Proceso de lectura de datos
             if (Error != null) {
                 String Resultado = "Se generó el siguiente error : " + Error;
@@ -260,6 +272,7 @@ public class listaproductos extends AppCompatActivity {
 
 
                 } catch (JSONException e) {
+                    funciones.RegistraError(pName, "listaproductos, ConsultaProductos", e, listaproductos.this,getApplicationContext());
                     String Resultado = "Se generó el siguiente error : " + e.toString();
 
                     // Log.e(TAG_ERROR,Resultado);
@@ -297,7 +310,12 @@ public class listaproductos extends AppCompatActivity {
             descripcionproducto1[k] = descripcionproducto[k] + " [" + upc[k] + "] ";
             //posiciones1[k] = k;
             upc1[k] = upc[k];
+
+            // Lista los productos
+            Log.e(TAG_ERROR, descripcionproducto1[k]);
         }
+
+
 
         if (iCuentaProductos == 0) {
             Toast.makeText(getApplicationContext(), "Esta tienda no tiene productos",
@@ -353,7 +371,8 @@ public class listaproductos extends AppCompatActivity {
             loadedImage = BitmapFactory.decodeStream(conn.getInputStream());
             return loadedImage;
         } catch (IOException e) {
-            e.printStackTrace();
+            funciones.RegistraError(pName, "listaproductos, downloadFile", e, listaproductos.this,getApplicationContext());
+            // e.printStackTrace();
             return null;
         }
     }

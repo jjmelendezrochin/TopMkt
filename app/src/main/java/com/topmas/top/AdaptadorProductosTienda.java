@@ -1,10 +1,12 @@
 package com.topmas.top;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import static com.topmas.top.Constants.TAG_ERROR;
+import static com.topmas.top.Constants.TAG_USUARIO;
+import static com.topmas.top.Constants.TAG_SERVIDOR;
 
 public class AdaptadorProductosTienda extends BaseAdapter {
     private int[] ArrProductos;
@@ -27,6 +31,8 @@ public class AdaptadorProductosTienda extends BaseAdapter {
     private String[] ArrUpcs;
     private Funciones funciones = new Funciones();
     private Activity context;
+    private final Usuario usr = new Usuario();
+    private String pName = "";
 
     public AdaptadorProductosTienda(
             Activity context,
@@ -43,6 +49,8 @@ public class AdaptadorProductosTienda extends BaseAdapter {
         //this.ArrPosiciones = aposiciones;
         this.ArrUpcs = aupcs;
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        pName = preferences.getString(TAG_USUARIO, pName);
     }
 
     @Override
@@ -56,6 +64,7 @@ public class AdaptadorProductosTienda extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
 
         AlmacenaImagen almacenaImagen =
                 new AlmacenaImagen(context);
@@ -80,9 +89,9 @@ public class AdaptadorProductosTienda extends BaseAdapter {
                 try {
                     if (funciones.ObtenImagen(position) == null) {
                         // Log.e(TAG_ERROR, "1. No Hay imagen " + String.valueOf(position));
-                        sRutaImagen = "https://www.topmas.mx/TopMas/ImagenesProductos/" +
+                        sRutaImagen = TAG_SERVIDOR +  "/ImagenesProductos/" +
                                 String.valueOf(ArrProductos[position]) + "_" + ArrUpcs[position] + ".png";
-                        // Log.e(TAG_ERROR, "Ruta imagen " + sRutaImagen);
+                        Log.e(TAG_ERROR, "Ruta imagen1 " + sRutaImagen);
                         MuestraImagen(sRutaImagen,
                                 imagen,
                                  almacenaImagen,
@@ -94,8 +103,10 @@ public class AdaptadorProductosTienda extends BaseAdapter {
                     }
                 } catch (NullPointerException e) {
                      // Log.e(TAG_ERROR, "1a. No Hay imagen "+ String.valueOf( position));
+                    // funciones.RegistraError(pName, "AdaptadorProductosTienda, establecepromocion", e, context, this.context);
                     sRutaImagen = "https://www.topmas.mx/TopMas/ImagenesProductos/" +
                             String.valueOf(ArrProductos[position]) + "_" + ArrUpcs[position] + ".png";
+                    Log.e(TAG_ERROR, "Ruta imagen2 " + sRutaImagen);
                     MuestraImagen(sRutaImagen,
                             imagen,
                             almacenaImagen,
@@ -164,7 +175,8 @@ public class AdaptadorProductosTienda extends BaseAdapter {
                     InputStream input = connection.getInputStream();
                     return BitmapFactory.decodeStream(input);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    funciones.RegistraError(pName, "AdaptadorProductosTienda, MuestraImagen", e, context, context);
+                    // e.printStackTrace();
                 }
                 return null;
             }

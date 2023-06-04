@@ -18,8 +18,8 @@
     <string name="Version">Version</string>
     <string name="buscar_tienda">"buscar tienda "</string>
 
-    <string name="resUsuario">abenitez</string>
-    <string name="_12345">12345</string>
+    <string name="resUsuario"></string>
+    <string name="_12345"></string>
     <string name="fotocompetencia">Foto competencia</string>
     <string name="fotocaducidad">Foto caducidad</string>
     <string name="textocaducidad">Caducidad</string>

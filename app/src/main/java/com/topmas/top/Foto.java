@@ -3,6 +3,7 @@ package com.topmas.top;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -39,15 +41,18 @@ import static com.topmas.top.Constants.CONST_ACCESOLOCAL;
 import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_DISTANCIA;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
+import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
 import static com.topmas.top.Constants.TAG_OPERACION;
 import static com.topmas.top.Constants.TAG_RESPUESTA;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
+import static com.topmas.top.Constants.TAG_USUARIO;
 
 
 public class Foto extends AppCompatActivity {
 
-    public static final String UPLOAD_URL = TAG_SERVIDOR + "/PhotoUpload/upload.php";
+    public static final String UPLOAD_URL = TAG_SERVIDOR + "/PhotoUpload/upload1.php";  // Usado para pruebas
+    public static final String UPLOAD_ERRORES = TAG_SERVIDOR + "/PhotoUpload/upload_errores.php";
 
     public static final String UPLOAD_IDPROMOTOR = "idpromotor";
     public static final String UPLOAD_LATITUD = "latitud";
@@ -60,10 +65,31 @@ public class Foto extends AppCompatActivity {
     public static final String UPLOAD_VERSION = "version_app";
     public static final String UPLOAD_SINDATOS = "sindatos";
 
+    public static final String UPLOAD_FABRICANTE = "fabricante";
+    public static final String UPLOAD_MARCA = "marca";
+    public static final String UPLOAD_MODELO = "modelo";
+    public static final String UPLOAD_BOARD = "board";
+    public static final String UPLOAD_HARDWARE = "hardware";
+    public static final String UPLOAD_SERIE = "serie";
+    public static final String UPLOAD_UID = "uid";
+    public static final String UPLOAD_ANDROID_ID = "android_id";
+    public static final String UPLOAD_RESOLUCION = "resolucion";
+    public static final String UPLOAD_TAMANIOPANTALLA = "tamaniopantalla";
+    public static final String UPLOAD_DENSIDAD = "densidad";
+    public static final String UPLOAD_BOOTLOADER = "bootloader";
+    public static final String UPLOAD_USER_VALUE = "user_value";
+    public static final String UPLOAD_HOST_VALUE = "host_value";
+    public static final String UPLOAD_API_VALUE = "api_value";
+    public static final String UPLOAD_BUILD_ID = "build_id";
+    public static final String UPLOAD_BUILD_TIME = "build_time";
+    public static final String UPLOAD_FINGERPRINT = "fingerprint";
+    public static final String UPLOAD_USUARIO = "usuario";
+    public static final String UPLOAD_SECCION = "seccion";
+    public static final String UPLOAD_ERROR = "error";
 
     private int idpromotor = 0;
     private String idempresa = "";
-    private String pName = "";
+    String pName = "";
     private double pLatitud = 0;
     private double pLongitud = 0;
     private int iResp=0;            // Es el id de la tabla almacenfoto de la foto recien subida
@@ -83,7 +109,6 @@ public class Foto extends AppCompatActivity {
 
     private ProgressDialog pDialog;
     private final Usuario usr = new Usuario();
-    private final Funciones funcs = new Funciones();
     private int idoperacion=0, idRuta=0;
     Funciones funciones = new Funciones();
     AlmacenaImagen almacenaImagen;
@@ -100,10 +125,21 @@ public class Foto extends AppCompatActivity {
 
         idRuta =  i.getIntExtra(TAG_IDRUTA,0);
         idoperacion =  i.getIntExtra(TAG_OPERACION,0);
-        idpromotor = usr.getid();
+        idpromotor =  i.getIntExtra(TAG_IDPROMOTOR,0);
+        if (idpromotor == 0){
+            idpromotor = usr.getid();
+        }
+        //idpromotor = usr.getid();
         idempresa = usr.getidempresa();
-
         btnFoto = findViewById(R.id.btnFoto);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        pName = preferences.getString(TAG_USUARIO, pName);
+
+        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
+            //log(throwable.getMessage(), thread.getId());
+            funciones.RegistraError(pName, "Foto setDefaultUncaughtExceptionHandler", (Exception) throwable, Foto.this, getApplicationContext());
+        });
 
         switch (idoperacion) {
             case 1:
@@ -194,6 +230,7 @@ public class Foto extends AppCompatActivity {
                     photoFile = createImageFile();
                     // Log.e("Mensaje", "archivo creado" + photoFile.getAbsolutePath());
                 } catch (IOException ex) {
+                    // funciones.RegistraError(pName, "Foto,btnFoto.setOnClickListener", ex, Foto.this, getApplicationContext());
                     Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al crear archivo de foto " +  ex.getMessage(),Toast.LENGTH_LONG).show();
                     // Log.e(ERROR_FOTO, "Error al crear archivo de foto ");
                 }
@@ -209,6 +246,7 @@ public class Foto extends AppCompatActivity {
 
                     }
                 } catch (Exception ex) {
+                    // funciones.RegistraError(pName, "Foto,btnFoto.setOnClickListener 1", ex, Foto.this, getApplicationContext());
                     Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al tomar la foto " +  ex.getMessage(),Toast.LENGTH_LONG).show();
                     // Log.e(ERROR_FOTO, ex.getMessage());
                 }
@@ -234,13 +272,15 @@ public class Foto extends AppCompatActivity {
                 catch( java.lang.NullPointerException e)
                 {
                     // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
+                    // funciones.RegistraError(pName, "Foto,btnSubir.setOnClickListener", e, Foto.this, getApplicationContext());
                     Toast.makeText(getApplicationContext(), "Error al tomar la foto, favor de intentar nuevamente", Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 if(pLatitud==0 || idUsuario.length()==0 || pLongitud==0)
                 {
-                    Toast.makeText(getApplicationContext(),"Sucedió un error al obtener los datos favor de intentar nuevamente",
+                    // funciones.RegistraError(pName, "Foto,btnSubir.setOnClickListener",null, Foto.this, getApplicationContext());
+                    Toast.makeText(getApplicationContext(),"Sucedió un error favor de intentar nuevamente, idUsuario: " + String.valueOf(idUsuario) + ", Longitud: " + String.valueOf(pLongitud) + ", Latitud: " + String.valueOf(pLatitud) ,
                             Toast.LENGTH_LONG).show();
                 }
                 else {
@@ -256,7 +296,7 @@ public class Foto extends AppCompatActivity {
                         finish();
                     }
                     else{
-                        if (funcs.RevisarConexion(getApplicationContext())) {
+                        if (funciones.RevisarConexion(getApplicationContext())) {
                             uploadImage();
                         }
                         else{
@@ -280,11 +320,15 @@ public class Foto extends AppCompatActivity {
         // Hace la validaciòn de los datos solamente si hay conexión de datos
         // de otra forma esta ingresando en modo desconectado y no debe hacer
         // la validación
-        if (funcs.RevisarConexion(getApplicationContext())){
+        if (funciones.RevisarConexion(getApplicationContext()) && idpromotor>0){
             //  Consulta operacion para saber si esa operacion ya se registro para esa ruta ese promotor y operacion
             ConsultaOperacion consulta = new ConsultaOperacion();
             consulta.execute();
         }
+        else{
+            // Log.e("idpromotor modo desconectado", String.valueOf(idpromotor));
+        }
+
         // ***************************
     }
 
@@ -424,6 +468,13 @@ public class Foto extends AppCompatActivity {
         catch( java.lang.NullPointerException e)
         {
             // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
+            // funciones.RegistraError(pName, "Foto,Uploadimage 0", e, Foto.this, getApplicationContext());
+            Toast.makeText(getApplicationContext(), "Error al tomar la foto, favor de intentar nuevamente", Toast.LENGTH_LONG).show();
+        }
+        catch( Exception e)
+        {
+            // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
+            // funciones.RegistraError(pName, "Foto,Uploadimage 1", e, Foto.this, getApplicationContext());
             Toast.makeText(getApplicationContext(), "Error al tomar la foto, favor de intentar nuevamente", Toast.LENGTH_LONG).show();
         }
     }
@@ -447,7 +498,7 @@ public class Foto extends AppCompatActivity {
         imagenFoto = findViewById(R.id.imagenFoto);
         try {
             if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-                funcs.grabImage(this,photoURI,imagenFoto);
+                funciones.grabImage(this,photoURI,imagenFoto);
 
                 Button btnNoSubir = findViewById(R.id.btnNoSubir);
                 Button btnSubir = findViewById(R.id.btnSubir);
@@ -492,25 +543,38 @@ public class Foto extends AppCompatActivity {
         }
         catch( java.lang.NullPointerException e)
         {
+            // funciones.RegistraError(pName, "Foto,Uploadimage 2", e, Foto.this, getApplicationContext());
             // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
+            Toast.makeText(getApplicationContext(), "Error al tomar la foto, favor de intentar nuevamente", Toast.LENGTH_LONG).show();
+        }
+        catch( Exception e)
+        {
+            // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
+            //funciones.RegistraError(pName, "Foto,Uploadimage 3", e, Foto.this, getApplicationContext());
             Toast.makeText(getApplicationContext(), "Error al tomar la foto, favor de intentar nuevamente", Toast.LENGTH_LONG).show();
         }
     }
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
+        try {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "JPEG_" + timeStamp + "_";
+            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            File image = File.createTempFile(
+                    imageFileName,  /* prefix */
+                    ".jpg",         /* suffix */
+                    storageDir      /* directory */
+            );
 
-        // Save a file: path for use with ACTION_VIEW intents
-        sRutaFoto = image.getAbsolutePath();
-        return image;
+            // Save a file: path for use with ACTION_VIEW intents
+            sRutaFoto = image.getAbsolutePath();
+            return image;
+        } catch (IOException e) {
+            funciones.RegistraError(pName, "Foto,createImageFile", e, Foto.this, getApplicationContext());
+            //e.printStackTrace();
+            return null;
+        }
     }
 
     // ********************************
@@ -577,8 +641,9 @@ public class Foto extends AppCompatActivity {
                     "&idpromotor=" + idpromotor +
                     "&idoperacion=" + idoperacion +
                     "&idempresa="+ idempresa;
-            // Log.e("idruta", String.valueOf(idRuta));
-            // Log.e("idpromotor", String.valueOf(idpromotor));
+            //Log.e("idruta", String.valueOf(idRuta));
+            //Log.e("idpromotor", String.valueOf(idpromotor));
+            //Log.e("sruta", sRuta);
             // Log.e("idoperacoin", String.valueOf(idoperacion));
             // Log.e("idempresa", String.valueOf(idempresa));
 
@@ -630,6 +695,7 @@ public class Foto extends AppCompatActivity {
                 // Log.i(TAG_RESPUESTA, sRespusta);/* */
 
             } catch (Exception ex) {
+                funciones.RegistraError(pName, "Foto,ConsultaOperacion", ex, Foto.this, getApplicationContext());
                 Error = ex.getMessage();
                 // Log.i("Ruta", Error);
             }
@@ -637,7 +703,9 @@ public class Foto extends AppCompatActivity {
             // **************************
             // Proceso de lectura de datos
             if (Error != null) {
+                // funciones.RegistraError(pName, "Foto,ConsultaOperacion 1", Error.trim(), Foto.this, getApplicationContext());
                 String Resultado = "Se generó el siguiente error : " + Error;
+
                 // Log.i(TAG_RESPUESTA, Resultado);
             } else {
                 try {
@@ -650,6 +718,7 @@ public class Foto extends AppCompatActivity {
                         //Log.i("Respuesta de foto", String.valueOf(iResp));
                     }
                 } catch (JSONException e) {
+                    funciones.RegistraError(pName, "Foto,ConsultaOperacion 2", e, Foto.this, getApplicationContext());
                     String Resultado = "Se generó el siguiente error : " + e.toString();
                     // Log.i(TAG_ERROR, Resultado);
                 }

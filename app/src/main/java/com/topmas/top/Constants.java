@@ -50,7 +50,7 @@ public final class Constants {
     public static final int CONST_ACCESORED = 1;
     public static final int CONST_ACCESOLOCAL = 2;
 
-    public static final String DATABASE_NAME = "topmas_a231";    // Cambiar este valor para crear nuevas tablas
+    public static final String DATABASE_NAME = "topmas_100a";    // Cambiar este valor para crear nuevas tablas
     public static final int DATABASE_VERSION = 1;
 
     public static final String TAG_PROD = "PROD";
@@ -75,6 +75,7 @@ public final class Constants {
     public static final String TAG_IDFORMATO = "idformato";
     public static final String TAG_IDCADENA = "idcadena";
     public static final String TAG_NOMBRECORTO = "nombrecorto";
+    public static final String TAG_USUARIO = "usuario";
 
     public static final String TAG_IDOBS = "idobs";
     public static final String TAG_OBSERVACIONES = "observaciones";
