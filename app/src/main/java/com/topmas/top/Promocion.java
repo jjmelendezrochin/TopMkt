@@ -38,7 +38,7 @@ import static com.topmas.top.Constants.TAG_USUARIO;
 import static com.topmas.top.Constants.TAG_url;
 
 public class Promocion extends AppCompatActivity {
-
+    // TODO /CatalogoProductos/insertapromocionfecha.php
     public static final String PROMOCION_URL = TAG_SERVIDOR + "/Promociones/insertapromocionfecha.php";
 
     AlmacenaImagen almacenaImagen;

@@ -1,39 +1,5 @@
 package com.topmas.top;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.icu.text.DecimalFormat;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Handler;
-import android.provider.Settings;
-import android.telephony.TelephonyManager;
-import android.util.Base64;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.widget.Toast;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-
 import static com.topmas.top.Caducidad.UPLOAD_CADUCIDAD;
 import static com.topmas.top.Caducidad.UPLOAD_caducidad;
 import static com.topmas.top.Caducidad.UPLOAD_idproducto;
@@ -47,7 +13,6 @@ import static com.topmas.top.Constants.TAG_ACTIVIDADBTL;
 import static com.topmas.top.Constants.TAG_APLICA;
 import static com.topmas.top.Constants.TAG_CANJES;
 import static com.topmas.top.Constants.TAG_ERROR;
-import static com.topmas.top.Constants.TAG_IDACTIVIDAD;
 import static com.topmas.top.Constants.TAG_IDEMOSTRADOR;
 import static com.topmas.top.Constants.TAG_IDEMPAQUE;
 import static com.topmas.top.Constants.TAG_IDEMPRESA;
@@ -58,7 +23,6 @@ import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
 import static com.topmas.top.Constants.TAG_IEMPLAYE;
 import static com.topmas.top.Constants.TAG_IEXHIBIDOR;
-import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_INVFINAL;
 import static com.topmas.top.Constants.TAG_INVINICIAL;
 import static com.topmas.top.Constants.TAG_PRECIO;
@@ -99,9 +63,39 @@ import static com.topmas.top.Foto.UPLOAD_USER_VALUE;
 import static com.topmas.top.Foto.UPLOAD_USUARIO;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
 import static com.topmas.top.Promocion.PROMOCION_URL;
-import static com.topmas.top.oInfoDispositivo._seccion;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.icu.text.DecimalFormat;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Handler;
+import android.provider.Settings;
+import android.util.Base64;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.widget.Toast;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 
 @SuppressWarnings("WeakerAccess") // Suprime error ACCESS CAN BE PRIVATE
+// TODO Aqui se encuentran todas las funciones de acceso a la base de datos Sqlite
 
 public class AlmacenaImagen extends SQLiteOpenHelper {
     Context contexto = null;
@@ -2053,13 +2047,15 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
     // **********************************
     // Función que obtiene un arreglo de descripcion de productos
+    // TODO Función que obtiene un arreglo de descripcion de productos
     public String[] Obtendescripcionesproducto() {
         int iNumProductos = this.ObtenRegistros(1);
         String[] retorno = new String[iNumProductos];
         String descripcionproducto;
         SQLiteDatabase db = getReadableDatabase();
         String sSql;
-        sSql = "Select (descripcion || ' ' || descripcion1 || ' ' || cantidad_kgs) as descripcion from cat_productos  order by descripcion asc;";
+        // sSql = "Select (descripcion || ' ' || descripcion1 || ' ' || cantidad_kgs) as descripcion from cat_productos  order by descripcion asc;";
+        sSql = "Select (descripcion || ' ' || cantidad_kgs) as descripcion from cat_productos  order by descripcion asc;";
 
         // Log.e(TAG_ERROR, "Consulta " + sSql);
 
@@ -2799,7 +2795,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 data.put(TAG_INVINICIAL, String.valueOf(pinvinicial));
                 data.put(TAG_INVFINAL, String.valueOf(pinvfinal));
                 data.put(TAG_IDOBS, String.valueOf(pidobs));
-
+                // TODO /CatalogoProductos/createProductoRutaFecha1.php
                 String PRODUCTO_URL = TAG_SERVIDOR + "/CatalogoProductos/createProductoRutaFecha1.php";
                 // Log.e(TAG_ERROR, "-- Enviando datos de precios");
                 return rh.sendPostRequest(PRODUCTO_URL,data);

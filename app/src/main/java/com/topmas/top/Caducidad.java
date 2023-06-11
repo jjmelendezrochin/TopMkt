@@ -61,7 +61,7 @@ import static com.topmas.top.Foto.UPLOAD_SINDATOS;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
 
 public class Caducidad extends AppCompatActivity {
-
+    // TODO /CatalogoProductos/upload_caducidad.php
     public static final String UPLOAD_CADUCIDAD = TAG_SERVIDOR + "/PhotoUpload/upload_caducidad.php";
     public static final String UPLOAD_idproducto = "idproducto";
     public static final String UPLOAD_lote = "lote";

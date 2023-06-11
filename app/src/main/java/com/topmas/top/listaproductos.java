@@ -177,6 +177,7 @@ public class listaproductos extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             String sProducto = txtBuscar.getText().toString().trim();
+            // TODO /CatalogoProductos/obtenerproductostienda1.php
             if (sProducto.equals("")) {
                 sRuta = TAG_SERVIDOR + "/CatalogoProductos/obtenerproductostienda1.php?idruta=" + pidRuta + "&producto=%&idempresa=" + pidEmpresa;
             } else {

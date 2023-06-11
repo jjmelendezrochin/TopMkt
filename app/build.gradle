@@ -6,7 +6,7 @@ android {
         applicationId "com.topmas.top"
         minSdkVersion 24
         targetSdkVersion 32
-        versionCode 29
+        versionCode 30   // TODO aqui se cambia la versión de la APP
         versionName "2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -329,6 +329,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
+            // TODO /CatalogoProductos/obtenerpromotor1.php
             sRuta = TAG_SERVIDOR + "/Promotor/obtenerpromotor1.php?"
                     + "idusuario=" + txtUsuario.getText().toString().trim()
                     + "&clave=" + txtPwd.getText().toString().trim()
@@ -544,6 +545,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
+            // TODO /CatalogoProductos/obtenerempresas.php
             sRuta = TAG_SERVIDOR + "/Promotor/obtenerempresas.php";
             // Log.e(TAG_ERROR, sRuta);
 

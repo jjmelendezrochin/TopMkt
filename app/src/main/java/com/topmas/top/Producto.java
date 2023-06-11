@@ -309,7 +309,7 @@ public class Producto extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-
+            // TODO /CatalogoProductos/obtenerproducto2.php
             sRuta = TAG_SERVIDOR + "/CatalogoProductos/obtenerproducto2.php?idproducto=" + pidproducto + "&idruta=" + pidruta + "&idempresa=" + pIdempresa;
             Log.e("Ruta", sRuta);
             super.onPreExecute();
@@ -492,7 +492,7 @@ public class Producto extends AppCompatActivity {
                 data.put(TAG_INVFINAL, String.valueOf(invfinal));
                 data.put(TAG_IDEMPRESA, pIdempresa);
                 data.put(TAG_IDOBS, String.valueOf(idObs));
-
+                // TODO /CatalogoProductos/createProductoRutaFecha1.php
                 String PRODUCTO_URL = TAG_SERVIDOR + "/CatalogoProductos/createProductoRutaFecha1.php";
                 // Log.e(TAG_ERROR, "-- Enviando datos de precios");
                 return rh.sendPostRequest(PRODUCTO_URL, data);

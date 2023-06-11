@@ -608,6 +608,7 @@ public class listatiendas extends AppCompatActivity {
         @Override
         protected void onPreExecute()
         {
+            // TODO /Promotor/obtenertiendaspromotor5.php
             String sTienda= txtBuscar.getText().toString().trim();
             if (sTienda.equals("")) {
                 sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor5.php?idpromotor=" + pidPromotor + "&tienda=%&idempresa=" + pIdempresa;
