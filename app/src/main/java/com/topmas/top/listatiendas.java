@@ -296,13 +296,9 @@ public class listatiendas extends AppCompatActivity {
         int iPromociones = almacenaImagen.ObtenRegistros(12);           // Obtiene la lista de promociones
         int iCaducidad = almacenaImagen.ObtenRegistros(14);             // Obtiene la lista de caducidades
         int iErrores = almacenaImagen.ObtenRegistros(16);               // Obtiene la lista de los errores
+        int iCompetenciaPromocion = almacenaImagen.ObtenRegistros(18); // Obtiene la lista de los registros competencia promoción
 
-        int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores);
-
-        // Log.e(TAG_ERROR, "* Imagenes " + iMagenesGuardadas);
-        // Log.e(TAG_ERROR, "* Pendientes " + iPendientes);
-        // Log.e(TAG_ERROR, "* Errores " + iErrores);
-        // Log.e(TAG_ERROR, "* Conexión " + funciones.RevisarConexion(this.getApplicationContext()));
+        int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion);
 
         if ((iPendientes>0) && funciones.RevisarConexion(this.getApplicationContext())){
             // **************************
@@ -350,15 +346,17 @@ public class listatiendas extends AppCompatActivity {
                 int iPromociones = almacenaImagen.ObtenRegistros(12);
                 int iCaducidad = almacenaImagen.ObtenRegistros(14);
                 int iErrores = almacenaImagen.ObtenRegistros(16);
-                int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores);
+                int iCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);
+                int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion);
 
                 if (iPendientes>0) {
                     AlertDialog.Builder alerta = new AlertDialog.Builder(listatiendas.this);
                     sMensaje = "Usted tiene " + String.valueOf(iMagenesGuardadas) + " imágenes almacenadas y/o " +
-                            iPreciosCambiados + " precios cambiados, y/o " +
-                            iPromociones + " promociones, y/o " +
-                            iRegistrosCompetencia + " fotos competencia, , y/o " +
+                            iPreciosCambiados + " precios cambiados y/o " +
+                            iPromociones + " promociones y/o " +
+                            iRegistrosCompetencia + " fotos competencia  y/o " +
                             iCaducidad + " registros de caducidad y/o " +
+                            iCompetenciaPromocion + " registros de competencia promoción y/o " +
                             iErrores + " registros de errores " +
                             " no olvide conectarse en cuanto tenga señal suficiente, para colocar sus fotos en plataforma (pulsar SI para salir)";
 
@@ -492,6 +490,7 @@ public class listatiendas extends AppCompatActivity {
         int iPromociones = 0;
         int iCaducidad = 0;
         int iErrores = 0;
+        int iCompetenciaPromocion = 0;
 
         int i =0;
         @Override
@@ -508,8 +507,9 @@ public class listatiendas extends AppCompatActivity {
             iPromociones = almacenaImagen.ObtenRegistros(12);
             iCaducidad = almacenaImagen.ObtenRegistros(14);
             iErrores = almacenaImagen.ObtenRegistros(16);
+            iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
 
-            int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores);
+            int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion);
 
             LayoutProgreso.setVisibility(View.VISIBLE);
             LayoutProgreso1.setVisibility(View.VISIBLE);
@@ -528,6 +528,7 @@ public class listatiendas extends AppCompatActivity {
                     public void run() {
                         progressBar.setProgress(progressStatus);
                         int i = 0;
+                        int j = 0;
 
                         iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
                         iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
@@ -535,6 +536,7 @@ public class listatiendas extends AppCompatActivity {
                         iPromociones = almacenaImagen.ObtenRegistros(12);
                         iCaducidad = almacenaImagen.ObtenRegistros(14);
                         iErrores = almacenaImagen.ObtenRegistros(16);
+                        iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
 
                         if (iMagenesGuardadas>0){
                             i = almacenaImagen.Colocarfoto();
@@ -567,6 +569,13 @@ public class listatiendas extends AppCompatActivity {
                             textoAvance.setText("Cargando errores " + progressStatus + "/" + progressBar.getMax());
                             textoAvance.setGravity(Gravity.CENTER);
                         }
+                        else if(iCompetenciaPromocion>0){
+                            Log.e(TAG_ERROR, "Cargando competencia promoción " + String.valueOf(i));
+                            i = almacenaImagen.ColocaCompetenciaPromocion();
+                            j = almacenaImagen.ColocaCompetenciaPromocionComplemento();
+                            textoAvance.setText("Cargando competencia promoción " + progressStatus + "/" + progressBar.getMax());
+                            textoAvance.setGravity(Gravity.CENTER);
+                        }
 
                         try {
                             Thread.sleep(500);
@@ -574,8 +583,6 @@ public class listatiendas extends AppCompatActivity {
                             funciones.RegistraError(pName, "listatiendas, CargaFotos 1", e, listatiendas.this, getApplicationContext());
                             // e.printStackTrace();
                         }
-
-
                     }
                 });
 
@@ -853,7 +860,7 @@ public class listatiendas extends AppCompatActivity {
                             almacenaImagen.insertatienda(pidPromotor, ruta[j], Integer.valueOf(determinante[j]),
                                     tienda[j], direccion[j], latitud[j], longitud[j]);
                     }
-                    //final int e = Log.e(TAG_ERROR, " conteo de tiendas " + jj);
+                    Log.e(TAG_ERROR, " conteo de tiendas " + jj);
                     // ******************************************
                     // Inserciòn de productos si el numero de registros es diferente
                     if (iCuentaProductos != k){

@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Competencia"
+    android:background="@drawable/fondo_foto1a">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        tools:context=".Competencia">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/Bloque"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal|center_vertical">
+
+                <ImageView
+                    android:id="@+id/imagenFoto1"
+                    android:layout_width="match_parent"
+                    android:layout_height="163dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="@dimen/margen_arriba"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginRight="0dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/imagenconfoto"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:scaleType="centerInside"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@tools:sample/avatars[8]" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margen_arriba"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_below="@+id/Bloque">
+
+                <Button
+                    android:id="@+id/btnfoto1"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/producto_exhibido" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margen_arriba"
+                android:orientation="horizontal"
+                android:layout_below="@+id/Bloque1">
+
+                <ImageView
+                    android:id="@+id/imagenFoto2"
+                    android:layout_width="match_parent"
+                    android:layout_height="163dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginRight="0dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/imagenconfoto"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:scaleType="centerInside"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@tools:sample/avatars[8]" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margen_arriba"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_below="@+id/Bloque2">
+
+                <Button
+                    android:id="@+id/btnfoto2"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/producto_competencia" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margen_productos"
+                android:orientation="horizontal"
+                android:layout_below="@+id/Bloque3">
+
+                <TextView
+                    android:id="@+id/Titulo1a"
+                    android:layout_width="92dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:text="Producto."
+                    android:textSize="@dimen/tamanioletraproductos"
+                    android:textColor="@color/colorFuente"/>
+
+                <Spinner
+                    android:id="@+id/spinProducto"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="2sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque4b"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Bloque4"
+                android:layout_marginTop="@dimen/margen_arriba"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/Titulo4b"
+                    android:layout_width="122dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="% Participación"
+                    android:textColor="@color/colorFuente"
+                    android:textSize="@dimen/tamanioletraproductos" />
+
+                <EditText
+                    android:hint ="% de Participación"
+                    android:id="@+id/txtpor_participa"
+                    android:layout_width="100dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/caja_bordesredondeados"
+                    android:ems="10"
+                    android:paddingStart="20dp"
+                    android:inputType="number"
+                    android:textColor="@color/verdeCorporativo" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque4c"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margen_arriba"
+                android:orientation="horizontal"
+                android:layout_below="@+id/Bloque4b">
+
+                <TextView
+                    android:id="@+id/Titulo4c"
+                    android:layout_width="122dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="No. frentes"
+                    android:textColor="@color/colorFuente"
+                    android:textSize="@dimen/tamanioletraproductos" />
+
+                <EditText
+                    android:hint ="Número de frentes"
+                    android:id="@+id/txtno_frentes"
+                    android:layout_width="100dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/caja_bordesredondeados"
+                    android:ems="10"
+                    android:paddingStart="20dp"
+                    android:inputType="number"
+                    android:textColor="@color/verdeCorporativo" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque4d"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margen_arriba"
+                android:orientation="horizontal"
+                android:layout_below="@+id/Bloque4c">
+
+                <TextView
+                    android:id="@+id/Titulo4d"
+                    android:layout_width="123dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Con promoción"
+                    android:textColor="@color/colorFuente"
+                    android:textSize="@dimen/tamanioletraproductos" />
+
+                <CheckBox
+                    android:id="@+id/chkconPromo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:minWidth="48dp"
+                    android:minHeight="48dp"
+                    android:textColor="@color/cardview_dark_background"
+                    android:buttonTint="@color/cardview_dark_background"
+                    android:text=""/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque4e"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Bloque4d"
+                android:layout_marginTop="@dimen/margen_arriba"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/Titulo4e"
+                    android:layout_width="123dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Precio"
+                    android:textColor="@color/colorFuente"
+                    android:textSize="@dimen/tamanioletraproductos" />
+
+                <EditText
+                    android:hint ="% de Descuento"
+                    android:id="@+id/txtpor_descuento"
+                    android:layout_width="100dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/caja_bordesredondeados"
+                    android:ems="10"
+                    android:paddingStart="20dp"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/verdeCorporativo" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque4f"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Bloque4e"
+                android:layout_marginTop="@dimen/margen_arriba"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/Titulo4f"
+                    android:layout_width="123dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Comentarios"
+                    android:textColor="@color/colorFuente"
+                    android:textSize="@dimen/tamanioletraproductos" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque4g"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Bloque4f"
+                android:layout_marginTop="@dimen/margen_arriba"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:hint="Comentario"
+                    android:id="@+id/txtcomentario"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="5dp"
+                    android:textSize="@dimen/tamanioletraproductos"
+                    android:background="@drawable/caja_bordesredondeados"
+                    android:ems="10"
+                    android:paddingStart="20dp"
+                    android:textColor="@color/verdeCorporativo" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Bloque5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margen_arriba"
+                android:gravity="center_horizontal|center_vertical"
+                android:orientation="horizontal"
+                android:layout_below="@+id/Bloque4g">
+
+                <Button
+                    android:id="@+id/cmdGuardar"
+                    android:layout_width="140dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/img_guardar"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab1"
+        android:contentDescription="Regresar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/margen_productos"
+        app:srcCompat="@drawable/regresar" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

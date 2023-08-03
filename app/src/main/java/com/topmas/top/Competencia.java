@@ -1,7 +1,6 @@
 package com.topmas.top;
 
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,9 +29,7 @@ import androidx.core.content.FileProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -44,7 +40,6 @@ import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_ACTIVIDADBTL;
 import static com.topmas.top.Constants.TAG_CANJES;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
-import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_IDEMOSTRADOR;
 import static com.topmas.top.Constants.TAG_IDEMPAQUE;
 import static com.topmas.top.Constants.TAG_IDRUTA;
@@ -183,8 +178,8 @@ public class Competencia extends AppCompatActivity {
                 EditText cajaproducto = findViewById(R.id.txtProducto);
                 EditText cajaprecio = findViewById(R.id.txtPrecioCompetencia);
                 EditText cajapresentacion = findViewById(R.id.txtPresentacion);
-                EditText cajactividadbtl = findViewById(R.id.txtActividadbtl);
-                EditText cajacanjes = findViewById(R.id.txtCanjes);
+                EditText cajactividadbtl = findViewById(R.id.txtpor_participa);
+                EditText cajacanjes = findViewById(R.id.txt_no_frentes);
 
                 CheckBox chkDemostrador = findViewById(R.id.chkDemostrador);
                 CheckBox chkExhibidor = findViewById(R.id.chkExhibidor);
@@ -281,6 +276,7 @@ public class Competencia extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         imagenFoto = findViewById(R.id.imagenFoto);
         try {
             if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
@@ -297,23 +293,18 @@ public class Competencia extends AppCompatActivity {
                 // ***********************
                 // Guardar la imagen despues de tomarla
                 iFoto = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), idoperacion, pName, idRuta, bitmap);
-                //Log.e(TAG_ERROR, "Se Guardo la foto almacenada " + iFoto);
+
                 Toast.makeText(getApplicationContext(), "Foto Guardada", Toast.LENGTH_LONG).show();
 
                 almacenaImagen = new AlmacenaImagen(getApplicationContext());
                 int iCuenta = almacenaImagen.ObtenRegistros(11);
-                if(iFoto==0)
-                {
-                    Toast.makeText(getApplicationContext(), "No se permiten Chekin/out duplicados ",Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
+                if (iFoto == 0) {
+                    Toast.makeText(getApplicationContext(), "No se permiten Chekin/out duplicados ", Toast.LENGTH_SHORT).show();
+                } else {
                     // Toast.makeText(getApplicationContext(), "Imágenes almacenadas " + String.valueOf(iCuenta),Toast.LENGTH_SHORT).show();
                 }
             }
-        }
-        catch( java.lang.NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             // unciones.RegistraError(pName, "Competencia, onActivityResult", e, Competencia.this, getApplicationContext());
             // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
             Toast.makeText(getApplicationContext(), "Error al colocar una foto de competencia", Toast.LENGTH_LONG).show();
@@ -343,6 +334,9 @@ public class Competencia extends AppCompatActivity {
                 Funciones funciones = new Funciones();
                 Bitmap bitmap = params[0];
                 bitmap = funciones.Compacta(bitmap);
+                bitmap = funciones.Compacta(bitmap);
+                bitmap = funciones.Compacta(bitmap);
+
                 String uploadImage = almacenaImagen.getStringImage(bitmap);
 
                 HashMap<String,String> data = new HashMap<>();

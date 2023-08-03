@@ -5,8 +5,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:requestLegacyExternalStorage="true"/>
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:requestLegacyExternalStorage="true" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-feature
@@ -21,7 +22,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Caducidad"></activity>
+        <activity
+            android:name=".Competencia_Promocion"
+            android:exported="false" />
+        <activity
+            android:name=".activity_competencia_promocion"
+            android:exported="false" />
+        <activity android:name=".Caducidad" />
         <activity android:name=".Competencia" />
         <activity android:name=".listaproductos" />
         <activity
@@ -53,8 +60,8 @@
         <activity android:name=".MapaTienda" />
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

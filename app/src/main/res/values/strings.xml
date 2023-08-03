@@ -19,7 +19,7 @@
     <string name="buscar_tienda">"buscar tienda "</string>
 
     <!-- TODO aqui se coloca el usuario y clave por default -->
-    <string name="resUsuario"></string> <!-- aromero -->
+    <string name="resUsuario"></string> <!-- schavez, aromero -->
     <string name="_12345"></string> <!-- 56789 -->
     <string name="fotocompetencia">Foto competencia</string>
     <string name="fotocaducidad">Foto caducidad</string>

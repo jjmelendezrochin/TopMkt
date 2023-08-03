@@ -264,6 +264,17 @@ public class MenuTienda extends AppCompatActivity
         });
 
         //****************************
+        // Imagen Competencia1
+        ImageView imgCompetencia1 = findViewById(R.id.imgCompetencia1);
+        imgCompetencia1.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view) {
+                Intent competencia1 = new Intent(getApplicationContext(), Competencia_Promocion.class);
+                competencia1.putExtra(TAG_IDRUTA, idruta);
+                startActivity(competencia1);
+            }
+        });
+
+        //****************************
         // Muestra datos almacenados
         FloatingActionButton fab1 = findViewById(R.id.fab1);
 

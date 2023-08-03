@@ -256,7 +256,7 @@
                     android:textColor="@color/colorFuente"/>
 
                 <EditText
-                    android:id="@+id/txtActividadbtl"
+                    android:id="@+id/txtpor_participa"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginLeft="5dp"
@@ -285,7 +285,7 @@
                     android:textColor="@color/colorFuente"/>
 
                 <EditText
-                    android:id="@+id/txtCanjes"
+                    android:id="@+id/txt_no_frentes"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginLeft="5dp"

@@ -64,6 +64,7 @@ public class Foto extends AppCompatActivity {
     public static final String UPLOAD_IDRUTA = "idruta";
     public static final String UPLOAD_FECHAHORA = "fechahora";
     public static final String UPLOAD_IMAGEN = "image";
+    public static final String UPLOAD_IMAGEN1 = "image1";
     public static final String UPLOAD_VERSION = "version_app";
     public static final String UPLOAD_SINDATOS = "sindatos";
 
@@ -433,6 +434,8 @@ public class Foto extends AppCompatActivity {
             protected String doInBackground(Bitmap... params) {
                 Funciones funciones = new Funciones();
                 Bitmap bitmap = params[0];
+                bitmap = funciones.Compacta(bitmap);
+                bitmap = funciones.Compacta(bitmap);
                 bitmap = funciones.Compacta(bitmap);
                 String uploadImage = almacenaImagen.getStringImage(bitmap);
 

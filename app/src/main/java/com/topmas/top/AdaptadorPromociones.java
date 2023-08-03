@@ -95,9 +95,9 @@ public class AdaptadorPromociones extends BaseAdapter{
             if(funciones.RevisarConexion(view.getContext())) {
                 imagen.setImageBitmap(_ArrImagenesPromo[position]);
             }
-            else{
-                imagen.setImageResource(R.drawable.a1_7503006577000);
-            }
+            //else{
+            //    imagen.setImageResource(R.drawable.a1_7503006577000);
+            //}
 
             return  view;
         }
