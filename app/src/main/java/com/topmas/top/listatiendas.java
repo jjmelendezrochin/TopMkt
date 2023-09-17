@@ -232,11 +232,11 @@ public class listatiendas extends AppCompatActivity {
         pExpira = i.getStringExtra(TAG_EXPIRESIN);
         pConsultaenWeb = i.getIntExtra(TAG_CONSULTAENWEB, pConsultaenWeb);
         // Obtiene el idpromotor si no trae este valor
-        Log.e(TAG_ERROR, "* Promotor " + pidPromotor);
+        // Log.e(TAG_ERROR, "* Promotor " + pidPromotor);
         if (pidPromotor==0)
         {
             pidPromotor = usr.getid();
-            Log.e(TAG_ERROR, "* Promotor " + pidPromotor);
+            // Log.e(TAG_ERROR, "* Promotor " + pidPromotor);
         }
         // Si no hay promotor debe de mandar un mensaje de error y solicitar ingresar
         if(pidPromotor==0)
@@ -860,7 +860,7 @@ public class listatiendas extends AppCompatActivity {
                             almacenaImagen.insertatienda(pidPromotor, ruta[j], Integer.valueOf(determinante[j]),
                                     tienda[j], direccion[j], latitud[j], longitud[j]);
                     }
-                    Log.e(TAG_ERROR, " conteo de tiendas " + jj);
+                    // Log.e(TAG_ERROR, " conteo de tiendas " + jj);
                     // ******************************************
                     // Inserciòn de productos si el numero de registros es diferente
                     if (iCuentaProductos != k){

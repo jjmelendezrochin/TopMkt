@@ -6,7 +6,6 @@ import static com.topmas.top.Constants.TAG_EMAIL;
 import static com.topmas.top.Constants.TAG_EMPRESA;
 import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_EXPIRESIN;
-import static com.topmas.top.Constants.TAG_ID;
 import static com.topmas.top.Constants.TAG_IDEMPRESA;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_INFO;
@@ -54,10 +53,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button b1;
+    private Button cmdIngresar;
     private EditText txtUsuario;
     private EditText txtPwd;
-    private int pid = 0;
+    private int pidpromotor = 0;
     private String pName = "";
     private String pEmail = "";
     private String pToken = "";
@@ -81,14 +80,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
-            //log(throwable.getMessage(), thread.getId());
             funciones.RegistraError(pName, "MainActivity setDefaultUncaughtExceptionHandler", (Exception) throwable, MainActivity.this, getApplicationContext());
         });
 
         try {
             almacenaImagen = new AlmacenaImagen(getApplicationContext());
             versionapp = almacenaImagen.ConsultaVersionApp();
-
 
             // *******************************
             // Obteniendo la versión de android
@@ -99,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             funciones.locationStart(this);
             // *******************************
 
-            b1 = findViewById(R.id.cmdIngresar);
+            cmdIngresar = findViewById(R.id.cmdIngresar);
             txtUsuario = findViewById(R.id.txtNombre);
             txtPwd = findViewById(R.id.txtPwd);
             spCliente = findViewById(R.id.spinClientes);
@@ -145,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
         final Spinner spinClientes = (Spinner) findViewById(R.id.spinClientes);
         // *******************************
-        b1.setOnClickListener(new View.OnClickListener() {
+        cmdIngresar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
                 String pNombre = txtUsuario.getText().toString();
@@ -169,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // **************************************
                 /* Alamcena en la variable idempresa el valor seleccionado en el spinner */
-                //idEmpresa =  String.valueOf((spinClientes.getSelectedItem()).idEmpresa);
+                // TODO almacena los valores de la empresa al inicio
                 SharedPreferences preferencias =
                         PreferenceManager.getDefaultSharedPreferences(view.getContext());
                 SharedPreferences.Editor editor = preferencias.edit();
@@ -180,7 +177,12 @@ public class MainActivity extends AppCompatActivity {
                 // Verifica si no hay conexión para consultar en la base de datos de Sqlite
                 if (!funciones.RevisarConexion(getApplicationContext())) {
                     int idpromotor = almacenaImagen.ObtenRegistrosPromotor(pNombre, pClave, idEmpresa);
-                    Log.e(TAG_INFO,"Promotor " + idpromotor );
+
+                    // TODO almacena los valores del promotor al inicio sin conexión
+                    editor.putString(TAG_IDPROMOTOR, String.valueOf(idpromotor));
+                    editor.commit();
+
+                    // Log.e(TAG_INFO,"Promotor " + idpromotor );
                     if (idpromotor > 0) {
                         // ***************************
                         // Inicio de lista de tiendas
@@ -189,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
                         listatiendas.putExtra(TAG_IDPROMOTOR, idpromotor);
                         listatiendas.putExtra(TAG_NAME, pNombre);
                         listatiendas.putExtra(TAG_IDEMPRESA, idEmpresa);
-                        // Log.e(TAG_ERROR,"idempresa: "+ idEmpresa);
                         listatiendas.putExtra(TAG_EMAIL, "null");
                         listatiendas.putExtra(TAG_ACCESSTOKEN, "null");
                         listatiendas.putExtra(TAG_EXPIRESIN, "null");
@@ -293,10 +294,10 @@ public class MainActivity extends AppCompatActivity {
             Cursor c = almacenaImagen.CursorEmpresas();
             if (c==null)
             {
-                Log.e("Cursor", "nulo" );
+                // Log.e("Cursor", "nulo" );
             }
             else{
-                Log.e("Cursor", "No nulo" );
+                // Log.e("Cursor", "No nulo" );
             }
             String[] from = new String[]{TAG_alias};
             int[] to = new int[]{android.R.id.text1};
@@ -320,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
         String data = "";
         String Error = null;
 
-        int id = 0;
+        int idpromotor = 0;
         String name = "";
         String email = "";
         String token = "";
@@ -329,13 +330,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            // TODO /CatalogoProductos/obtenerpromotor1.php
-            sRuta = TAG_SERVIDOR + "/Promotor/obtenerpromotor1.php?"
+            // TODO /Promotor/obtenerpromotor2.php
+            sRuta = TAG_SERVIDOR + "/Promotor/obtenerpromotor2.php?"
                     + "idusuario=" + txtUsuario.getText().toString().trim()
                     + "&clave=" + txtPwd.getText().toString().trim()
                     + "&idempresa=" + idEmpresa;
-            //Log.e("Ruta", sRuta);
 
+            // Log.e(TAG_ERROR, sRuta);
             super.onPreExecute();
             pDialog = new ProgressDialog(MainActivity.this);
             pDialog.setMessage("Consultando en el servicio Web ...");
@@ -349,51 +350,46 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(Void... params) {
             BufferedReader reader = null;
             String sRespusta = null;
-            // Log.e("Ruta", "1");
             try {
                 // Defined URL where to send data
                 URL url = new URL(sRuta);
-                // Log.e("Ruta", "2");
 
                 // Send POST data request
                 URLConnection conn = url.openConnection();
-                // Log.e("Ruta", "3");
+
                 conn.setDoOutput(true);
                 OutputStreamWriter wr = new OutputStreamWriter(
                         conn.getOutputStream());
                 wr.write(data);
                 wr.flush();
-                // Log.e("Ruta", "4");
+
                 // Get the server response
                 reader = new BufferedReader(new InputStreamReader(
                         conn.getInputStream()));
                 StringBuilder sb = new StringBuilder();
                 String line;
-                // Log.e("Ruta", "5");
+
                 // Read Server Response
                 while ((line = reader.readLine()) != null) {
                     // Append server response in string
                     sb.append(line + " ");
                 }
 
-                // Log.e("Ruta", "6");
                 // Append Server Response To Content String
                 sRespusta = sb.toString();
-                // Log.e(TAG_RESPUESTA, sRespusta);
+                //Log.e(TAG_ERROR, sRespusta);
 
             } catch (Exception e) {
                 Error = e.getMessage();
                 funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService", e, MainActivity.this, getApplicationContext());
                 Toast.makeText(getApplicationContext(), " Error al obtener los datos del promotor " +  Error,Toast.LENGTH_LONG).show();
-                // Log.e("Ruta", Error);
+
             } finally {
                 try {
                     reader.close();
                 } catch (Exception ex) {
                     Error = ex.getMessage();
                     funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService", ex, MainActivity.this, getApplicationContext());
-                    //Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al obtener los datos del promotor 1" +  Error,Toast.LENGTH_LONG).show();
-                    // Log.e("Ruta", Error);
                 }
             }
 
@@ -407,26 +403,26 @@ public class MainActivity extends AppCompatActivity {
                     // Revisando la respusta
                     jsonResponse = new JSONObject(sRespusta);
 
-                    int iResp = jsonResponse.getInt(TAG_ID);
-                    // Log.e("RESPUESTA", String.valueOf( iResp));
+                    int iResp = jsonResponse.getInt(TAG_IDPROMOTOR);
+                    //Log.e("RESPUESTA", String.valueOf( iResp));
                     if (iResp > 0) {
                         // ******************************
                         // Obtención de variables y acceso al sistema
-                        id = jsonResponse.getInt(TAG_ID);
+                        idpromotor = jsonResponse.getInt(TAG_IDPROMOTOR);
                         name = jsonResponse.getString(TAG_NAME);
                         email = jsonResponse.getString(TAG_EMAIL);
                         token = jsonResponse.getString(TAG_ACCESSTOKEN);
                         expira = jsonResponse.getString(TAG_EXPIRESIN);
 
-                        pid = id;
+                        pidpromotor = idpromotor;
                         pName = name;
                         pEmail = email;
                         pToken = token;
                         pExpira = expira;
                         // ******************************
                     } else {
-                        id = 0;
-                        pid = 0;
+                        idpromotor = 0;
+                        pidpromotor = 0;
                     }
 
                 } catch (JSONException e) {
@@ -449,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
     protected void Verifica() {
         // *********************************************************
         // Proceso que verifica el resultado para ingresar
-        if (pid > 0) {
+        if (pidpromotor > 0) {
 
             // ******************************
             // Aqui se inicia el servicio
@@ -462,9 +458,10 @@ public class MainActivity extends AppCompatActivity {
             if (iServicioIniciado == 0) {
                 editor.putInt("ServicioIniciado", 1);
                 editor.apply();
+                editor.commit();
 
                 Intent iServicio = new Intent(MainActivity.this, LocationService.class);
-                iServicio.putExtra(TAG_IDPROMOTOR, pid);
+                iServicio.putExtra(TAG_IDPROMOTOR, pidpromotor);
                 preferences.getInt("ServicioIniciado", 0);
                 startService(iServicio);
             }
@@ -475,29 +472,30 @@ public class MainActivity extends AppCompatActivity {
 
             // ***************************
             // Inserta o actualiza promotor en la tabla cat_promotores
-            almacenaImagen.insertaoactualizapromotor(pid, nombre, pwd, idEmpresa);
+            almacenaImagen.insertaoactualizapromotor(pidpromotor, nombre, pwd, idEmpresa);
 
             // Establece el nombre del usuario en las preferencias
             SharedPreferences preferencias =
                     PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             editor = preferencias.edit();
             editor.putString(TAG_USUARIO, nombre);
+            editor.putString(TAG_IDPROMOTOR, String.valueOf(pidpromotor));
+            // Log.e(TAG_ERROR, "idUsuario enviado " + nombre +  " idpromotor " + String.valueOf(pidpromotor));
             editor.commit();
 
             // ***************************
             // Inicio de lista de tiendas
             Intent listatiendas = new Intent(getApplicationContext(), listatiendas.class);
 
-            listatiendas.putExtra(TAG_IDPROMOTOR, pid);
+            listatiendas.putExtra(TAG_IDPROMOTOR, pidpromotor);
             listatiendas.putExtra(TAG_IDEMPRESA, idEmpresa);
-            // Log.e(TAG_ERROR,"lista tiendas: " + idEmpresa);
             listatiendas.putExtra(TAG_NAME, pName);
             listatiendas.putExtra(TAG_EMAIL, pEmail);
             listatiendas.putExtra(TAG_ACCESSTOKEN, pToken);
             listatiendas.putExtra(TAG_EXPIRESIN, pExpira);
             listatiendas.putExtra(TAG_CONSULTAENWEB, 1);    // Indica que debe buscar en la lista de tiendas en web
 
-            Usuario usr = new Usuario(pid, pName, pEmail, pToken, pExpira, idEmpresa);
+            Usuario usr = new Usuario(pidpromotor, pName, pEmail, pToken, pExpira, idEmpresa);
             startActivity(listatiendas);
             // ***************************
         } else {
@@ -525,7 +523,7 @@ public class MainActivity extends AppCompatActivity {
             isReady.set(false);
         }
 
-        b1.setEnabled(isReady.get());
+        cmdIngresar.setEnabled(isReady.get());
     }
 
     //************************************
@@ -562,7 +560,7 @@ public class MainActivity extends AppCompatActivity {
             pidEmpresaSel = params[0];
             BufferedReader reader = null;
             String sRespuesta = null;
-            // Log.e("Ruta", "1");
+
             try {
                 // Defined URL where to send data
                 URL url = new URL(sRuta);
@@ -587,7 +585,6 @@ public class MainActivity extends AppCompatActivity {
 
                 // Append Server Response To Content String
                 sRespuesta = sb.toString();
-                //Log.e(TAG_ERROR, sRespuesta);
 
                 // **************************
                 // Proceso de lectura de datos
@@ -624,21 +621,20 @@ public class MainActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         String Resultado = "Se generó el siguiente error : " + e.toString();
                         funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService Cargar Empresas", e, MainActivity.this, getApplicationContext());
-                        // Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al obtener las variables de tiendas " +  Resultado,Toast.LENGTH_LONG).show();
                     }
                 }
 
             } catch (Exception ex) {
                 Error = ex.getMessage();
                 funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService Cargar Empresas 1", ex, MainActivity.this, getApplicationContext());
-                Log.e(TAG_ERROR, Error);
+                // Log.e(TAG_ERROR, Error);
             } finally {
                 try {
                     reader.close();
                 } catch (Exception ex) {
                     Error = ex.getMessage();
                     funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService Cargar Empresas 2", ex, MainActivity.this, getApplicationContext());
-                    Log.e(TAG_ERROR, Error);
+                    // Log.e(TAG_ERROR, Error);
                 }
             }
 

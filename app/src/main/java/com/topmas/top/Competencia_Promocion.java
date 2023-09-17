@@ -68,7 +68,8 @@ import java.util.HashMap;
 
 public class Competencia_Promocion extends AppCompatActivity {
 
-
+    // TODO /Competencia_Promocion/upload_competencia_promocion.php
+    // TODO /Competencia_Promocion/upload_competencia_promocion_complemento.php
     public static final String UPLOAD_COMPETENCIA_PROMOCION = TAG_SERVIDOR + "/PhotoUpload/upload_competencia_promocion.php";
     public static final String UPLOAD_COMPETENCIA_PROMOCION_COMPLEMENTO = TAG_SERVIDOR + "/PhotoUpload/upload_competencia_promocion_complemento.php";
     public static final String UPLOAD_CON_SIN_PARTICIPACION = "con_sin_participacion";
@@ -334,14 +335,6 @@ public class Competencia_Promocion extends AppCompatActivity {
 
                 String sruta = photoURI.getPath();
                 File file = new File(sruta);
-               /*
-                if(file.exists()) {
-                    Log.e(ERROR_FOTO, "Archivo " + sruta + " existe");
-                }
-                else{
-                    Log.e(ERROR_FOTO, "Archivo " + sruta + " no existe");
-                }
-                */
                 return;
             }
             if (photoFile2 != null) {
@@ -350,14 +343,6 @@ public class Competencia_Promocion extends AppCompatActivity {
 
                 String sruta = photoURI.getPath();
                 File file = new File(sruta);
-                /*
-                if(file.exists()) {
-                    Log.e(ERROR_FOTO, "Archivo " + sruta + " existe");
-                }
-                else{
-                    Log.e(ERROR_FOTO, "Archivo " + sruta + " no existe");
-                }
-                */
                 return;
             }
         }
@@ -477,7 +462,8 @@ public class Competencia_Promocion extends AppCompatActivity {
                 data.put(UPLOAD_VERSION, sVerApp);
                 data.put(UPLOAD_SINDATOS, "0");
 
-                return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION_COMPLEMENTO,data);
+                return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION,data);
+                // return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION_COMPLEMENTO,data);
             }
 
             @Override

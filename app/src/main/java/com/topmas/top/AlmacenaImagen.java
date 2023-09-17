@@ -80,7 +80,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.database.CursorWindow;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -103,7 +102,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -114,13 +112,11 @@ import java.util.HashMap;
 // TODO Aqui se encuentran todas las funciones de acceso a la base de datos Sqlite
 
 public class AlmacenaImagen extends SQLiteOpenHelper {
-    Context contexto = null;
-    public String databasePath = "";
+    Context contexto;
+    public String databasePath;
     Funciones funciones = new Funciones();
     Usuario usr = new Usuario();
-    String pName = null;
-
-    oTiendasPromotor[] Tiendas = null;
+    String pName;
 
     // **********************************
     // Constuctor
@@ -463,7 +459,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         // ***************************************************************************************************************
     }
 
-
     // **********************************
     // Actualizar base de datos
     @Override
@@ -514,9 +509,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             int _idpromotor,
             int _idruta
         ) {
-        String sSql = null;
+        String sSql;
         Cursor cursor = null;
-        int cta = 0;
         int aplica = -1;
         SQLiteDatabase db = getReadableDatabase();
 
@@ -527,7 +521,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 "' and cast(fecha as date)  = cast(CURRENT_DATE as date)" +
                 " limit 1";
 
-        //Log.e(TAG_INFO, "sSql " + sSql);
         // db.beginTransaction();
         try {
             cursor = db.rawQuery(sSql, null);
@@ -535,8 +528,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 aplica = cursor.getInt(0);
             }
             cursor.close();
-            //Log.e(TAG_INFO, sSql);
-            //Log.e(TAG_INFO, "Valor obtenido de aplica " + aplica);
             // db.setTransactionSuccessful();
             return aplica;
         } catch (Exception e) {
@@ -1354,7 +1345,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                            Bitmap imagen) {
         String sSql;
         Cursor cursor;
-        Funciones funciones = new Funciones();
+
         Bitmap bitmap = funciones.Compacta(imagen);
         String uploadImage = getStringImage(bitmap);
         SQLiteDatabase db = getWritableDatabase();
@@ -1415,7 +1406,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     }
 
     // **********************************
-    // Función que guard la imagen como una cadena
+    // Función que guards la imagen como una cadena
     public String getStringImage(Bitmap bmp) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 50, baos);
@@ -1477,7 +1468,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             sSql = "Select idruta from listatiendas where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
         }
 
-        // Log.e(TAG_ERROR, "Consulta " + sSql);
 
         Cursor cursor = null;
         int i = 0;
@@ -2100,7 +2090,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     }
 
     // **********************************
-    // Truncar tabla almacenfotos
+    // Truncar tabla fotos
     public void TruncarTablaFotos() {
         String sSql;
         SQLiteDatabase db = getWritableDatabase();
@@ -3731,7 +3721,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
 
     // **********************************
-    // Método para insertar competencia
+    // Método para insertar error
     public int inserta_error(oInfoDispositivo oinfo) {
         String sSql = null;
         Cursor cursor = null;
@@ -4223,7 +4213,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
         SQLiteDatabase db = getReadableDatabase();
 
-
         //********************************************
         // Primer cursor
         String sSql = "Select distinct  c.idcompetenciapromo, af.idpromotor, af.latitud, af.longitud, af.idusuario, 8 as idoperacion, af.idruta, " +
@@ -4374,30 +4363,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(contexto.getApplicationContext());
                 pName = preferences.getString(TAG_USUARIO, pName);
-                /*
-                Log.e(TAG_ERROR, "**************************");
-                Log.e(TAG_ERROR, "Envìo de datos cargados Competencia_Promocion Complemento");
 
-                Log.e(TAG_ERROR, String.valueOf(idpromotor));
-                Log.e(TAG_ERROR, String.valueOf(pLatitud));
-                Log.e(TAG_ERROR, String.valueOf(pLongitud));
-                Log.e(TAG_ERROR, String.valueOf(pName));
-                Log.e(TAG_ERROR, String.valueOf(idoperacion));
-                Log.e(TAG_ERROR, String.valueOf(idRuta));
-                Log.e(TAG_ERROR, _fechahora);
-                Log.e(TAG_ERROR, uploadImage1);
-                Log.e(TAG_ERROR, uploadImage2);
-
-                Log.e(TAG_ERROR, String.valueOf(iconPromo));
-                Log.e(TAG_ERROR, String.valueOf(por_participa));
-                Log.e(TAG_ERROR, String.valueOf(no_frentes));
-                Log.e(TAG_ERROR, String.valueOf(por_descuento));
-                Log.e(TAG_ERROR, _comentario);
-                Log.e(TAG_ERROR, String.valueOf(idproducto));
-                Log.e(TAG_ERROR, String.valueOf(precio));
-                Log.e(TAG_ERROR, String.valueOf(UPLOAD_COMPETENCIA_PROMOCION_COMPLEMENTO));
-                Log.e(TAG_ERROR, "**************************");
-                */
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
                 data.put(UPLOAD_LONGITUD, String.valueOf(pLongitud));
@@ -4426,5 +4392,34 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         EstableceCompetenciaPromocionComplemento ui = new EstableceCompetenciaPromocionComplemento();
         ui.execute(_idpromotor, _pLatitud, _pLongitud, _pName, _idoperacion, _idRuta,_fechahora,
                 _uploadImage1, _uploadImage2, _iconPromo, _por_participa, _no_frentes, _por_descuento, _comentario, _idproducto, _precio, _sVerApp);
+    }
+
+    // **********************************
+    // Función que consulta si un promotor realizo el checkin en una tienda y fecha
+    public int consultaCheckinPromotorTienda(Integer _idpromotor, Integer _pidruta) {
+        int iResultado = 0;
+        SQLiteDatabase db = getReadableDatabase();
+        String sSql;
+
+        Cursor cursor = null;
+        try {
+
+            sSql = "Select count(*) from almacenfotos where idpromotor = " + _idpromotor + " and idruta = " + _pidruta +
+                    " and DATE(fechahora) = DATE(CURRENT_DATE) and idoperacion = 1";
+            cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                iResultado = cursor.getInt(0);
+            }
+            cursor.close();
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener registros de lista de tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            // funciones.RegistraError(pName, "AlmacenaImagen, downloadFile", e,  (Activity) AlmacenaImagen.this.contexto , AlmacenaImagen.this.contexto);
+            // Por si hay una excepcion
+        } finally {
+            assert cursor != null;
+            db.close();
+        }
+        return iResultado;
     }
 }
