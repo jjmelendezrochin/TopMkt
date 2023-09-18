@@ -19,6 +19,7 @@ import static com.topmas.top.Foto.UPLOAD_LATITUD;
 import static com.topmas.top.Foto.UPLOAD_LONGITUD;
 import static com.topmas.top.Foto.UPLOAD_SINDATOS;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
+import static com.topmas.top.Foto.rotateImage;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -72,7 +73,11 @@ public class Competencia_Promocion extends AppCompatActivity {
     public static final String TAG_INFO = "INFORMACION";
 
     Button btnFoto1 = null;
+    Button imgizq1;
+    Button imgder1;
     Button btnFoto2 = null;
+    Button imgizq2;
+    Button imgder2;
     File photoFile1 = null;
     File photoFile2 = null;
     Uri photoURI1 = null;
@@ -138,6 +143,101 @@ public class Competencia_Promocion extends AppCompatActivity {
         // Botón de foto
         btnFoto1 = findViewById(R.id.btnfoto1);
         btnFoto2 = findViewById(R.id.btnfoto2);
+        imgizq1 =  findViewById(R.id.btnizquierda1);
+        imgder1 =  findViewById(R.id.btnderecha1);
+        imgizq2 =  findViewById(R.id.btnizquierda2);
+        imgder2 =  findViewById(R.id.btnderecha2);
+
+        // Oculta botones rotación
+        imgizq1.setVisibility(View.INVISIBLE);
+        imgder1.setVisibility(View.INVISIBLE);
+        imgizq2.setVisibility(View.INVISIBLE);
+        imgder2.setVisibility(View.INVISIBLE);
+        // ********************************
+        // Rotacion izquierda
+        imgizq1.setOnClickListener(view -> {
+            imagenFoto1 = findViewById(R.id.imagenFoto1);
+            if (imagenFoto1.getDrawable() != null) {
+
+                pDialog = new ProgressDialog(Competencia_Promocion.this);
+                pDialog.setMessage("Rotando ...");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(false);
+                pDialog.show();
+
+                BitmapDrawable drawable = (BitmapDrawable) imagenFoto1.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
+                int angle = -90;
+                //imagenFoto.setRotation(angle);
+                bitmap = rotateImage(bitmap ,angle);
+                imagenFoto1.setImageBitmap(bitmap);
+
+                pDialog.dismiss();
+            }
+        });
+
+        imgizq2.setOnClickListener(view -> {
+            imagenFoto2 = findViewById(R.id.imagenFoto2);
+            if (imagenFoto2.getDrawable() != null) {
+
+                pDialog = new ProgressDialog(Competencia_Promocion.this);
+                pDialog.setMessage("Rotando ...");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(false);
+                pDialog.show();
+
+                BitmapDrawable drawable = (BitmapDrawable) imagenFoto2.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
+                int angle = -90;
+                bitmap = rotateImage(bitmap ,angle);
+                imagenFoto2.setImageBitmap(bitmap);
+
+                pDialog.dismiss();
+            }
+        });
+
+        // ********************************
+        // Rotacion derecha
+        imgder1.setOnClickListener(view -> {
+            imagenFoto1 = findViewById(R.id.imagenFoto1);
+            if (imagenFoto1.getDrawable() != null) {
+
+                pDialog = new ProgressDialog(Competencia_Promocion.this);
+                pDialog.setMessage("Rotando ...");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(false);
+                pDialog.show();
+
+                BitmapDrawable drawable = (BitmapDrawable) imagenFoto1.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
+                int angle = 90;
+                //imagenFoto.setRotation(angle);
+                bitmap = rotateImage(bitmap ,angle);
+                imagenFoto1.setImageBitmap(bitmap);
+
+                pDialog.dismiss();
+            }
+        });
+
+        imgder2.setOnClickListener(view -> {
+            imagenFoto2 = findViewById(R.id.imagenFoto2);
+            if (imagenFoto2.getDrawable() != null) {
+
+                pDialog = new ProgressDialog(Competencia_Promocion.this);
+                pDialog.setMessage("Rotando ...");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(false);
+                pDialog.show();
+
+                BitmapDrawable drawable = (BitmapDrawable) imagenFoto2.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
+                int angle = 90;
+                bitmap = rotateImage(bitmap ,angle);
+                imagenFoto2.setImageBitmap(bitmap);
+
+                pDialog.dismiss();
+            }
+        });
 
         // *****************************
         // Boton foto puede tomar una foto
@@ -366,6 +466,11 @@ public class Competencia_Promocion extends AppCompatActivity {
                     idoperacion =  7;       // PRODUCTO EXHIBIDO
                     iFoto1 = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), 7, idUsuario, idRuta, bitmap);
                     Toast.makeText(getApplicationContext(), "Foto Guardada " + iFoto1, Toast.LENGTH_LONG).show();
+
+                    imgizq1.setVisibility(View.VISIBLE);
+                    imgder1.setVisibility(View.VISIBLE);
+                    imgizq2.setVisibility(View.VISIBLE);
+                    imgder2.setVisibility(View.VISIBLE);
 
                     return;
                 }

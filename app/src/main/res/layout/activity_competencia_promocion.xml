@@ -53,10 +53,21 @@
                 android:id="@+id/Bloque1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margen_arriba"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:layout_below="@+id/Bloque">
+                android:gravity="center_horizontal|center_vertical"
+                android:layout_below="@+id/Bloque"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/Bloque"
+                android:weightSum="3"
+                android:layout_gravity="center">
+
+                <Button
+                    android:id="@+id/btnizquierda1"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="45dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/izq"
+                    tools:visibility="invisible" />
 
                 <Button
                     android:id="@+id/btnfoto1"
@@ -65,6 +76,15 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="5dp"
                     android:background="@drawable/producto_exhibido" />
+
+                <Button
+                    android:id="@+id/btnderecha1"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="40dp"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/der"
+                    tools:visibility="invisible" />
             </LinearLayout>
 
             <LinearLayout
@@ -101,10 +121,21 @@
                 android:id="@+id/Bloque3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margen_arriba"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:layout_below="@+id/Bloque2">
+                android:layout_below="@+id/Bloque2"
+                android:gravity="center_horizontal|center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/Bloque2"
+                android:weightSum="3"
+                android:layout_gravity="center">
+
+                <Button
+                    android:id="@+id/btnizquierda2"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="45dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/izq"
+                    tools:visibility="invisible" />
 
                 <Button
                     android:id="@+id/btnfoto2"
@@ -113,6 +144,17 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="5dp"
                     android:background="@drawable/producto_competencia" />
+
+                <Button
+                    android:id="@+id/btnderecha2"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="40dp"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/der"
+                    tools:visibility="invisible" />
+
+
             </LinearLayout>
 
             <LinearLayout
