@@ -615,13 +615,18 @@ public class listatiendas extends AppCompatActivity {
         @Override
         protected void onPreExecute()
         {
-            // TODO /Promotor/obtenertiendaspromotor5.php
+            // TODO /Promotor/obtenertiendaspromotor6.php
+            // ****************************************************
+            // Se utilizaba /Promotor/obtenertiendaspromotor5.php
+            // Pero no quitaba las tiendas visitadas de los supervisores hasta la versiòn 2.32
+            // ****************************************************
+
             String sTienda= txtBuscar.getText().toString().trim();
             if (sTienda.equals("")) {
-                sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor5.php?idpromotor=" + pidPromotor + "&tienda=%&idempresa=" + pIdempresa;
+                sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor6.php?idpromotor=" + pidPromotor + "&tienda=%&idempresa=" + pIdempresa;
             }
             else{
-                sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor5.php?idpromotor=" + pidPromotor + "&tienda=" + sTienda + "&idempresa=" + pIdempresa;
+                sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor6.php?idpromotor=" + pidPromotor + "&tienda=" + sTienda + "&idempresa=" + pIdempresa;
             }
             Log.e(TAG_ERROR, "Consulta Tiendas " + sRuta);
 
