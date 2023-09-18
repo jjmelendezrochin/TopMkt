@@ -25,8 +25,8 @@
 
             <ImageView
                 android:id="@+id/imagenFoto"
-                android:layout_width="match_parent"
-                android:layout_height="210dp"
+                android:layout_width="363dp"
+                android:layout_height="392dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginLeft="20dp"
