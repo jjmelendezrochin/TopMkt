@@ -60,6 +60,7 @@ import static com.topmas.top.Foto.UPLOAD_LATITUD;
 import static com.topmas.top.Foto.UPLOAD_LONGITUD;
 import static com.topmas.top.Foto.UPLOAD_SINDATOS;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
+import static com.topmas.top.Foto.rotateImage;
 
 public class Caducidad extends AppCompatActivity {
     // TODO /CatalogoProductos/upload_caducidad.php
@@ -71,6 +72,8 @@ public class Caducidad extends AppCompatActivity {
 
     public Date fechacaducidad = null;
     Button btnFoto= null;
+    Button imgizq;
+    Button imgder;
     File photoFile = null;
     Uri photoURI = null;
     String sRutaFoto;
@@ -140,6 +143,58 @@ public class Caducidad extends AppCompatActivity {
         // *****************************
         // Botón de foto
         btnFoto =  findViewById(R.id.btnFoto);
+        imgizq =  findViewById(R.id.btnizquierda);
+        imgder =  findViewById(R.id.btnderecha);
+
+        // Muestra imagen de inicio
+        imgizq.setVisibility(View.INVISIBLE);
+        imgder.setVisibility(View.INVISIBLE);
+
+        // ********************************
+        // Rotacion izquierda
+        imgizq.setOnClickListener(view -> {
+            imagenFoto = findViewById(R.id.imagenFoto);
+            if (imagenFoto.getDrawable() != null) {
+
+                pDialog = new ProgressDialog(Caducidad.this);
+                pDialog.setMessage("Rotando ...");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(false);
+                pDialog.show();
+
+                BitmapDrawable drawable = (BitmapDrawable) imagenFoto.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
+                int angle = -90;
+                //imagenFoto.setRotation(angle);
+                bitmap = rotateImage(bitmap ,angle);
+                imagenFoto.setImageBitmap(bitmap);
+
+                pDialog.dismiss();
+            }
+        });
+
+        // ********************************
+        // Rotacion derecha
+        imgder.setOnClickListener(view -> {
+            imagenFoto = findViewById(R.id.imagenFoto);
+            if (imagenFoto.getDrawable() != null) {
+
+                pDialog = new ProgressDialog(Caducidad.this);
+                pDialog.setMessage("Rotando ...");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(false);
+                pDialog.show();
+
+                BitmapDrawable drawable = (BitmapDrawable) imagenFoto.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
+                int angle = 90;
+                //imagenFoto.setRotation(angle);
+                bitmap = rotateImage(bitmap ,angle);
+                imagenFoto.setImageBitmap(bitmap);
+
+                pDialog.dismiss();
+            }
+        });
 
         // Boton foto puede tomar una foto
         btnFoto.setOnClickListener(new View.OnClickListener() {
@@ -453,6 +508,9 @@ public class Caducidad extends AppCompatActivity {
                 // Guardar la imagen despues de tomarla
                 iFoto = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), idoperacion, idUsuario, idRuta, bitmap);
                 Toast.makeText(getApplicationContext(), "Foto Guardada", Toast.LENGTH_LONG).show();
+
+                imgizq.setVisibility(View.VISIBLE);
+                imgder.setVisibility(View.VISIBLE);
 
                 almacenaImagen = new AlmacenaImagen(getApplicationContext());
                 int iCuenta = almacenaImagen.ObtenRegistros(11);

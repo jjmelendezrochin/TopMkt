@@ -47,8 +47,23 @@
                 android:id="@+id/Bloque"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_below="@+id/imagenFoto"
                 android:gravity="center_horizontal|center_vertical"
-                android:layout_below="@+id/imagenFoto">
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/imagenFoto"
+                android:weightSum="3"
+                android:layout_gravity="center"
+                >
+
+                <Button
+                    android:id="@+id/btnizquierda"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="45dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/izq"
+                    tools:visibility="invisible" />
 
                 <Button
                     android:id="@+id/btnFoto"
@@ -65,6 +80,15 @@
                     app:layout_constraintTop_toBottomOf="@+id/imagenFoto"
                     app:srcCompat="@android:drawable/ic_menu_camera"
                     android:textColor="@color/colorFuente"/>
+
+                <Button
+                    android:id="@+id/btnderecha"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="40dp"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/der"
+                    tools:visibility="invisible" />
 
             </LinearLayout>
 
