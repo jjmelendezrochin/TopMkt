@@ -7,9 +7,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -98,6 +100,7 @@ import static com.topmas.top.Constants.TAG_TIENDA;
 import static com.topmas.top.Constants.TAG_UDA;
 import static com.topmas.top.Constants.TAG_UDC;
 import static com.topmas.top.Constants.TAG_UPC;
+import static com.topmas.top.Constants.TAG_USUARIO;
 import static com.topmas.top.Constants.TAG_VERSIONAPP;
 import static com.topmas.top.Constants.TAG_VISTA;
 import static com.topmas.top.Constants.TAG_empaque;
@@ -365,6 +368,7 @@ public class listatiendas extends AppCompatActivity {
                             .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    funciones.limpiaVariablessesion(getApplicationContext());
                                     Intent main = new Intent(getApplicationContext(),
                                             MainActivity.class);
                                     startActivity(main);
@@ -380,6 +384,7 @@ public class listatiendas extends AppCompatActivity {
                 }
                 else
                 {
+                    funciones.limpiaVariablessesion(getApplicationContext());
                     Intent main = new Intent(getApplicationContext(),
                             MainActivity.class);
                     startActivity(main);

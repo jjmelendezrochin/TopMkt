@@ -1,10 +1,15 @@
 package com.topmas.top;
 
+import static com.topmas.top.Constants.TAG_IDEMPRESA;
+import static com.topmas.top.Constants.TAG_IDPROMOTOR;
+import static com.topmas.top.Constants.TAG_USUARIO;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -16,6 +21,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -237,4 +243,22 @@ public class Funciones {
             return true;
         return false;
     }
+
+    // ***************************************
+    // Limpia variables al salir
+    public void limpiaVariablessesion(Context contexto) {
+        // **************************************
+        /* Limpia variables de sesion */
+        // TODO almacena los valores de la empresa al inicio
+        SharedPreferences preferencias =
+                PreferenceManager.getDefaultSharedPreferences(contexto);
+        SharedPreferences.Editor editor = preferencias.edit();
+                        editor.putString(TAG_IDEMPRESA
+                                , String.valueOf("0"));
+                        editor.putString(TAG_IDPROMOTOR, String.valueOf("0"));
+                        editor.putString(TAG_USUARIO, String.valueOf("0"));
+                        editor.commit();
+        // **************************************
+    }
+
 }
