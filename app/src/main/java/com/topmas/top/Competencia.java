@@ -62,6 +62,7 @@ import static com.topmas.top.Foto.UPLOAD_LATITUD;
 import static com.topmas.top.Foto.UPLOAD_LONGITUD;
 import static com.topmas.top.Foto.UPLOAD_SINDATOS;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
+import static com.topmas.top.Foto.rotateImage;
 
 public class Competencia extends AppCompatActivity {
 
@@ -76,6 +77,8 @@ public class Competencia extends AppCompatActivity {
     String canjes;
 
     Button btnFoto= null;
+    Button imgizq;
+    Button imgder;
     File photoFile = null;
     Uri photoURI = null;
     ImageView imagenFoto;
@@ -133,6 +136,59 @@ public class Competencia extends AppCompatActivity {
         // *****************************
         // Botón de foto
         btnFoto =  findViewById(R.id.btnFoto);
+        imgizq =  findViewById(R.id.btnizquierda);
+        imgder =  findViewById(R.id.btnderecha);
+
+        // Oculta botones rotación
+        imgizq.setVisibility(View.INVISIBLE);
+        imgder.setVisibility(View.INVISIBLE);
+
+        // ********************************
+        // Rotacion izquierda
+        imgizq.setOnClickListener(view -> {
+            imagenFoto = findViewById(R.id.imagenFoto);
+            if (imagenFoto.getDrawable() != null) {
+
+                pDialog = new ProgressDialog(Competencia.this);
+                pDialog.setMessage("Rotando ...");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(false);
+                pDialog.show();
+
+                BitmapDrawable drawable = (BitmapDrawable) imagenFoto.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
+                int angle = -90;
+                //imagenFoto.setRotation(angle);
+                bitmap = rotateImage(bitmap ,angle);
+                imagenFoto.setImageBitmap(bitmap);
+
+                pDialog.dismiss();
+            }
+        });
+
+        // ********************************
+        // Rotacion derecha
+        imgder.setOnClickListener(view -> {
+            imagenFoto = findViewById(R.id.imagenFoto);
+            if (imagenFoto.getDrawable() != null) {
+
+                pDialog = new ProgressDialog(Competencia.this);
+                pDialog.setMessage("Rotando ...");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(false);
+                pDialog.show();
+
+                BitmapDrawable drawable = (BitmapDrawable) imagenFoto.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
+                int angle = 90;
+                //imagenFoto.setRotation(angle);
+                bitmap = rotateImage(bitmap ,angle);
+                imagenFoto.setImageBitmap(bitmap);
+
+                pDialog.dismiss();
+            }
+        });
+
 
         // Boton foto puede tomar una foto
         btnFoto.setOnClickListener(new View.OnClickListener() {
@@ -295,6 +351,9 @@ public class Competencia extends AppCompatActivity {
                 iFoto = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), idoperacion, pName, idRuta, bitmap);
 
                 Toast.makeText(getApplicationContext(), "Foto Guardada", Toast.LENGTH_LONG).show();
+
+                imgizq.setVisibility(View.VISIBLE);
+                imgder.setVisibility(View.VISIBLE);
 
                 almacenaImagen = new AlmacenaImagen(getApplicationContext());
                 int iCuenta = almacenaImagen.ObtenRegistros(11);

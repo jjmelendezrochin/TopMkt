@@ -146,7 +146,7 @@ public class Caducidad extends AppCompatActivity {
         imgizq =  findViewById(R.id.btnizquierda);
         imgder =  findViewById(R.id.btnderecha);
 
-        // Muestra imagen de inicio
+        // Oculta botones rotación
         imgizq.setVisibility(View.INVISIBLE);
         imgder.setVisibility(View.INVISIBLE);
 
