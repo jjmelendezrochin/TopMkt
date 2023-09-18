@@ -20,11 +20,8 @@ public class RequestHandler {
                                   HashMap<String, String> postDataParams) {
 
         Funciones funciones = new Funciones();
-        Usuario usr = new Usuario();
-        String pName;
         URL url;
 
-        pName = usr.getnombre();
         StringBuilder sb = new StringBuilder();
         try {
             url = new URL(requestURL);
@@ -57,7 +54,6 @@ public class RequestHandler {
             }
 
         } catch (Exception e) {
-            // funciones.RegistraError(pName, "RequestHandler ,MuestraImagen", e.getMessage().trim(), null,null);
             //String Error = e.getMessage();
             //Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al obtener la operacion del promotor " +  Error,Toast.LENGTH_LONG).show();
             // e.printStackTrace();

@@ -73,7 +73,7 @@ public class listapromociones extends AppCompatActivity {
         //View view = this.findViewById(R.id.LinearLayout);
         lista =  findViewById(R.id.lista1);
         txtBuscar = (findViewById(R.id.txtBuscar));
-        // pName = usr.getnombre();
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         pName = preferences.getString(TAG_USUARIO, pName);
 

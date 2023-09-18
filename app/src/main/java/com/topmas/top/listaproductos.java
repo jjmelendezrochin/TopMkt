@@ -3,10 +3,12 @@ package com.topmas.top;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -46,6 +48,7 @@ import static com.topmas.top.Constants.TAG_RESPUESTA;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
 import static com.topmas.top.Constants.TAG_TIENDA;
 import static com.topmas.top.Constants.TAG_UPC;
+import static com.topmas.top.Constants.TAG_USUARIO;
 
 
 public class listaproductos extends AppCompatActivity {
@@ -57,7 +60,7 @@ public class listaproductos extends AppCompatActivity {
     Double plongitud = 0.0;
     String pdireccion = "";
     String ptienda = "";
-    String pName = "";
+    String idUsuario = "";
     EditText txtBuscar;
 
     private Usuario usr = new Usuario();
@@ -81,7 +84,14 @@ public class listaproductos extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listaproductos);
-        pName = usr.getnombre();
+        // ***************************************
+        // Obtiene el nombre del usuario en y promotor las preferencias
+        SharedPreferences preferencias =
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        idUsuario = preferencias.getString(TAG_USUARIO, usr.getnombre());
+        String spromotor = preferencias.getString(TAG_IDPROMOTOR, String.valueOf(usr.getid()));
+        pidPromotor = Integer.valueOf(spromotor);
+        // ***************************************
 
         //View view = this.findViewById(R.id.LinearLayout);
         lista = findViewById(R.id.lista1);
@@ -93,13 +103,12 @@ public class listaproductos extends AppCompatActivity {
         platitud = i.getDoubleExtra(TAG_LATITUD, 0.0);
         plongitud = i.getDoubleExtra(TAG_LONGITUD, 0.0);
         pdireccion = i.getStringExtra(TAG_DIRECCION);
-        pidPromotor = usr.getid();
         pidEmpresa = usr.getidempresa();
         almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
 
         Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
             //log(throwable.getMessage(), thread.getId());
-            funciones.RegistraError(pName, "listaproductos setDefaultUncaughtExceptionHandler", (Exception) throwable, listaproductos.this, getApplicationContext());
+            funciones.RegistraError(idUsuario, "listaproductos setDefaultUncaughtExceptionHandler", (Exception) throwable, listaproductos.this, getApplicationContext());
         });
 
         //****************************
@@ -227,14 +236,14 @@ public class listaproductos extends AppCompatActivity {
                 sRespusta = sb.toString();
 
             } catch (Exception ex) {
-                funciones.RegistraError(pName, "listaproductos ,MuestraImagen 1", ex, listaproductos.this,getApplicationContext());
+                funciones.RegistraError(idUsuario, "listaproductos ,MuestraImagen 1", ex, listaproductos.this,getApplicationContext());
                 Error = ex.getMessage();
             } finally {
                 try {
                     assert reader != null;
                     reader.close();
                 } catch (Exception ex) {
-                    funciones.RegistraError(pName, "listaproductos ,MuestraImagen 2", ex, listaproductos.this,getApplicationContext());
+                    funciones.RegistraError(idUsuario, "listaproductos ,MuestraImagen 2", ex, listaproductos.this,getApplicationContext());
                     Error = ex.getMessage();
                 }
             }
@@ -273,7 +282,7 @@ public class listaproductos extends AppCompatActivity {
 
 
                 } catch (JSONException e) {
-                    funciones.RegistraError(pName, "listaproductos, ConsultaProductos", e, listaproductos.this,getApplicationContext());
+                    funciones.RegistraError(idUsuario, "listaproductos, ConsultaProductos", e, listaproductos.this,getApplicationContext());
                     String Resultado = "Se generó el siguiente error : " + e.toString();
 
                     // Log.e(TAG_ERROR,Resultado);
@@ -372,7 +381,7 @@ public class listaproductos extends AppCompatActivity {
             loadedImage = BitmapFactory.decodeStream(conn.getInputStream());
             return loadedImage;
         } catch (IOException e) {
-            funciones.RegistraError(pName, "listaproductos, downloadFile", e, listaproductos.this,getApplicationContext());
+            funciones.RegistraError(idUsuario, "listaproductos, downloadFile", e, listaproductos.this,getApplicationContext());
             // e.printStackTrace();
             return null;
         }

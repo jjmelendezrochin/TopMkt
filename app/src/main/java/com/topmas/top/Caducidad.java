@@ -45,6 +45,7 @@ import java.util.HashMap;
 import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_ERROR;
+import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
 import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
@@ -89,7 +90,7 @@ public class Caducidad extends AppCompatActivity {
     ProgressDialog pDialog;
 
     Usuario usr = new Usuario();
-    String pName = "";
+    String idUsuario = "";
     static final int REQUEST_IMAGE_CAPTURE = 1;
     Funciones funciones = new Funciones();
     AlmacenaImagen almacenaImagen;
@@ -106,12 +107,12 @@ public class Caducidad extends AppCompatActivity {
         almacenaImagen = new AlmacenaImagen(getApplicationContext());
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        pName = preferences.getString(TAG_USUARIO, pName);
+        idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
 
         // Activity activity = (Activity) context;
         Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
             //log(throwable.getMessage(), thread.getId());
-            funciones.RegistraError(pName, "Caducidad setDefaultUncaughtExceptionHandler", (Exception) throwable, Caducidad.this, getApplicationContext());
+            funciones.RegistraError(idUsuario, "Caducidad setDefaultUncaughtExceptionHandler", (Exception) throwable, Caducidad.this, getApplicationContext());
         });
 
 
@@ -132,7 +133,6 @@ public class Caducidad extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
                 idproducto = Integer.parseInt(String.valueOf(id));
                 Toast.makeText(getApplicationContext(),"Producto " + idproducto, Toast.LENGTH_SHORT);
-                // Log.e(TAG_ERROR, String.valueOf(idproducto));
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
@@ -151,9 +151,7 @@ public class Caducidad extends AppCompatActivity {
                 // Create the File where the photo should go
                 try {
                     photoFile = createImageFile();
-                    // Log.e("Mensaje", "archivo creado" + photoFile.getAbsolutePath());
                 } catch (IOException ex) {
-                   //  funciones.RegistraError(pName, "Caducidad, SetOnClickListener", ex, Caducidad.this, getApplicationContext());
                     Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al crear archivo de foto " +  ex.getMessage(),Toast.LENGTH_LONG).show();
                 }
 
@@ -222,14 +220,15 @@ public class Caducidad extends AppCompatActivity {
                         {
                             LimpiaCajas();
                             Toast.makeText(getApplicationContext(), "Dato almacenado",Toast.LENGTH_LONG);
+                            finish();
                         }
                     }
                 } catch (NumberFormatException ex) {
-                    // funciones.RegistraError(pName, "Caducidad, cmdGuardar.setOnClickListener", ex, Caducidad.this, getApplicationContext());
+                    // funciones.RegistraError(idUsuario, "Caducidad, cmdGuardar.setOnClickListener", ex, Caducidad.this, getApplicationContext());
                     Toast.makeText( getApplicationContext(),"Todos los campos deben tener datos",
                             Toast.LENGTH_LONG).show();
                 } catch (Exception ex) {
-                    // funciones.RegistraError(pName, "Caducidad, cmdGuardar.setOnClickListener", ex, Caducidad.this, getApplicationContext());
+                    // funciones.RegistraError(idUsuario, "Caducidad, cmdGuardar.setOnClickListener", ex, Caducidad.this, getApplicationContext());
                     Toast.makeText( getApplicationContext(),"Error " + ex.getMessage(),
                             Toast.LENGTH_LONG).show();
                 }
@@ -245,7 +244,7 @@ public class Caducidad extends AppCompatActivity {
                 try {
                     finish();
                 } catch (Exception e) {
-                    funciones.RegistraError(pName, "Caducidad, fab.setOnClickListener", e, Caducidad.this, getApplicationContext());
+                    funciones.RegistraError(idUsuario, "Caducidad, fab.setOnClickListener", e, Caducidad.this, getApplicationContext());
                 }
             }
         });
@@ -334,7 +333,7 @@ public class Caducidad extends AppCompatActivity {
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
                 data.put(UPLOAD_LONGITUD, String.valueOf(pLongitud));
-                data.put(UPLOAD_IDUSUARIO, pName);
+                data.put(UPLOAD_IDUSUARIO, idUsuario);
                 data.put(UPLOAD_IDOPERACION, String.valueOf(idoperacion));
 
                 data.put(UPLOAD_IMAGEN, uploadImage);
@@ -365,6 +364,7 @@ public class Caducidad extends AppCompatActivity {
                     imagenFoto.setImageResource(android.R.color.transparent);
                 }
                 LimpiaCajas();
+                finish();
             }
 
         }
@@ -376,7 +376,7 @@ public class Caducidad extends AppCompatActivity {
         }
         catch( java.lang.NullPointerException e)
         {
-            // funciones.RegistraError(pName, "Caducidad, uploadCaducidad ", e, Caducidad.this, getApplicationContext());
+            // funciones.RegistraError(idUsuario, "Caducidad, uploadCaducidad ", e, Caducidad.this, getApplicationContext());
             // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
             Toast.makeText(getApplicationContext(), "Error al colocar una foto de caducidad", Toast.LENGTH_LONG).show();
         }
@@ -415,7 +415,7 @@ public class Caducidad extends AppCompatActivity {
             sRutaFoto = image.getAbsolutePath();
             return image;
         } catch (IOException e) {
-            // funciones.RegistraError(pName, "Caducidad, createImageFile ", e, Caducidad.this, getApplicationContext());
+            // funciones.RegistraError(idUsuario, "Caducidad, createImageFile ", e, Caducidad.this, getApplicationContext());
             // e.printStackTrace();
             return null;
         }
@@ -423,15 +423,23 @@ public class Caducidad extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         imagenFoto = findViewById(R.id.imagenFoto);
         try {
             if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
                 funciones.grabImage(this, photoURI, imagenFoto);
 
-                idpromotor = usr.getid();
-                pName = usr.getnombre();
                 pLatitud = usr.getLatitud();
                 pLongitud = usr.getLongitud();
+
+                // ***************************************
+                // Obtiene el nombre del usuario en y promotor las preferencias
+                SharedPreferences preferencias =
+                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                String spromotor = preferencias.getString(TAG_IDPROMOTOR, String.valueOf(idpromotor));
+                idUsuario = preferencias.getString(TAG_USUARIO, idUsuario);
+                idpromotor = Integer.valueOf(spromotor);
+                // ***************************************
 
                 // **********************
                 Calendar c = Calendar.getInstance();
@@ -443,26 +451,19 @@ public class Caducidad extends AppCompatActivity {
                 Bitmap bitmap = drawable.getBitmap();
                 // ***********************
                 // Guardar la imagen despues de tomarla
-                iFoto = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), idoperacion, pName, idRuta, bitmap);
-                //Log.e(TAG_ERROR, "Se Guardo la foto almacenada " + iFoto);
+                iFoto = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), idoperacion, idUsuario, idRuta, bitmap);
                 Toast.makeText(getApplicationContext(), "Foto Guardada", Toast.LENGTH_LONG).show();
 
                 almacenaImagen = new AlmacenaImagen(getApplicationContext());
                 int iCuenta = almacenaImagen.ObtenRegistros(11);
-                if(iFoto==0)
-                {
-                    Toast.makeText(getApplicationContext(), "No se permiten Chekin/out duplicados ",Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    // Toast.makeText(getApplicationContext(), "Imágenes almacenadas " + String.valueOf(iCuenta),Toast.LENGTH_SHORT).show();
+                if (iFoto == 0) {
+                    Toast.makeText(getApplicationContext(), "No se permiten Chekin/out duplicados ", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Imágenes almacenadas " + String.valueOf(iCuenta),Toast.LENGTH_SHORT).show();
+
                 }
             }
-        }
-        catch( java.lang.NullPointerException e)
-        {
-            // funciones.RegistraError(pName, "Caducidad, onActivityResult ", e, Caducidad.this, getApplicationContext());
-            // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
+        } catch (NullPointerException e) {
             Toast.makeText(getApplicationContext(), "Error al cargar una foto de caducidad", Toast.LENGTH_LONG).show();
         }
     }

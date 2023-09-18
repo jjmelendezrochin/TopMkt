@@ -64,9 +64,9 @@ import static com.topmas.top.Foto.UPLOAD_SINDATOS;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
 
 public class Competencia extends AppCompatActivity {
+
     // TODO /PhotoUpload/upload_competencia.php
     public static final String UPLOAD_COMPETENCIA = TAG_SERVIDOR + "/PhotoUpload/upload_competencia.php";
-
     static final int REQUEST_IMAGE_CAPTURE = 1;
     String sRutaFoto;
     String pName = "";

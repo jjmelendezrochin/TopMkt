@@ -100,7 +100,7 @@ public class Producto extends AppCompatActivity {
         pidproducto = i.getIntExtra(TAG_IDPRODUCTO, pidproducto);
         pidruta = i.getIntExtra(TAG_IDRUTA, pidruta);
         pUpc = i.getStringExtra(TAG_UPC);
-        // pName = usr.getnombre();
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         pName = preferences.getString(TAG_USUARIO, pName);
 

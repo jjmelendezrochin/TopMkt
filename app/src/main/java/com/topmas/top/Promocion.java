@@ -65,7 +65,7 @@ public class Promocion extends AppCompatActivity {
         idpromotor = i.getIntExtra(TAG_IDPROMOTOR, 0);
         idruta = i.getIntExtra(TAG_IDRUTA, 0);
         url = i.getStringExtra(TAG_url);
-        // pName = usr.getnombre();
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         pName = preferences.getString(TAG_USUARIO, pName);
 

@@ -4,7 +4,6 @@ import static com.topmas.top.Constants.CONST_ACCESOLOCAL;
 import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_DISTANCIA;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
-import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
 import static com.topmas.top.Constants.TAG_OPERACION;
@@ -25,7 +24,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -532,10 +530,17 @@ public class Foto extends AppCompatActivity {
                 btnderecha.setVisibility(View.VISIBLE);
                 btnizquierda.setVisibility(View.VISIBLE);
 
-                idpromotor = usr.getid();
-                idUsuario = usr.getnombre();
                 pLatitud = usr.getLatitud();
                 pLongitud = usr.getLongitud();
+
+                // ***************************************
+                // Obtiene el nombre del usuario en y promotor las preferencias
+                SharedPreferences preferencias =
+                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                String spromotor = preferencias.getString(TAG_IDPROMOTOR, String.valueOf(idpromotor));
+                idUsuario = preferencias.getString(TAG_USUARIO, idUsuario);
+                idpromotor = Integer.valueOf(spromotor);
+                // ***************************************
 
                 // **********************
                 Calendar c = Calendar.getInstance();

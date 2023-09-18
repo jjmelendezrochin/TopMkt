@@ -417,7 +417,7 @@ public class listatiendas extends AppCompatActivity {
             // ******************************************
             // Si hay tiendas en la tabla de tiendas entonces debe de leerlas y colocarlas
             // en los arreglos
-            Log.e(TAG_ERROR, "iNumTiendas " + iNumTiendas);
+            //Log.e(TAG_ERROR, "iNumTiendas " + iNumTiendas);
             if (iNumTiendas > 0) {
                 sTienda= txtBuscar.getText().toString().trim();
                 MuestraTiendasTelefono(sTienda);

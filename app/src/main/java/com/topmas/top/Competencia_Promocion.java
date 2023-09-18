@@ -2,22 +2,12 @@ package com.topmas.top;
 
 import static com.topmas.top.Competencia.REQUEST_IMAGE_CAPTURE;
 import static com.topmas.top.Constants.ERROR_FOTO;
-import static com.topmas.top.Constants.TAG_ACTIVIDADBTL;
-import static com.topmas.top.Constants.TAG_CANJES;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_ERROR;
-import static com.topmas.top.Constants.TAG_IDEMOSTRADOR;
-import static com.topmas.top.Constants.TAG_IDEMPAQUE;
 import static com.topmas.top.Constants.TAG_IDRUTA;
-import static com.topmas.top.Constants.TAG_IEMPLAYE;
-import static com.topmas.top.Constants.TAG_IEXHIBIDOR;
-import static com.topmas.top.Constants.TAG_INFO;
-import static com.topmas.top.Constants.TAG_PRECIO;
-import static com.topmas.top.Constants.TAG_PRESENTACION;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
 import static com.topmas.top.Constants.TAG_UPC;
 import static com.topmas.top.Constants.TAG_USUARIO;
-import static com.topmas.top.Constants.TAG_producto;
 import static com.topmas.top.Foto.UPLOAD_FECHAHORA;
 import static com.topmas.top.Foto.UPLOAD_IDOPERACION;
 import static com.topmas.top.Foto.UPLOAD_IDPROMOTOR;
@@ -29,9 +19,6 @@ import static com.topmas.top.Foto.UPLOAD_LATITUD;
 import static com.topmas.top.Foto.UPLOAD_LONGITUD;
 import static com.topmas.top.Foto.UPLOAD_SINDATOS;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -56,6 +43,9 @@ import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -96,7 +86,7 @@ public class Competencia_Promocion extends AppCompatActivity {
     ImageView imagenFoto2;
     int iconPromo;
     int idRuta = 0;
-    String pName = "";
+    String idUsuario = "";
     int idoperacion = 0;
     double pLatitud = 0;
     double pLongitud = 0;
@@ -128,10 +118,10 @@ public class Competencia_Promocion extends AppCompatActivity {
         pLongitud = usr.getLongitud();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        pName = preferences.getString(TAG_USUARIO, pName);
+        idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
 
         Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
-            funciones.RegistraError(pName, "Competencia setDefaultUncaughtExceptionHandler", (Exception) throwable, Competencia_Promocion.this, getApplicationContext());
+            funciones.RegistraError(idUsuario, "Competencia setDefaultUncaughtExceptionHandler", (Exception) throwable, Competencia_Promocion.this, getApplicationContext());
         });
 
         //****************************
@@ -374,7 +364,7 @@ public class Competencia_Promocion extends AppCompatActivity {
                     // ***********************
                     // Guardar la imagen despues de tomarla
                     idoperacion =  7;       // PRODUCTO EXHIBIDO
-                    iFoto1 = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), 7, pName, idRuta, bitmap);
+                    iFoto1 = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), 7, idUsuario, idRuta, bitmap);
                     Toast.makeText(getApplicationContext(), "Foto Guardada " + iFoto1, Toast.LENGTH_LONG).show();
 
                     return;
@@ -387,13 +377,13 @@ public class Competencia_Promocion extends AppCompatActivity {
                     // ***********************
                     // Guardar la imagen despues de tomarla
                     idoperacion =  8;       // COMPETENCIA 8
-                    iFoto2 = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), idoperacion, pName, idRuta, bitmap);
+                    iFoto2 = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), idoperacion, idUsuario, idRuta, bitmap);
                     Toast.makeText(getApplicationContext(), "Foto Guardada " + iFoto2, Toast.LENGTH_LONG).show();
                     return;
                 }
             }
         } catch (NullPointerException e) {
-            // unciones.RegistraError(pName, "Competencia, onActivityResult", e, Competencia.this, getApplicationContext());
+            // unciones.RegistraError(idUsuario, "Competencia, onActivityResult", e, Competencia.this, getApplicationContext());
             // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
             Toast.makeText(getApplicationContext(), "Error al colocar una foto de competencia", Toast.LENGTH_LONG).show();
         }
@@ -444,7 +434,7 @@ public class Competencia_Promocion extends AppCompatActivity {
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
                 data.put(UPLOAD_LONGITUD, String.valueOf(pLongitud));
-                data.put(UPLOAD_IDUSUARIO, pName);
+                data.put(UPLOAD_IDUSUARIO, idUsuario);
                 data.put(UPLOAD_IDOPERACION, String.valueOf(idoperacion));
                 data.put(UPLOAD_IDRUTA, String.valueOf(idRuta));
                 data.put(UPLOAD_FECHAHORA, fechahora);
@@ -501,8 +491,6 @@ public class Competencia_Promocion extends AppCompatActivity {
         }
         catch( java.lang.NullPointerException e)
         {
-            // funciones.RegistraError(pName, "Competencia, uploadImageCompetencia", e, Competencia.this, getApplicationContext());
-            // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
             Toast.makeText(getApplicationContext(), "Error al cargar una foto de competencia", Toast.LENGTH_LONG).show();
         }
     }
