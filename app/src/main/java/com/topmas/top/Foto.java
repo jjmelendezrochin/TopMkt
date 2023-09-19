@@ -4,6 +4,7 @@ import static com.topmas.top.Constants.CONST_ACCESOLOCAL;
 import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_DISTANCIA;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
+import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
 import static com.topmas.top.Constants.TAG_OPERACION;
@@ -24,6 +25,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -247,6 +249,8 @@ public class Foto extends AppCompatActivity {
 
                     }
                 } catch (Exception ex) {
+                    funciones.RegistraError(idUsuario, "Foto setDefaultUncaughtExceptionHandler", (Exception) ex, Foto.this, getApplicationContext());
+                    // Log.e(TAG_ERROR, "Error camara " + ex.getMessage());
                     Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al tomar la foto " +  ex.getMessage(),Toast.LENGTH_LONG).show();
                 }
             }
