@@ -40,7 +40,7 @@
         android:background="@drawable/img_clave"
         android:ems="10"
         android:hint="Clave"
-        android:inputType="textPassword"
+        android:inputType="textPersonName"
         android:paddingStart="65dp"
         android:text="@string/resClave"
         android:textColor="@color/colorPrimary"

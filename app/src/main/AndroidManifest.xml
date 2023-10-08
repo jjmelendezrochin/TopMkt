@@ -4,9 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-<!--    <uses-permission android:name="android.permission.CAMERA"/>-->
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- <uses-permission android:name="android.permission.CAMERA"/> -->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:requestLegacyExternalStorage="true" />
@@ -14,7 +12,12 @@
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="true" />
+        android:required="true" /> <!-- Habilitar camara en motorola 5g5 -->
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
 
     <application
         android:allowBackup="true"
@@ -24,6 +27,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".Canjes"
+            android:exported="false" />
         <activity
             android:name=".Competencia_Promocion"
             android:exported="false" />
@@ -84,12 +90,5 @@
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
-
-    <!-- Habilitar camara en motorola 5g5 -->
-    <queries>
-        <intent>
-            <action android:name="android.media.action.IMAGE_CAPTURE" />
-        </intent>
-    </queries>
 
 </manifest>

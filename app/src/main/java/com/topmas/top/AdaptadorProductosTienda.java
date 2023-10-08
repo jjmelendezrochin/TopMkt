@@ -23,6 +23,8 @@ import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_USUARIO;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
 
+import org.json.JSONException;
+
 public class AdaptadorProductosTienda extends BaseAdapter {
     private int[] ArrProductos;
     private int[] ArrRutas;
@@ -46,7 +48,6 @@ public class AdaptadorProductosTienda extends BaseAdapter {
         this.ArrProductos = aproductos;
         this.ArrRutas= arutas;
         this.ArrDescripciones= adescripciones;
-        //this.ArrPosiciones = aposiciones;
         this.ArrUpcs = aupcs;
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -77,60 +78,69 @@ public class AdaptadorProductosTienda extends BaseAdapter {
         TextView cajaidproducto = (TextView) view.findViewById(R.id.idproducto);
         TextView cajaidruta = (TextView) view.findViewById(R.id.idruta);
         TextView cajaproducto = (TextView) view.findViewById(R.id.txtProducto);
-        //TextView cajaposiciones = (TextView) view.findViewById(R.id.posiciones);
         TextView cajaupc = (TextView) view.findViewById(R.id.upc_producto);
 
-        if (!ArrDescripciones[position].equals("") &&
-                ArrDescripciones[position] != null ) {
+        //Log.e(TAG_ERROR,  " ** position " + position);
+        //Log.e(TAG_ERROR,  " ** arreglo " + ArrDescripciones[position]);
+        //Log.e(TAG_ERROR,  " ** cuenta " + ArrDescripciones.length);
 
-            if (funciones.RevisarConexion(context)) {
-                // ********************************
-                // Verifica si hay un dato en el arreglo si no lo hay lo obtiene de web
-                try {
-                    if (funciones.ObtenImagen(position) == null) {
-                        // Log.e(TAG_ERROR, "1. No Hay imagen " + String.valueOf(position));
-                        sRutaImagen = TAG_SERVIDOR +  "/ImagenesProductos/" +
+        try {
+            if (!ArrDescripciones[position].equals("") &&
+                    ArrDescripciones[position] != null ) {
+
+                if (funciones.RevisarConexion(context)) {
+                    // ********************************
+                    // Verifica si hay un dato en el arreglo si no lo hay lo obtiene de web
+                    try {
+                        if (funciones.ObtenImagen(position) == null) {
+                            // Log.e(TAG_ERROR, "1. No Hay imagen " + String.valueOf(position));
+                            sRutaImagen = TAG_SERVIDOR +  "/ImagenesProductos/" +
+                                    String.valueOf(ArrProductos[position]) + "_" + ArrUpcs[position] + ".png";
+                            //Log.e(TAG_ERROR, "Ruta imagen1 " + sRutaImagen);
+                            //Log.e(TAG_ERROR, "Posicion " + position);
+                            MuestraImagen(sRutaImagen,
+                                    imagen,
+                                     almacenaImagen,
+                                    ArrProductos[position],
+                                    position);
+                        } else {
+                             // Log.e(TAG_ERROR, "2. Hay imagen "+ String.valueOf( position));
+                            imagen.setImageBitmap(funciones.ObtenImagen(position));
+                        }
+                    } catch (NullPointerException e) {
+                         // Log.e(TAG_ERROR, "1a. No Hay imagen "+ String.valueOf( position));
+                        // funciones.RegistraError(pName, "AdaptadorProductosTienda, establecepromocion", e, context, this.context);
+                        sRutaImagen = "https://www.topmas.mx/TopMas/ImagenesProductos/" +
                                 String.valueOf(ArrProductos[position]) + "_" + ArrUpcs[position] + ".png";
-                        Log.e(TAG_ERROR, "Ruta imagen1 " + sRutaImagen);
+                        Log.e(TAG_ERROR, "Ruta imagen2 " + sRutaImagen);
                         MuestraImagen(sRutaImagen,
                                 imagen,
-                                 almacenaImagen,
+                                almacenaImagen,
                                 ArrProductos[position],
                                 position);
-                    } else {
-                         // Log.e(TAG_ERROR, "2. Hay imagen "+ String.valueOf( position));
-                        imagen.setImageBitmap(funciones.ObtenImagen(position));
+
                     }
-                } catch (NullPointerException e) {
-                     // Log.e(TAG_ERROR, "1a. No Hay imagen "+ String.valueOf( position));
-                    // funciones.RegistraError(pName, "AdaptadorProductosTienda, establecepromocion", e, context, this.context);
-                    sRutaImagen = "https://www.topmas.mx/TopMas/ImagenesProductos/" +
-                            String.valueOf(ArrProductos[position]) + "_" + ArrUpcs[position] + ".png";
-                    Log.e(TAG_ERROR, "Ruta imagen2 " + sRutaImagen);
-                    MuestraImagen(sRutaImagen,
-                            imagen,
-                            almacenaImagen,
-                            ArrProductos[position],
-                            position);
-
                 }
+
+                // *************************************************
+                cajaidproducto.setText(String.valueOf(ArrProductos[position]));
+                cajaidproducto.setVisibility(View.GONE);
+                cajaidruta.setText(String.valueOf(ArrRutas[position]));
+                cajaidruta.setVisibility(View.GONE);
+                cajaproducto.setText(ArrDescripciones[position]);
+                cajaproducto.setVisibility(View.VISIBLE);
+                cajaupc.setText(ArrUpcs[position]);
+                cajaupc.setVisibility(View.GONE);
+
+                return view;
+
+            } else {
+                return null;
             }
-
-            // *************************************************
-            cajaidproducto.setText(String.valueOf(ArrProductos[position]));
-            cajaidproducto.setVisibility(View.GONE);
-            cajaidruta.setText(String.valueOf(ArrRutas[position]));
-            cajaidruta.setVisibility(View.GONE);
-            cajaproducto.setText(ArrDescripciones[position]);
-            cajaproducto.setVisibility(View.VISIBLE);
-            cajaupc.setText(ArrUpcs[position]);
-            cajaupc.setVisibility(View.GONE);
-
-            return view;
-
-        } else {
-            return null;
+        } catch (Exception e) {
+            String Resultado = "Se generó el siguiente error : " + e.toString();
         }
+        return view;
     }
 
 

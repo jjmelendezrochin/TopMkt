@@ -225,11 +225,6 @@ public class MenuTienda extends AppCompatActivity
         ImageView imgproductomenu = findViewById(R.id.imgproductomenu);
         imgproductomenu.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
-
-                //Log.e(TAG_ERROR,  " ** idruta " + idruta);
-                //Log.e(TAG_ERROR,  " ** pidpromotor " + pidpromotor);
-                //Log.e(TAG_ERROR,  " ** tienda " + tienda);
-
                 Intent ListaProductos = new Intent(getApplicationContext(), listaproductos.class);
                 ListaProductos.putExtra(TAG_IDRUTA, idruta);
                 ListaProductos.putExtra(TAG_IDPROMOTOR, pidpromotor);
@@ -271,6 +266,17 @@ public class MenuTienda extends AppCompatActivity
                 Intent competencia1 = new Intent(getApplicationContext(), Competencia_Promocion.class);
                 competencia1.putExtra(TAG_IDRUTA, idruta);
                 startActivity(competencia1);
+            }
+        });
+
+        //****************************
+        // Imagen Canjes
+        ImageView imgCanejes = findViewById(R.id.imgCanjes);
+        imgCanejes.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view) {
+                Intent canjes = new Intent(getApplicationContext(), Canjes.class);
+                canjes.putExtra(TAG_IDRUTA, idruta);
+                startActivity(canjes);
             }
         });
 
