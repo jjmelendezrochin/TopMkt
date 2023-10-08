@@ -183,6 +183,12 @@ public class listaproductos extends AppCompatActivity {
         String data = "";
         String Error = null;
 
+        int[] idproducto2 ;
+        int[] idruta2 ;
+        String[] descripcionproducto2;
+        String[] upc2;
+
+
         @Override
         protected void onPreExecute() {
             String sProducto = txtBuscar.getText().toString().trim();
@@ -190,7 +196,7 @@ public class listaproductos extends AppCompatActivity {
             if (sProducto.equals("")) {
                 sRuta = TAG_SERVIDOR + "/CatalogoProductos/obtenerproductostienda1.php?idruta=" + pidRuta + "&producto=%&idempresa=" + pidEmpresa;
             } else {
-                sRuta = TAG_SERVIDOR + "/CatalogoProductos/obtenerproductostienda1.php?idruta=" + pidRuta + "&producto=" + sProducto + "&idempresa=" + pidEmpresa;
+                sRuta = TAG_SERVIDOR + "/CatalogoProductos/obtenerproductostienda1.php?idruta=" + pidRuta + "&producto=%" + sProducto + "%&idempresa=" + pidEmpresa;
             }
             Log.e(TAG_ERROR,  "La ruta de la api usada es:" + sRuta);
 
@@ -262,10 +268,16 @@ public class listaproductos extends AppCompatActivity {
                     // Revisando la respusta
                     assert sRespusta != null;
                     jsonResponse = new JSONObject(sRespusta);
-                    // Log.e("AQUI", sRespusta.toString());
+                    //Log.e("AQUI", sRespusta.toString());
                     jsonarray = jsonResponse.getJSONArray(TAG_RESPUESTA);       // Arreglo
-                    iCuentaProductos = almacenaImagen.ObtenRegistros(1);
+                    iCuentaProductos = jsonarray.length();
+                    // iCuentaProductos = almacenaImagen.ObtenRegistros(1);
                     // Log.e(TAG_ERROR, " ** Cuenta Productos " + iCuentaProductos );
+
+                    idproducto2 = new int[iCuentaProductos];
+                    idruta2 = new int[iCuentaProductos];
+                    descripcionproducto2 = new String[iCuentaProductos];
+                    upc2 = new String[iCuentaProductos];
 
                     // ******************************************
                     // Ciclo de obtención de datos del servicio web
@@ -273,11 +285,11 @@ public class listaproductos extends AppCompatActivity {
                         jsonChidNode = jsonarray.getJSONObject(i);
                         jsonObjRuta = jsonChidNode.getJSONObject(TAG_PRODUCTO);
                         // Colocacion de datos en los arreglos
-                        idruta[i] = Integer.parseInt(jsonObjRuta.getString(TAG_IDRUTA));
-                        idproducto[i] = Integer.parseInt(jsonObjRuta.getString(TAG_IDPRODUCTO));
-                        descripcionproducto[i] = jsonObjRuta.getString(TAG_DESCRIPCIONPRODUCTO);
-                        categoriaproducto[i] = jsonObjRuta.getString(TAG_CATEGORIAPRODUCTO);
-                        upc[i] = jsonObjRuta.getString(TAG_UPC);
+                        idruta2[i] = Integer.parseInt(jsonObjRuta.getString(TAG_IDRUTA));
+                        idproducto2[i] = Integer.parseInt(jsonObjRuta.getString(TAG_IDPRODUCTO));
+                        descripcionproducto2[i] = jsonObjRuta.getString(TAG_DESCRIPCIONPRODUCTO);
+                        //categoriaproducto2[i] = jsonObjRuta.getString(TAG_CATEGORIAPRODUCTO);
+                        upc2[i] = jsonObjRuta.getString(TAG_UPC);
                     }
 
 
@@ -295,52 +307,22 @@ public class listaproductos extends AppCompatActivity {
         @Override
         protected void onPostExecute(String file_url) {
             pDialog.dismiss();
-            MuestraLista();
+            //MuestraLista1();
+            AdaptadorProductosTienda adaptador = new AdaptadorProductosTienda(
+                    listaproductos.this,
+                    idproducto2,
+                    idruta2,
+                    descripcionproducto2,
+                    upc2);
+            lista.setAdapter(adaptador);
         }
     }
 
     // **************************
-    // Muestra lista después del proceso
-    public void MuestraLista() {
-        // Declarar el numero de elementos exacto del areglo
-
-        int iCuentaProductos = almacenaImagen.ObtenRegistros(1);
-        int[] idproducto1 = new int[iCuentaProductos];
-        int[] idruta1 = new int[iCuentaProductos];
-        String[] descripcionproducto1 = new String[iCuentaProductos];
-        String[] categoriaproducto1 = new String[iCuentaProductos];
-        //int[] posiciones1 = new int[iCuentaProductos];
-        String[] upc1 = new String[iCuentaProductos];
-        final Bitmap[] imagenesprod = new Bitmap[iCuentaProductos];
-
-        for (int k = 0; k < iCuentaProductos; k++) {
-            idproducto1[k] = idproducto[k];
-            idruta1[k] = idruta[k];
-            categoriaproducto1[k] = categoriaproducto[k];
-            descripcionproducto1[k] = descripcionproducto[k] + " [" + upc[k] + "] ";
-            //posiciones1[k] = k;
-            upc1[k] = upc[k];
-
-            // Lista los productos
-            Log.e(TAG_ERROR, descripcionproducto1[k]);
-        }
-
-
-
-        if (iCuentaProductos == 0) {
-            Toast.makeText(getApplicationContext(), "Esta tienda no tiene productos",
-                    Toast.LENGTH_LONG).show();
-        }
-
+    // Muestra lista después obtenida de consulta web
+    public void MuestraLista1(){
         // Llamada al proceso de asignacion del adaptador a la lista
-        AdaptadorProductosTienda adaptador = new AdaptadorProductosTienda(
-                this,
-                idproducto1,
-                idruta1,
-                descripcionproducto1,
-                //posiciones1,
-                upc1);
-        lista.setAdapter(adaptador);
+
     }
 
     //************************************
@@ -371,19 +353,42 @@ public class listaproductos extends AppCompatActivity {
         MuestraLista();
     }
 
-    private Bitmap downloadFile(String imageHttpAddress) {
-        URL imageUrl = null;
-        Bitmap loadedImage;
-        try {
-            imageUrl = new URL(imageHttpAddress);
-            HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
-            conn.connect();
-            loadedImage = BitmapFactory.decodeStream(conn.getInputStream());
-            return loadedImage;
-        } catch (IOException e) {
-            funciones.RegistraError(idUsuario, "listaproductos, downloadFile", e, listaproductos.this,getApplicationContext());
-            // e.printStackTrace();
-            return null;
+    // **************************
+    // Muestra lista después del proceso
+    public void MuestraLista() {
+        // Declarar el numero de elementos exacto del areglo
+
+        int iCuentaProductos = almacenaImagen.ObtenRegistros(1);
+        int[] idproducto1 = new int[iCuentaProductos];
+        int[] idruta1 = new int[iCuentaProductos];
+        String[] descripcionproducto1 = new String[iCuentaProductos];
+        String[] categoriaproducto1 = new String[iCuentaProductos];
+        String[] upc1 = new String[iCuentaProductos];
+        final Bitmap[] imagenesprod = new Bitmap[iCuentaProductos];
+
+        for (int k = 0; k < iCuentaProductos; k++) {
+            idproducto1[k] = idproducto[k];
+            idruta1[k] = idruta[k];
+            categoriaproducto1[k] = categoriaproducto[k];
+            descripcionproducto1[k] = descripcionproducto[k] + " [" + upc[k] + "] ";
+            upc1[k] = upc[k];
+
+            // Lista los productos
+            Log.e(TAG_ERROR, descripcionproducto1[k]);
         }
+
+        if (iCuentaProductos == 0) {
+            Toast.makeText(getApplicationContext(), "Esta tienda no tiene productos",
+                    Toast.LENGTH_LONG).show();
+        }
+
+        // Llamada al proceso de asignacion del adaptador a la lista
+        AdaptadorProductosTienda adaptador = new AdaptadorProductosTienda(
+                this,
+                idproducto1,
+                idruta1,
+                descripcionproducto1,
+                upc1);
+        lista.setAdapter(adaptador);
     }
 }

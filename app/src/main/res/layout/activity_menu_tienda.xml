@@ -8,6 +8,7 @@
     tools:context=".MenuTienda">
 
     <LinearLayout
+        android:id="@+id/renglon0"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/fondo_foto"
@@ -30,6 +31,8 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/renglon1"
+            android:layout_below="@+id/renglon0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margen_productos"
@@ -53,6 +56,8 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/renglon2"
+            android:layout_below="@+id/renglon1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margen_productos"
@@ -74,6 +79,8 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/renglon3"
+            android:layout_below="@+id/renglon2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margen_productos"
@@ -95,6 +102,8 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/renglon4"
+            android:layout_below="@+id/renglon3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -117,6 +126,8 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/renglon5"
+            android:layout_below="@+id/renglon4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -138,9 +149,28 @@
                 app:srcCompat="@drawable/comparativa" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/renglon6"
+            android:layout_below="@+id/renglon5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/margen_productos"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imgCanjes"
+                android:contentDescription="Canjes"
+                android:layout_width="@dimen/tamaniobotonmenu1"
+                android:layout_height="@dimen/tamaniobotonmenu1"
+                android:layout_marginLeft="@dimen/marginstarmenu"
+                app:srcCompat="@drawable/img_anaquel_entrada" />
+        </LinearLayout>
 
 
         <LinearLayout
+            android:id="@+id/renglon7"
+            android:layout_below="@+id/renglon6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

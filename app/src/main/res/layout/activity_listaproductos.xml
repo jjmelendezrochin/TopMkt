@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".listatiendas">
+    tools:context=".listaproductos">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                 android:layout_marginTop="12dp"
                 android:layout_weight="1"
                 android:background="@null"
-                android:contentDescription="@string/buscar_tienda"
+                android:contentDescription="@string/buscar_producto"
 
                 app:srcCompat="@android:drawable/ic_menu_search" />
         </LinearLayout>
