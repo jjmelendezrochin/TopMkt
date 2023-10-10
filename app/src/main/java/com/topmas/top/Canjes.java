@@ -1,7 +1,14 @@
 package com.topmas.top;
 
 import static com.topmas.top.Competencia.REQUEST_IMAGE_CAPTURE;
+import static com.topmas.top.Constants.CONST_ACCESOLOCAL;
 import static com.topmas.top.Constants.ERROR_FOTO;
+import static com.topmas.top.Constants.TAG_DIRECCION;
+import static com.topmas.top.Constants.TAG_ERROR;
+import static com.topmas.top.Constants.TAG_IDRUTA;
+import static com.topmas.top.Constants.TAG_LATITUD;
+import static com.topmas.top.Constants.TAG_LONGITUD;
+import static com.topmas.top.Constants.TAG_TIENDA;
 import static com.topmas.top.Foto.rotateImage;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,9 +23,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -55,6 +64,8 @@ public class Canjes extends AppCompatActivity {
     double pLongitud = 0;
     int idpromotor = 0;
 
+    ListView lista;
+
     int por_participa = 0 ;
     int no_frentes = 0;
     float precio =  0;
@@ -66,11 +77,35 @@ public class Canjes extends AppCompatActivity {
     Funciones funciones = new Funciones();
     AlmacenaImagen almacenaImagen;
 
+    int iCuentaProductos = 50;
+    int[] idproducto = new int[iCuentaProductos];
+    int[] idruta = new int[iCuentaProductos];
+    String[] descripcionproducto = new String[iCuentaProductos];
+    String[] categoriaproducto = new String[iCuentaProductos];
+    String[] upc = new String[iCuentaProductos];
+
+    int pidPromotor = 0;
+    int pidRuta = 0;
+    String pidEmpresa = "0";
+    Double platitud = 0.0;
+    Double plongitud = 0.0;
+    String pdireccion = "";
+    String ptienda = "";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_canjes);
 
+        Intent i = getIntent();
+        pidRuta = i.getIntExtra(TAG_IDRUTA, pidRuta);
+        ptienda = i.getStringExtra(TAG_TIENDA);
+        platitud = i.getDoubleExtra(TAG_LATITUD, 0.0);
+        plongitud = i.getDoubleExtra(TAG_LONGITUD, 0.0);
+        pdireccion = i.getStringExtra(TAG_DIRECCION);
+        pidEmpresa = usr.getidempresa();
+        almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
 
         //****************************
         FloatingActionButton fab1 = findViewById(R.id.fab1);
@@ -90,7 +125,14 @@ public class Canjes extends AppCompatActivity {
         imgder1 =  findViewById(R.id.btnderecha1);
         imgizq2 =  findViewById(R.id.btnizquierda2);
         imgder2 =  findViewById(R.id.btnderecha2);
+        // Lista
+        lista = findViewById(R.id.listaproductoscanjes);
 
+        //****************************
+        // Evento click al adaptador
+        lista.setOnItemClickListener(new OnItemClickListenerAdaptadorProductosCanjes());
+
+        //****************************
         // Oculta botones rotación
         imgizq1.setVisibility(View.INVISIBLE);
         imgder1.setVisibility(View.INVISIBLE);
@@ -182,6 +224,7 @@ public class Canjes extends AppCompatActivity {
             }
         });
 
+        MuestraProductosTelefono(pidRuta);
         // *****************************
         // Boton foto puede tomar una foto
         btnFoto1.setOnClickListener(new View.OnClickListener() {
@@ -343,4 +386,70 @@ public class Canjes extends AppCompatActivity {
         }
     }
 
+    //************************************
+    // Muestra la lista de las tiendas registradas en el teléfono
+    public void MuestraProductosTelefono(int pidRuta) {
+        int iNumProductos = almacenaImagen.ObtenRegistros(1);
+
+        int[] idsproducto;
+        String[] descripcionesproducto;
+        String[] categoriasproducto;
+        String[] upcsproducto;
+
+        idsproducto = almacenaImagen.Obtenidsproducto();
+        descripcionesproducto = almacenaImagen.Obtendescripcionesproducto();
+        categoriasproducto = almacenaImagen.Obtencategoriasproducto();
+        upcsproducto = almacenaImagen.Obtenupcsproducto();
+
+        for (int k = 0; k < iNumProductos; k++) {
+            idproducto[k] = idsproducto[k];
+            idruta[k] = pidRuta;
+            categoriaproducto[k] = categoriasproducto[k];
+            descripcionproducto[k] = descripcionesproducto[k];
+            upc[k] = upcsproducto[k];
+        }
+        // ******************************
+        // Establece la forma de acceso y muestra las tiendas
+        Acceso.EstableceAcceso(CONST_ACCESOLOCAL);
+        MuestraLista();
+    }
+
+    // **************************
+    // Muestra lista después del proceso
+    public void MuestraLista() {
+        // Declarar el numero de elementos exacto del areglo
+
+        int iCuentaProductos = almacenaImagen.ObtenRegistros(1);
+        int[] idproducto1 = new int[iCuentaProductos];
+        int[] idruta1 = new int[iCuentaProductos];
+        String[] descripcionproducto1 = new String[iCuentaProductos];
+        String[] categoriaproducto1 = new String[iCuentaProductos];
+        String[] upc1 = new String[iCuentaProductos];
+        final Bitmap[] imagenesprod = new Bitmap[iCuentaProductos];
+
+        for (int k = 0; k < iCuentaProductos; k++) {
+            idproducto1[k] = idproducto[k];
+            idruta1[k] = idruta[k];
+            categoriaproducto1[k] = categoriaproducto[k];
+            descripcionproducto1[k] = descripcionproducto[k] + " [" + upc[k] + "] ";
+            upc1[k] = upc[k];
+
+            // Lista los productos
+            Log.e(TAG_ERROR, descripcionproducto1[k]);
+        }
+
+        if (iCuentaProductos == 0) {
+            Toast.makeText(getApplicationContext(), "Esta tienda no tiene productos",
+                    Toast.LENGTH_LONG).show();
+        }
+
+        // Llamada al proceso de asignacion del adaptador a la lista
+        AdaptadorProductosTienda adaptador = new AdaptadorProductosTienda(
+                this,
+                idproducto1,
+                idruta1,
+                descripcionproducto1,
+                upc1);
+        lista.setAdapter(adaptador);
+    }
 }

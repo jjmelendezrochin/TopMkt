@@ -71,11 +71,11 @@
 
                 <Button
                     android:id="@+id/btnfoto1"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="160dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="5dp"
-                    android:background="@drawable/producto_exhibido" />
+                    android:background="@drawable/ticktets" />
 
                 <Button
                     android:id="@+id/btnderecha1"
@@ -139,11 +139,11 @@
 
                 <Button
                     android:id="@+id/btnfoto2"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="160dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="5dp"
-                    android:background="@drawable/producto_competencia" />
+                    android:background="@drawable/evidencia" />
 
                 <Button
                     android:id="@+id/btnderecha2"
@@ -155,12 +155,36 @@
                     tools:visibility="invisible" />
             </LinearLayout>
 
-
             <LinearLayout
                 android:id="@+id/Bloque4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/Bloque3"
+                android:layout_marginTop="@dimen/margen_arriba"
+                android:orientation="horizontal"
+                android:scrollbars="vertical">
+
+            <ListView
+                android:id="@+id/listaproductoscanjes"
+                android:layout_width="match_parent"
+                android:layout_height="900dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/menu_tienda"
+                android:scrollbars="vertical"
+                />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/Bloque5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Bloque4"
                 android:layout_marginTop="@dimen/margen_arriba"
                 android:orientation="horizontal">
 
@@ -176,8 +200,8 @@
 
 
             <LinearLayout
-                android:id="@+id/Bloque4a"
-                android:layout_below="@+id/Bloque4"
+                android:id="@+id/Bloque6"
+                android:layout_below="@+id/Bloque5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margen_arriba"
@@ -197,8 +221,8 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/Bloque5"
-                android:layout_below="@+id/Bloque4a"
+                android:id="@+id/Bloque7"
+                android:layout_below="@+id/Bloque6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margen_arriba"
@@ -206,8 +230,8 @@
                 android:orientation="horizontal">
                 <Button
                     android:id="@+id/cmdGuardar"
-                    android:layout_width="140dp"
-                    android:layout_height="48dp"
+                    android:layout_width="160dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="5dp"
                     android:background="@drawable/img_guardar"/>

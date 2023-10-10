@@ -164,7 +164,7 @@
                 android:layout_width="@dimen/tamaniobotonmenu1"
                 android:layout_height="@dimen/tamaniobotonmenu1"
                 android:layout_marginLeft="@dimen/marginstarmenu"
-                app:srcCompat="@drawable/ubicacion_tienda" />
+                app:srcCompat="@drawable/canjes" />
         </LinearLayout>
 
         <LinearLayout

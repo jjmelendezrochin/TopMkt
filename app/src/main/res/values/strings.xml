@@ -26,4 +26,13 @@
     <string name="fotocaducidad">Foto caducidad</string>
     <string name="textocaducidad">Caducidad</string>
 
+    <string name="start">Inicio</string>
+    <string name="end">Fin</string>
+
+    <string name="ok">ok</string>
+    <string name="cancel">cancel</string>
+
+    <string name="username">username</string>
+    <string name="password">password</string>
+
 </resources>

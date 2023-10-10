@@ -31,10 +31,11 @@
             android:name=".Canjes"
             android:exported="false" />
         <activity
-            android:name=".Competencia_Promocion"
+            android:name=".OnItemClickListenerAdaptadorProductosCanjes"
+            android:theme="@style/Theme.AppCompat.Light"
             android:exported="false" />
         <activity
-            android:name=".activity_competencia_promocion"
+            android:name=".Competencia_Promocion"
             android:exported="false" />
         <activity android:name=".Caducidad" />
         <activity android:name=".Competencia" />

@@ -276,6 +276,11 @@ public class MenuTienda extends AppCompatActivity
             public void onClick(View view) {
                 Intent canjes = new Intent(getApplicationContext(), Canjes.class);
                 canjes.putExtra(TAG_IDRUTA, idruta);
+                canjes.putExtra(TAG_IDPROMOTOR, pidpromotor);
+                canjes.putExtra(TAG_TIENDA, tienda);
+                canjes.putExtra(TAG_LATITUD, latitud);
+                canjes.putExtra(TAG_LONGITUD, longitud);
+                canjes.putExtra(TAG_DIRECCION, direccion);
                 startActivity(canjes);
             }
         });

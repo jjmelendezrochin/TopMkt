@@ -67,8 +67,8 @@
 
                 <Button
                     android:id="@+id/btnFoto"
-                    android:layout_width="140dp"
-                    android:layout_height="35dp"
+                    android:layout_width="160dp"
+                    android:layout_height="40dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="5dp"
@@ -154,11 +154,21 @@
                 android:layout_below="@+id/Bloque1">
 
                 <Button
+
                     android:id="@+id/cmdCaducidad"
+                    android:layout_width="160dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginRight="10dp"
                     android:background="@drawable/boton_caducidad"
-                    android:layout_width="140dp"
-                    android:layout_height="35dp"
-                    android:textColor="@color/colorFuente"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imagenFoto"
+                    app:srcCompat="@android:drawable/ic_menu_camera"
+                    android:textColor="@color/colorFuente" />
 
                 <TextView
                     android:id="@+id/txtFechaCaducidad"
@@ -214,8 +224,8 @@
 
                 <Button
                     android:id="@+id/cmdGuardar"
-                    android:layout_width="140dp"
-                    android:layout_height="35dp"
+                    android:layout_width="160dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="5px"
                     android:background="@drawable/img_guardar"

@@ -66,7 +66,6 @@ public class listaproductos extends AppCompatActivity {
     private Usuario usr = new Usuario();
     private Funciones funciones = new Funciones();
     private ListView lista;
-    private int iLongitudArreglo;
 
     private AlmacenaImagen almacenaImagen;
     private Acceso formaacceso;
