@@ -188,7 +188,7 @@
 
 
             <EditText
-                android:id="@+id/txtPrecioReal"
+                android:id="@+id/txtCantidadAdquirida"
                 android:layout_width="80dp"
                 android:layout_height="@dimen/tamaniocajaproductos"
                 android:layout_marginLeft="65dp"
@@ -196,7 +196,7 @@
                 android:paddingStart="20dp"
                 android:textColor="@color/verdeCorporativo"
                 android:ems="8"
-                android:inputType="numberDecimal" />
+                android:inputType="number" />
 
         </LinearLayout>
 
@@ -231,7 +231,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/cmdGuardarPrecio"
+                android:id="@+id/cmdGuardarCantidad"
                 android:layout_width="140dp"
                 android:layout_height="35dp"
                 android:layout_gravity="center"

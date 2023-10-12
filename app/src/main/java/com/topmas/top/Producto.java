@@ -540,7 +540,6 @@ public class Producto extends AppCompatActivity {
         }
     }
 
-
     // ***************************
     // Carga una imagen desde url y la guarda en la base de datos Sqlite para que la carge de ahi la proxima ocasión
     public void MuestraImagen(
@@ -601,4 +600,5 @@ public class Producto extends AppCompatActivity {
                 new ImageLoadTask(_url, _imageView, _almacenaImagen, _idproducto);
         imageLoadTask.execute();
     }
+
 }

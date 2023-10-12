@@ -138,13 +138,14 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     }
 
     // **********************************
-    // Crear base de datos
+    // Crear base de datos  y sus tablas
+    // TODO Crear base de datos  y sus tablas
     @Override
     public void onCreate(SQLiteDatabase db) {
         // ***************************************************************************************************************
         // Creación de tablas de base de datos
         // ***************************************************************************************************************
-        // Tabla tiendas
+        // TODO Tabla listatiendas
         String sSql1 = "Create table listatiendas" +
                 "(" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -159,7 +160,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql1);
         // Log.e(TAG_INFO, "se creo la tabla lista tiendas");
         // ************************************
-        // Tabla de fotos
+        // TODO Tabla de almacenfotos
         String sSql = "Create table almacenfotos" +
                 "(" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -175,7 +176,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql);
         // Log.e(TAG_INFO, "se creo la tabla almacenfotos");
         // ************************************
-        // Tabla de promotores
+        // TODO Tabla de cat_promotor
         String sSql2 = "Create table cat_promotor" +
                 "(" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -186,7 +187,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 ")";
         db.execSQL(sSql2);
         // ************************************
-        // Tabla de actualizaciones
+        // TODO Tabla de actualizaciones
         String sSql3 = "Create table actualizacion" +
                 "(" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -195,7 +196,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 ")";
         db.execSQL(sSql3);
         // ************************************
-        // Tabla de versiones de app
+        // TODO Tabla versionapp
         String sSql4 = "Create table versionapp" +
                 "(" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -204,7 +205,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql4);
 
         // ************************************
-        // Tabla de productos
+        // TODO Tabla de cat_productos
         String sSql5 = "Create table cat_productos" +
                 "(" +
                 "idproducto INTEGER PRIMARY KEY," +
@@ -228,7 +229,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql5);
 
         // ************************************
-        // Tabla de productos
+        // TODO Tabla de producto_formato_precio
         String sSql6 = "Create table producto_formato_precio" +
                 "(" +
                 "idproductoformatoprecio INTEGER PRIMARY KEY," +
@@ -244,7 +245,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql6);
 
         // ************************************
-        // Tabla de rutas
+        // TODO Tabla de cat_rutas
         String sSql7 = "Create table cat_rutas" +
                 "(" +
                 "idruta INTEGER PRIMARY KEY," +
@@ -275,7 +276,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql8);
 
         // ************************************
-        // Tabla cat_cadena
+        // TODO Tabla cat_cadena
         String sSql9 = "Create table cat_cadena" +
                 "(" +
                 "idcadena INTEGER," +
@@ -285,7 +286,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql9);
 
         // ************************************
-        // Tabla cat_cadena
+        // TODO Tabla cat_observa_precios
         String sSql10 = "Create table cat_observa_precios" +
                 "(" +
                 "_id INTEGER," +
@@ -294,7 +295,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql10);
 
         // ************************************
-        // Tabla de productos
+        // TODO Tabla de vw_promociones
         String sSql11 = "Create table vw_promociones" +
                 "(" +
                 "idpromocion INTEGER," +
@@ -316,7 +317,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql11);
 
         // ************************************
-        // Tabla de productos
+        // TODO Tabla de promociones_tiendas
         String sSql12 = "Create table promociones_tiendas" +
                 "(" +
                 "idpromocion INTEGER," +
@@ -329,7 +330,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql12);
 
         // ************************************
-        // Tabla cat_cadena
+        // TODO Tabla cat_actividad
         String sSql13 = "Create table cat_actividad" +
                 "(" +
                 "_id INTEGER," +
@@ -338,7 +339,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql13);
 
         // ************************************
-        // Tabla de productos
+        // TODO Tabla de competencia
         String sSql14 = "Create table competencia" +
                 "(" +
                 "idcompetencia INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -359,7 +360,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql14);
 
         // ************************************
-        // Tabla cat_cadena
+        // TODO Tabla cat_empaque
         String sSql15 = "Create table cat_empaque" +
                 "(" +
                 "_id INTEGER," +
@@ -368,7 +369,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql15);
 
         // ************************************
-        // Tabla vw_productos
+        // TODO Tabla vw_productos
         String sSql16 = "Create view vw_productos" +
                 " as " +
                 " Select 0 as _id, ' -- Seleccionar -- ' as upc " +
@@ -378,7 +379,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql16);
 
         // ************************************
-        // Tabla de caducidad
+        // TODO Tabla de caducidad
         String sSql17 = "Create table caducidad" +
                 "(" +
                 "idcaducidad INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -393,7 +394,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql17);
 
         // ************************************
-        // Tabla de configuracion
+        // TODO Tabla de configuracion
         String sSql18 = "Create table configuracion" +
                 "(" +
                 "idconf INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -402,7 +403,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql18);
 
         // ************************************
-        // Tabla cat_empresa
+        // TODO Tabla cat_empresa
         String sSql19 = "Create table cat_empresa" +
                 "(" +
                 "_id INTEGER PRIMARY KEY," +
@@ -412,7 +413,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql19);
 
         // ************************************
-        // Tabla cat_empresa
+        // TODO Tabla errores
         String sSql20 = "Create table errores" +
                 "(" +
                 "_id INTEGER PRIMARY KEY," +
@@ -444,7 +445,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db.execSQL(sSql20);
 
         // ************************************
-        // Tabla de productos
+        // TODO Tabla de competencia_promocion
         String sSql21 = "Create table competencia_promocion" +
                 "(" +
                 "idcompetenciapromo INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -463,6 +464,18 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 "precio TEXT" +
                 ")";
         db.execSQL(sSql21);
+
+        // TODO Tabla canjes
+        String sSql22 = "Create table canjes" +
+                "(" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "idruta INT," +
+                "idpromotor INT," +
+                "idproducto INT," +
+                "cantidad int," +
+                "fechahora TEXT" +
+                ")";
+        db.execSQL(sSql22);
         // ***************************************************************************************************************
     }
 
@@ -876,6 +889,41 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
             // db.endTransaction();
+            db.close();
+        }
+    }
+
+
+    // **********************************
+    // TODO Método para insertar canjes
+    public int insertaoactualizacanjes(oCanje  ocanje)
+    {
+        Date fechahora = Calendar.getInstance().getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String fechahora1 = sdf.format(fechahora);
+
+        String sSql = null;
+        SQLiteDatabase db = getWritableDatabase();
+
+        if (ocanje.get_canje() > 0) {
+            sSql = "  Update canjes " +
+                    " set idruta = '" + ocanje.get_ruta()  + "', idpromotor = '" + ocanje.get_promotor() + "', " +
+                    " idproducto = '" + ocanje.get_producto() + "', cantidad =  '" + ocanje.get_cantidad() + "', fechahora = '" + fechahora1 + "'" +
+                    " where id = '" + ocanje.get_canje() + "';";
+        } else {
+            sSql = "Insert into canjes(idruta, idpromotor, idproducto, cantidad,  fechahora) " +
+                    "values ('" + ocanje.get_ruta() + "','" + ocanje.get_promotor() + "','" + ocanje.get_producto() +
+                    "','" + ocanje.get_cantidad() + "','" + fechahora1  + "');";
+        }
+        // Log.e(TAG_INFO, "Inserciòn canjes " + sSql);
+        try {
+            db.execSQL(sSql);
+            return 1;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            this.inserta_error1(idUsuario, e, "insertaoactualizapromotor" );
+            return 0;
+        } finally {
             db.close();
         }
     }
@@ -1718,6 +1766,39 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             db.close();
         }
         return (idpromotor > 0) ? idpromotor : iResultado;
+    }
+
+    // **********************************
+    // Función que consulta el número de registros existentes de promotores y entrega el id promotor si existe
+    public int ObtenRegistrosCanjes(oCanje ocanje) {
+        int iResultado = 0;
+        int idcanje = 0;
+        SQLiteDatabase db = getReadableDatabase();
+        String sSql = " Select count(*) from canjes " +
+                "       where id = '" + ocanje.get_canje() + "'";
+        // Log.e(TAG_INFO,sSql);
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                iResultado = cursor.getInt(0);
+            }
+            cursor.close();
+            // Si el resultado es mayor a uno entonces debe obtener y retornar el idpromotor
+            sSql = " Select id from canjes  where id = '" + ocanje.get_canje() + "'" ;
+
+            cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                idcanje = cursor.getInt(0);
+            }
+            cursor.close();
+        } catch (Exception e) {
+            this.inserta_error1(idUsuario, e, "AlmacenaImagen.ObtenRegistrosPromotor" );
+        } finally {
+            assert cursor != null;
+            db.close();
+        }
+        return (idcanje > 0) ? idcanje : iResultado;
     }
 
     // **********************************
@@ -3728,7 +3809,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
 
     // **********************************
-    // Método para insertar error
+    // TODO Método para insertar error
     public int inserta_error(oInfoDispositivo oinfo) {
         String sSql = null;
         Cursor cursor = null;
@@ -4313,6 +4394,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             db.close();
         }
     }
+
     private void cargaCompetenciaPromocionComplemento(
             String _idpromotor,
             String _pLatitud,
@@ -4429,4 +4511,69 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         }
         return iResultado;
     }
+
+    // **********************************
+    // TODO Método consulta_idcanjes
+    public int consulta_idcanjes(
+            int _idruta,
+            int _idpromotor,
+            int _idproducto
+    ) {
+        String sSql;
+        Cursor cursor = null;
+        int idcanje = -1;
+        SQLiteDatabase db = getReadableDatabase();
+
+        sSql = "  Select id from canjes " +
+                " where idruta = '" + _idruta + "'" +
+                " and idpromotor  = '" + _idpromotor + "'" +
+                " and idproducto = '" + _idproducto + "'";
+        // Log.e(TAG_ERROR, sSql);
+        try {
+            cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                idcanje = cursor.getInt(0);
+            }
+            cursor.close();
+            // Log.e(TAG_ERROR, "Valor de idcanje1 " + idcanje);
+
+            return idcanje;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            this.inserta_error1(idUsuario, e, "consulta_idcanjes" );
+            return 0;
+        } finally {
+            db.close();
+        }
+    }
+
+    // **********************************
+    // TODO Método consulta_catidadcanjes
+    public int consulta_cantidadcanjes(
+            int _idcanje
+    ) {
+        String sSql;
+        Cursor cursor = null;
+        int cantidad = -1;
+        SQLiteDatabase db = getReadableDatabase();
+
+        sSql = "Select cantidad from canjes " +
+                "  where id = '" + _idcanje + "' ";
+        try {
+            cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                cantidad = cursor.getInt(0);
+            }
+            cursor.close();
+            return cantidad;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            this.inserta_error1(idUsuario, e, "consulta_cantidadcanjes" );
+            return 0;
+        } finally {
+            db.close();
+        }
+    }
+
+
 }
