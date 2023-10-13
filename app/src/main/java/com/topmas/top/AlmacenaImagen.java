@@ -893,41 +893,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         }
     }
 
-
-    // **********************************
-    // TODO Método para insertar canjes
-    public int insertaoactualizacanjes(oCanje  ocanje)
-    {
-        Date fechahora = Calendar.getInstance().getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String fechahora1 = sdf.format(fechahora);
-
-        String sSql = null;
-        SQLiteDatabase db = getWritableDatabase();
-
-        if (ocanje.get_canje() > 0) {
-            sSql = "  Update canjes " +
-                    " set idruta = '" + ocanje.get_ruta()  + "', idpromotor = '" + ocanje.get_promotor() + "', " +
-                    " idproducto = '" + ocanje.get_producto() + "', cantidad =  '" + ocanje.get_cantidad() + "', fechahora = '" + fechahora1 + "'" +
-                    " where id = '" + ocanje.get_canje() + "';";
-        } else {
-            sSql = "Insert into canjes(idruta, idpromotor, idproducto, cantidad,  fechahora) " +
-                    "values ('" + ocanje.get_ruta() + "','" + ocanje.get_promotor() + "','" + ocanje.get_producto() +
-                    "','" + ocanje.get_cantidad() + "','" + fechahora1  + "');";
-        }
-        // Log.e(TAG_INFO, "Inserciòn canjes " + sSql);
-        try {
-            db.execSQL(sSql);
-            return 1;
-        } catch (Exception e) {
-            String Resultado = e.getMessage();
-            this.inserta_error1(idUsuario, e, "insertaoactualizapromotor" );
-            return 0;
-        } finally {
-            db.close();
-        }
-    }
-
     // **********************************
     // Metodo para insertar tienda
     public int insertatienda(
@@ -2379,7 +2344,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     public Cursor CursorEmpresas(){
         SQLiteDatabase db = getReadableDatabase();
         try {
-            return db.query("cat_empresa", null,null,null,null,null, null);
+            return db.query("cat_empresa", null,null,null,null,null, "alias");
         }
         catch ( SQLException e)
         {
@@ -4271,7 +4236,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _uploadImage1, _uploadImage2, _iconPromo, _por_participa, _no_frentes, _por_descuento, _comentario, _idproducto, _precio, _sVerApp);
     }
 
-
     // **********************************
     // Obtiene datos para subir foto de la tabla competencia promocion complemento
     public int ColocaCompetenciaPromocionComplemento()
@@ -4512,6 +4476,41 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         return iResultado;
     }
 
+
+    // **********************************
+    // TODO Método para insertar canjes
+    public int insertaoactualizacanjes(oCanje  ocanje)
+    {
+        Date fechahora = Calendar.getInstance().getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String fechahora1 = sdf.format(fechahora);
+
+        String sSql = null;
+        SQLiteDatabase db = getWritableDatabase();
+
+        if (ocanje.get_canje() > 0) {
+            sSql = "  Update canjes " +
+                    " set idruta = '" + ocanje.get_ruta()  + "', idpromotor = '" + ocanje.get_promotor() + "', " +
+                    " idproducto = '" + ocanje.get_producto() + "', cantidad =  '" + ocanje.get_cantidad() + "', fechahora = '" + fechahora1 + "'" +
+                    " where id = '" + ocanje.get_canje() + "';";
+        } else {
+            sSql = "Insert into canjes(idruta, idpromotor, idproducto, cantidad,  fechahora) " +
+                    "values ('" + ocanje.get_ruta() + "','" + ocanje.get_promotor() + "','" + ocanje.get_producto() +
+                    "','" + ocanje.get_cantidad() + "','" + fechahora1  + "');";
+        }
+        Log.e(TAG_INFO, "Inserciòn canjes " + sSql);
+        try {
+            db.execSQL(sSql);
+            return 1;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            this.inserta_error1(idUsuario, e, "insertaoactualizapromotor" );
+            return 0;
+        } finally {
+            db.close();
+        }
+    }
+
     // **********************************
     // TODO Método consulta_idcanjes
     public int consulta_idcanjes(
@@ -4569,6 +4568,98 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         } catch (Exception e) {
             String Resultado = e.getMessage();
             this.inserta_error1(idUsuario, e, "consulta_cantidadcanjes" );
+            return 0;
+        } finally {
+            db.close();
+        }
+    }
+
+    // **********************************
+    // Método para consultar el número de canejes por tienda y promotor
+    public int consulta_canjes_tienda_promotor(
+            int _idpromotor,
+            int _idruta
+    ) {
+        String sSql;
+        Cursor cursor = null;
+        int cta = -1;
+        SQLiteDatabase db = getReadableDatabase();
+
+        sSql = "Select sum(cantidad) as Cta from canjes where  idpromotor = '" + _idpromotor + "' and idruta = '" + _idruta + "' ";
+        Log.e(TAG_ERROR, sSql);
+        // db.beginTransaction();
+        try {
+            cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                cta = cursor.getInt(0);
+            }
+            cursor.close();
+            return cta;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            this.inserta_error1(idUsuario, e, "consulta_promocion_tienda" );
+           return 0;
+        } finally {
+            db.close();
+        }
+    }
+
+    // **********************************
+    // TODO Método para consultar la cadena  de canejes por tienda y promotor
+    public String consulta_cadena_canjes_tienda_promotor(
+            int _idpromotor,
+            int _idruta
+    ) {
+        String sSql;
+        Cursor cursor = null;
+        String sProducto = "";
+        int cantidad = 0;
+        String sRetorno = "";
+        SQLiteDatabase db = getReadableDatabase();
+
+        sSql = "  Select p.upc , c.cantidad from canjes c inner join cat_productos p on c.idproducto = p.idproducto" +
+                " where c.cantidad>0 and c.idpromotor = '" + _idpromotor + "' and c.idruta = '" + _idruta + "'";
+        Log.e(TAG_ERROR, sSql);
+        // db.beginTransaction();
+        try {
+            cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                sProducto = cursor.getString(0);
+                cantidad = cursor.getInt(1);
+                sRetorno += String.valueOf(sProducto)+"="+String.valueOf(cantidad)+"|";
+            }
+            cursor.close();
+            sRetorno = sRetorno.substring(0, sRetorno.length()-1);
+            return sRetorno;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            this.inserta_error1(idUsuario, e, "consulta_promocion_tienda" );
+            return sRetorno;
+        } finally {
+            db.close();
+        }
+    }
+
+    // **********************************
+    // TODO Método para consultar la cadena  de canejes por tienda y promotor
+    public int borra_canjes(
+            int _idpromotor,
+            int _idruta
+    ) {
+        String sSql;
+        Cursor cursor = null;
+        SQLiteDatabase db = getWritableDatabase();
+
+        Log.e(TAG_ERROR, String.valueOf(_idpromotor));
+        Log.e(TAG_ERROR, String.valueOf(_idruta));
+        sSql = "  Delete from canjes where idpromotor = '" + _idpromotor + "' and idruta = '" + _idruta + "';";
+        Log.e(TAG_ERROR, sSql);
+        // db.beginTransaction();
+        try {
+            db.execSQL(sSql);
+            return 1;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
             return 0;
         } finally {
             db.close();

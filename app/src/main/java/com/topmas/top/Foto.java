@@ -68,7 +68,7 @@ public class Foto extends AppCompatActivity {
     public static final String UPLOAD_IMAGEN1 = "image1";
     public static final String UPLOAD_VERSION = "version_app";
     public static final String UPLOAD_SINDATOS = "sindatos";
-
+    public static final String UPLOAD_ARREGLOPRODUCTO = "arregloproductos";
     public static final String UPLOAD_FABRICANTE = "fabricante";
     public static final String UPLOAD_MARCA = "marca";
     public static final String UPLOAD_MODELO = "modelo";

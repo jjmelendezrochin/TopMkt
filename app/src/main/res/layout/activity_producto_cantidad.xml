@@ -232,22 +232,23 @@
 
             <Button
                 android:id="@+id/cmdGuardarCantidad"
-                android:layout_width="140dp"
-                android:layout_height="35dp"
+                android:layout_width="160dp"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:background="@drawable/img_guardar"
                 android:layout_marginTop="5px" />
 
-            <Button
-                android:id="@+id/cmdRegresar"
-                android:text="Regresar"
-                android:layout_width="140dp"
-                android:layout_height="35dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5px"/>
+
 
         </LinearLayout>
     </LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab1"
+        android:contentDescription="Regresar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/margen_productos"
+        app:srcCompat="@drawable/regresar" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

@@ -3,25 +3,39 @@ package com.topmas.top;
 import static com.topmas.top.Competencia.REQUEST_IMAGE_CAPTURE;
 import static com.topmas.top.Constants.CONST_ACCESOLOCAL;
 import static com.topmas.top.Constants.ERROR_FOTO;
+import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_DIRECCION;
 import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
-import static com.topmas.top.Constants.TAG_LATITUD;
-import static com.topmas.top.Constants.TAG_LONGITUD;
+import static com.topmas.top.Constants.TAG_INFO;
+import static com.topmas.top.Constants.TAG_SERVIDOR;
 import static com.topmas.top.Constants.TAG_TIENDA;
+import static com.topmas.top.Constants.TAG_USUARIO;
+import static com.topmas.top.Foto.UPLOAD_ARREGLOPRODUCTO;
+import static com.topmas.top.Foto.UPLOAD_FECHAHORA;
+import static com.topmas.top.Foto.UPLOAD_IDOPERACION;
+import static com.topmas.top.Foto.UPLOAD_IDPROMOTOR;
+import static com.topmas.top.Foto.UPLOAD_IDRUTA;
+import static com.topmas.top.Foto.UPLOAD_IDUSUARIO;
+import static com.topmas.top.Foto.UPLOAD_IMAGEN;
+import static com.topmas.top.Foto.UPLOAD_IMAGEN1;
+import static com.topmas.top.Foto.UPLOAD_LATITUD;
+import static com.topmas.top.Foto.UPLOAD_LONGITUD;
+import static com.topmas.top.Foto.UPLOAD_SINDATOS;
+import static com.topmas.top.Foto.UPLOAD_VERSION;
 import static com.topmas.top.Foto.rotateImage;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -30,6 +44,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
@@ -37,6 +54,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Canjes extends AppCompatActivity {
 
@@ -46,6 +64,7 @@ public class Canjes extends AppCompatActivity {
     Button btnFoto2 = null;
     Button imgizq2;
     Button imgder2;
+    Button cmdGuardar = null;
     File photoFile1 = null;
     File photoFile2 = null;
     Uri photoURI1 = null;
@@ -57,18 +76,14 @@ public class Canjes extends AppCompatActivity {
     ImageView imagenFoto1;
     ImageView imagenFoto2;
     int iconPromo;
-    int idRuta = 0;
     String idUsuario = "";
     int idoperacion = 0;
     double pLatitud = 0;
     double pLongitud = 0;
-    int idpromotor = 0;
+    String sArregloProductos="";
 
     ListView lista;
 
-    int por_participa = 0 ;
-    int no_frentes = 0;
-    float precio =  0;
     String comentario = null;
 
     ProgressDialog pDialog;
@@ -79,7 +94,7 @@ public class Canjes extends AppCompatActivity {
 
     int iCuentaProductos = 50;
     int[] idproducto = new int[iCuentaProductos];
-    int[] idruta = new int[iCuentaProductos];
+    int[] idArregloruta = new int[iCuentaProductos];
     String[] descripcionproducto = new String[iCuentaProductos];
     String[] categoriaproducto = new String[iCuentaProductos];
     String[] upc = new String[iCuentaProductos];
@@ -87,11 +102,9 @@ public class Canjes extends AppCompatActivity {
     int pidPromotor = 0;
     int pidRuta = 0;
     String pidEmpresa = "0";
-    Double platitud = 0.0;
-    Double plongitud = 0.0;
     String pdireccion = "";
     String ptienda = "";
-
+    public static final String UPLOAD_CANJES = TAG_SERVIDOR + "/PhotoUpload/upload_canjes.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,11 +114,15 @@ public class Canjes extends AppCompatActivity {
         Intent i = getIntent();
         pidRuta = i.getIntExtra(TAG_IDRUTA, pidRuta);
         ptienda = i.getStringExtra(TAG_TIENDA);
-        platitud = i.getDoubleExtra(TAG_LATITUD, 0.0);
-        plongitud = i.getDoubleExtra(TAG_LONGITUD, 0.0);
         pdireccion = i.getStringExtra(TAG_DIRECCION);
         pidEmpresa = usr.getidempresa();
         almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
+        pidPromotor = usr.getid();
+        pLatitud = usr.getLatitud();
+        pLongitud = usr.getLongitud();
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
 
         //****************************
         FloatingActionButton fab1 = findViewById(R.id.fab1);
@@ -125,6 +142,7 @@ public class Canjes extends AppCompatActivity {
         imgder1 =  findViewById(R.id.btnderecha1);
         imgizq2 =  findViewById(R.id.btnizquierda2);
         imgder2 =  findViewById(R.id.btnderecha2);
+        cmdGuardar = findViewById(R.id.cmdGuardar10);
         // Lista
         lista = findViewById(R.id.listaproductoscanjes);
 
@@ -283,6 +301,68 @@ public class Canjes extends AppCompatActivity {
                 }
             }
         });
+
+        // *****************************
+        // Botón para guardar
+        cmdGuardar.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+               /* EditText cajapor_participa = findViewById(R.id.txtpor_participa);
+                EditText cajano_frentes = findViewById(R.id.txtno_frentes);
+                EditText cajapor_descuento = findViewById(R.id.txtpor_descuento);
+                EditText cajacomentario = findViewById(R.id.txtcomentario);
+                CheckBox chkconPromo = findViewById(R.id.chkconPromo);
+                iconPromo = (chkconPromo.isChecked() ? 1 : 0);*/
+
+                try {
+/**/
+                    String imagen1 = (imagenFoto1.getDrawable() == null ? "imagen1 nula" : "imagen1 no nula");
+                    String imagen2 = (imagenFoto2.getDrawable() == null ? "imagen2 nula" : "imagen2 no nula");
+
+                    Log.e(TAG_ERROR, String.valueOf(imagen1));
+                    Log.e(TAG_ERROR, String.valueOf(imagen2));
+
+                    int iCta = almacenaImagen.consulta_canjes_tienda_promotor(pidPromotor, pidRuta);
+                    Log.e(TAG_ERROR, "Cuenta " + String.valueOf(iCta));
+                    Log.e(TAG_ERROR, "pidPromotor " + String.valueOf(pidPromotor));
+                    Log.e(TAG_ERROR, "pidRuta " + String.valueOf(pidRuta));
+
+                    if (    imagen1.equals("imagen1 nula") ||
+                            imagen2.equals("imagen2 nula") ||
+                            pidPromotor == 0 ||
+                            pidRuta == 0 ||
+                            iCta < 4
+                    ) {
+                        Toast.makeText(getApplicationContext(), " Favor de capturar imágenes y cuando menos 4 en cantidad de productos",
+                                Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    // *****************
+                    // Obteniendo los valores de aquellos productos con cantidad de este promotor y ruta
+                    sArregloProductos = almacenaImagen.consulta_cadena_canjes_tienda_promotor(pidPromotor, pidRuta);
+                    Log.e(TAG_ERROR, sArregloProductos + "1");
+                    // *****************************
+                    // Verifica la forma en que subirá los datos
+                    if (funciones.RevisarConexion(getApplicationContext())) {
+                        UploadImagenesCanjes();
+                    } 
+                    else{
+                        // Implementar el guardado de datodo no conectado.
+                    }
+
+
+                    // Toast.makeText(getApplicationContext(), " Guardando valores", Toast.LENGTH_LONG).show();
+                } catch (NullPointerException e) {
+                    /**/Toast.makeText(getApplicationContext(), " Todas las imágenes son requeridas", Toast.LENGTH_LONG).show();
+                    Log.e(TAG_INFO,  e.toString());
+                } catch (NumberFormatException e) {
+                   /**/ Toast.makeText(getApplicationContext(), " Todas las imágenes y campos deben tener valores 2", Toast.LENGTH_LONG).show();
+                    Log.e(TAG_INFO,  e.toString());
+                }
+            }
+        });
+
+
     }
 
     // ****************************
@@ -355,8 +435,8 @@ public class Canjes extends AppCompatActivity {
                     Bitmap bitmap = drawable.getBitmap();
                     // ***********************
                     // Guardar la imagen despues de tomarla
-                    idoperacion =  7;       // PRODUCTO EXHIBIDO
-                    iFoto1 = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), 7, idUsuario, idRuta, bitmap);
+                    idoperacion =  9;       // '9', 'TICKET CANJE'
+                    iFoto1 = almacenaImagen.guardaFotos(pidPromotor, pLatitud, pLongitud, strDate.trim(), idoperacion, idUsuario, pidRuta, bitmap);
                     Toast.makeText(getApplicationContext(), "Foto Guardada " + iFoto1, Toast.LENGTH_LONG).show();
 
                     imgizq1.setVisibility(View.VISIBLE);
@@ -373,8 +453,8 @@ public class Canjes extends AppCompatActivity {
                     Bitmap bitmap = drawable.getBitmap();
                     // ***********************
                     // Guardar la imagen despues de tomarla
-                    idoperacion =  8;       // COMPETENCIA 8
-                    iFoto2 = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), idoperacion, idUsuario, idRuta, bitmap);
+                    idoperacion =  10;       // FOTO EVIDENCIA 10
+                    iFoto2 = almacenaImagen.guardaFotos(pidPromotor, pLatitud, pLongitud, strDate.trim(), idoperacion, idUsuario, pidRuta, bitmap);
                     Toast.makeText(getApplicationContext(), "Foto Guardada " + iFoto2, Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -403,7 +483,7 @@ public class Canjes extends AppCompatActivity {
 
         for (int k = 0; k < iNumProductos; k++) {
             idproducto[k] = idsproducto[k];
-            idruta[k] = pidRuta;
+            idArregloruta[k] = pidRuta;
             categoriaproducto[k] = categoriasproducto[k];
             descripcionproducto[k] = descripcionesproducto[k];
             upc[k] = upcsproducto[k];
@@ -429,7 +509,7 @@ public class Canjes extends AppCompatActivity {
 
         for (int k = 0; k < iCuentaProductos; k++) {
             idproducto1[k] = idproducto[k];
-            idruta1[k] = idruta[k];
+            idruta1[k] = idArregloruta[k];
             categoriaproducto1[k] = categoriaproducto[k];
             descripcionproducto1[k] = descripcionproducto[k] + " [" + upc[k] + "] ";
             upc1[k] = upc[k];
@@ -451,5 +531,131 @@ public class Canjes extends AppCompatActivity {
                 descripcionproducto1,
                 upc1);
         lista.setAdapter(adaptador);
+    }
+
+    //***********************
+    // Upload image function
+    public void UploadImagenesCanjes()
+    {
+        class UploadImagenesCanjes extends AsyncTask<Bitmap,Void,String> {
+
+            private RequestHandler rh = new RequestHandler();
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                Log.e(TAG_ERROR, sArregloProductos + "1");
+                pDialog = new ProgressDialog(Canjes.this);
+                pDialog.setMessage("Enviando datos ...");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(false);
+                pDialog.show();
+            }
+
+            @Override
+            protected String doInBackground(Bitmap... params) {
+                Funciones funciones = new Funciones();
+                Bitmap bitmap1 = params[0];
+                Bitmap bitmap2 = params[1];
+                bitmap1 = funciones.Compacta(bitmap1);
+                bitmap1 = funciones.Compacta(bitmap1);
+                bitmap1 = funciones.Compacta(bitmap1);
+                bitmap2 = funciones.Compacta(bitmap2);
+                bitmap2 = funciones.Compacta(bitmap2);
+                bitmap2 = funciones.Compacta(bitmap2);
+                String uploadImage1 = almacenaImagen.getStringImage(bitmap1);
+                String uploadImage2 = almacenaImagen.getStringImage(bitmap2);
+
+                HashMap<String,String> data = new HashMap<>();
+                Log.e(TAG_ERROR, sArregloProductos + "2");
+
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String fechahora = sdf.format(c.getTime());
+
+                int versionCode = BuildConfig.VERSION_CODE;
+                String versionName = BuildConfig.VERSION_NAME;
+                String sVerApp =  versionName + ":" + versionCode;
+
+                Log.e(TAG_ERROR, "**************************");
+                Log.e(TAG_ERROR, "Envìo de datos cargados Canjes");
+
+                Log.e(TAG_ERROR, String.valueOf(pidPromotor));
+                Log.e(TAG_ERROR, String.valueOf(pLatitud));
+                Log.e(TAG_ERROR, String.valueOf(pLongitud));
+                Log.e(TAG_ERROR, String.valueOf(idUsuario));
+                Log.e(TAG_ERROR, String.valueOf(idoperacion));
+                Log.e(TAG_ERROR, String.valueOf(pidRuta));
+                Log.e(TAG_ERROR, fechahora);
+                Log.e(TAG_ERROR, uploadImage1);
+                Log.e(TAG_ERROR, uploadImage2);
+                Log.e(TAG_ERROR, sArregloProductos);
+                Log.e(TAG_ERROR, UPLOAD_CANJES);
+                Log.e(TAG_ERROR, "**************************");
+
+                data.put(UPLOAD_IDPROMOTOR, String.valueOf(pidPromotor));
+                data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
+                data.put(UPLOAD_LONGITUD, String.valueOf(pLongitud));
+                data.put(UPLOAD_IDUSUARIO, idUsuario);
+                data.put(UPLOAD_IDOPERACION, String.valueOf(idoperacion));
+                data.put(UPLOAD_IDRUTA, String.valueOf(pidRuta));
+                data.put(UPLOAD_FECHAHORA, fechahora);
+                data.put(UPLOAD_IMAGEN, uploadImage1);
+                data.put(UPLOAD_IMAGEN1, uploadImage2);
+                data.put(UPLOAD_ARREGLOPRODUCTO,sArregloProductos);
+
+                data.put(UPLOAD_VERSION, sVerApp);
+                data.put(UPLOAD_SINDATOS, "0");
+
+                return rh.sendPostRequest(UPLOAD_CANJES,data);
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                pDialog.dismiss();
+
+                AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
+                int i = almacenaImagen.BorraFotoEnviada(iFoto1);
+                int j = almacenaImagen.BorraFotoEnviada(iFoto2);
+                Log.e(TAG_ERROR, "Se Borro la foto almacenada " + iFoto1);
+                Log.e(TAG_ERROR, "Se Borro la foto almacenada " + iFoto2);
+                Log.e(TAG_ERROR, "Respuesta " + s);
+                // **************************************
+                // Si se pudo cargar la foto entonces debe de borrar la foto almacenada y los de canjes len a tocal
+                if (s == TAG_CARGA_FOTO_EXITOSA) {
+                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+                    imagenFoto1.setImageResource(android.R.color.transparent);
+                    imagenFoto2.setImageResource(android.R.color.transparent);
+                    Log.e(TAG_ERROR, "********************");
+                    Log.e(TAG_ERROR, String.valueOf(pidPromotor));
+                    Log.e(TAG_ERROR, String.valueOf(pidRuta));
+                    almacenaImagen.borra_canjes(pidPromotor, pidRuta);
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), s , Toast.LENGTH_LONG).show();
+                    imagenFoto1.setImageResource(android.R.color.transparent);
+                    imagenFoto2.setImageResource(android.R.color.transparent);
+                    Log.e(TAG_ERROR, "********************");
+                    Log.e(TAG_ERROR, String.valueOf(pidPromotor));
+                    Log.e(TAG_ERROR, String.valueOf(pidRuta));
+                    almacenaImagen.borra_canjes(pidPromotor, pidRuta);
+                }
+                finish();
+                // **************************************
+            }
+        }
+
+        try {
+            UploadImagenesCanjes ui = new UploadImagenesCanjes();
+            Bitmap bm1=((BitmapDrawable)imagenFoto1.getDrawable()).getBitmap();
+            Bitmap bm2=((BitmapDrawable)imagenFoto2.getDrawable()).getBitmap();
+            Log.e(TAG_ERROR, sArregloProductos);
+            ui.execute(bm1, bm2);
+        }
+        catch( java.lang.NullPointerException e)
+        {
+            Toast.makeText(getApplicationContext(), "Error al cargar una foto de canjes", Toast.LENGTH_LONG).show();
+        }
     }
 }

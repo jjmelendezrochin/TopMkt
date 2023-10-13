@@ -558,7 +558,6 @@ public class Competencia_Promocion extends AppCompatActivity {
                 data.put(UPLOAD_SINDATOS, "0");
 
                 return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION,data);
-                // return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION_COMPLEMENTO,data);
             }
 
             @Override
@@ -599,4 +598,5 @@ public class Competencia_Promocion extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Error al cargar una foto de competencia", Toast.LENGTH_LONG).show();
         }
     }
+
 }

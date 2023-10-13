@@ -40,6 +40,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -194,12 +196,14 @@ public class OnItemClickListenerAdaptadorProductosCanjes implements AdapterView.
             }
         });
 
-        // *************************
+
+        //****************************
         // Botón regresar
-        Button cmdSalir = view1.findViewById(R.id.cmdRegresar);
-        cmdSalir.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab1 = view1.findViewById(R.id.fab1);
+
+        fab1.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 alertDialog.dismiss();
             }
         });
