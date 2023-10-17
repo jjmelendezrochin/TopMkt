@@ -53,6 +53,9 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class OnItemClickListenerAdaptadorProductosCanjes implements AdapterView.OnItemClickListener{
 
@@ -68,7 +71,6 @@ public class OnItemClickListenerAdaptadorProductosCanjes implements AdapterView.
     String cantidad_caja = "";
     String pIdempresa = "";
     double precio = 0;
-    double precioreal = 0;
     String descripcion = "";
     String descripcion1 = "";
     String categoria1 = "";
@@ -87,6 +89,10 @@ public class OnItemClickListenerAdaptadorProductosCanjes implements AdapterView.
         idproducto = cajaproducto.getText().toString();
         upc = cajaupc.getText().toString();
 
+        Log.e(TAG_ERROR, "idruta " + idruta);
+        Log.e(TAG_ERROR, "idproducto " + idproducto);
+        Log.e(TAG_ERROR, "upc " + upc);
+
         Intent Producto = new Intent(context, Producto.class);
         Producto.putExtra(TAG_IDPRODUCTO, Integer.parseInt(idproducto));
         Producto.putExtra(TAG_IDRUTA, Integer.parseInt(idruta));
@@ -95,7 +101,7 @@ public class OnItemClickListenerAdaptadorProductosCanjes implements AdapterView.
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         pName = preferences.getString(TAG_USUARIO, pName);
 
-        /*
+/*
         Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
             //log(throwable.getMessage(), thread.getId());
             funciones.RegistraError(pName, "Producto setDefaultUncaughtExceptionHandler",
@@ -165,7 +171,7 @@ public class OnItemClickListenerAdaptadorProductosCanjes implements AdapterView.
         }
 
         // *************************
-        // Estbleciendo el campo cantidad
+        // Estableciendo el campo cantidad
         pidcanjes =  almacenaImagen.consulta_idcanjes(Integer.parseInt(idruta), idpromotor,Integer.parseInt(idproducto));
         pCantidad = 0;
         if (pidcanjes>0){
@@ -188,10 +194,17 @@ public class OnItemClickListenerAdaptadorProductosCanjes implements AdapterView.
                     return;
                 }else
                 {
-                    oCanje oncanje = new oCanje(pidcanjes, Integer.parseInt(idruta),idpromotor,
-                            Integer.parseInt(idproducto), pCantidad, "");
-                    almacenaImagen.insertaoactualizacanjes(oncanje);
-                    alertDialog.dismiss();
+                    Date fechahora = Calendar.getInstance().getTime();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String fechahora1 = sdf.format(fechahora);
+
+                    oCanje oncanje = new oCanje( Integer.parseInt(idruta),idpromotor,
+                            Integer.parseInt(idproducto), pCantidad, fechahora1,pidcanjes);
+                    int iCta = 0;
+                    iCta = almacenaImagen.insertaoactualizacanjes(oncanje);
+                    if (iCta>0) {
+                        alertDialog.dismiss();
+                    }
                 }
             }
         });

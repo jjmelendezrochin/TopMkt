@@ -12,7 +12,9 @@ import static com.topmas.top.Constants.TAG_SERVIDOR;
 import static com.topmas.top.Constants.TAG_TIENDA;
 import static com.topmas.top.Constants.TAG_USUARIO;
 import static com.topmas.top.Foto.UPLOAD_ARREGLOPRODUCTO;
+import static com.topmas.top.Foto.UPLOAD_COMENTARIOS;
 import static com.topmas.top.Foto.UPLOAD_FECHAHORA;
+import static com.topmas.top.Foto.UPLOAD_IDCANJE;
 import static com.topmas.top.Foto.UPLOAD_IDOPERACION;
 import static com.topmas.top.Foto.UPLOAD_IDPROMOTOR;
 import static com.topmas.top.Foto.UPLOAD_IDRUTA;
@@ -20,6 +22,7 @@ import static com.topmas.top.Foto.UPLOAD_IDUSUARIO;
 import static com.topmas.top.Foto.UPLOAD_IMAGEN;
 import static com.topmas.top.Foto.UPLOAD_IMAGEN1;
 import static com.topmas.top.Foto.UPLOAD_LATITUD;
+import static com.topmas.top.Foto.UPLOAD_LLAVE;
 import static com.topmas.top.Foto.UPLOAD_LONGITUD;
 import static com.topmas.top.Foto.UPLOAD_SINDATOS;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
@@ -40,6 +43,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -75,23 +79,19 @@ public class Canjes extends AppCompatActivity {
     String sRutaFoto;
     ImageView imagenFoto1;
     ImageView imagenFoto2;
-    int iconPromo;
+    EditText editTextComentario;
     String idUsuario = "";
     int idoperacion = 0;
     double pLatitud = 0;
     double pLongitud = 0;
     String sArregloProductos="";
-
+    String sComentarios="";
+    String llave = "";
     ListView lista;
-
-    String comentario = null;
-
     ProgressDialog pDialog;
-
     Usuario usr = new Usuario();
     Funciones funciones = new Funciones();
     AlmacenaImagen almacenaImagen;
-
     int iCuentaProductos = 50;
     int[] idproducto = new int[iCuentaProductos];
     int[] idArregloruta = new int[iCuentaProductos];
@@ -143,6 +143,7 @@ public class Canjes extends AppCompatActivity {
         imgizq2 =  findViewById(R.id.btnizquierda2);
         imgder2 =  findViewById(R.id.btnderecha2);
         cmdGuardar = findViewById(R.id.cmdGuardar10);
+        editTextComentario = findViewById(R.id.txtcomentario);
         // Lista
         lista = findViewById(R.id.listaproductoscanjes);
 
@@ -306,25 +307,11 @@ public class Canjes extends AppCompatActivity {
         // Botón para guardar
         cmdGuardar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-               /* EditText cajapor_participa = findViewById(R.id.txtpor_participa);
-                EditText cajano_frentes = findViewById(R.id.txtno_frentes);
-                EditText cajapor_descuento = findViewById(R.id.txtpor_descuento);
-                EditText cajacomentario = findViewById(R.id.txtcomentario);
-                CheckBox chkconPromo = findViewById(R.id.chkconPromo);
-                iconPromo = (chkconPromo.isChecked() ? 1 : 0);*/
-
                 try {
-/**/
                     String imagen1 = (imagenFoto1.getDrawable() == null ? "imagen1 nula" : "imagen1 no nula");
                     String imagen2 = (imagenFoto2.getDrawable() == null ? "imagen2 nula" : "imagen2 no nula");
-
-                    Log.e(TAG_ERROR, String.valueOf(imagen1));
-                    Log.e(TAG_ERROR, String.valueOf(imagen2));
-
+                    sComentarios = editTextComentario.getText().toString();
                     int iCta = almacenaImagen.consulta_canjes_tienda_promotor(pidPromotor, pidRuta);
-                    Log.e(TAG_ERROR, "Cuenta " + String.valueOf(iCta));
-                    Log.e(TAG_ERROR, "pidPromotor " + String.valueOf(pidPromotor));
-                    Log.e(TAG_ERROR, "pidRuta " + String.valueOf(pidRuta));
 
                     if (    imagen1.equals("imagen1 nula") ||
                             imagen2.equals("imagen2 nula") ||
@@ -348,6 +335,14 @@ public class Canjes extends AppCompatActivity {
                     } 
                     else{
                         // Implementar el guardado de datodo no conectado.
+                        AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
+                        llave = almacenaImagen.inserta_canjes(pidRuta, pidPromotor,iFoto1,iFoto2, sComentarios);
+                        Log.e(TAG_INFO, "* Valor de resultado de inserción  de llave " + llave);
+                        if (llave.length()>0)
+                        {
+                            Toast.makeText(getApplicationContext(), "Dato almacenado en el teléfono",Toast.LENGTH_LONG).show();
+                            finish();
+                        }
                     }
 
 
@@ -435,7 +430,7 @@ public class Canjes extends AppCompatActivity {
                     Bitmap bitmap = drawable.getBitmap();
                     // ***********************
                     // Guardar la imagen despues de tomarla
-                    idoperacion =  9;       // '9', 'TICKET CANJE'
+                    idoperacion =  9;       // TICKET CANJE 9
                     iFoto1 = almacenaImagen.guardaFotos(pidPromotor, pLatitud, pLongitud, strDate.trim(), idoperacion, idUsuario, pidRuta, bitmap);
                     Toast.makeText(getApplicationContext(), "Foto Guardada " + iFoto1, Toast.LENGTH_LONG).show();
 
@@ -460,8 +455,6 @@ public class Canjes extends AppCompatActivity {
                 }
             }
         } catch (NullPointerException e) {
-            // unciones.RegistraError(idUsuario, "Competencia, onActivityResult", e, Competencia.this, getApplicationContext());
-            // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
             Toast.makeText(getApplicationContext(), "Error al colocar una foto de competencia", Toast.LENGTH_LONG).show();
         }
     }
@@ -566,8 +559,12 @@ public class Canjes extends AppCompatActivity {
                 String uploadImage1 = almacenaImagen.getStringImage(bitmap1);
                 String uploadImage2 = almacenaImagen.getStringImage(bitmap2);
 
+                // Obtención de datos de llave
+                almacenaImagen.consulta_total_canjes();
+                llave = almacenaImagen.inserta_canjes(pidRuta, pidPromotor,iFoto1,iFoto2, sComentarios);
+                //almacenaImagen.consulta_total_canjes();
+
                 HashMap<String,String> data = new HashMap<>();
-                Log.e(TAG_ERROR, sArregloProductos + "2");
 
                 Calendar c = Calendar.getInstance();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -576,7 +573,7 @@ public class Canjes extends AppCompatActivity {
                 int versionCode = BuildConfig.VERSION_CODE;
                 String versionName = BuildConfig.VERSION_NAME;
                 String sVerApp =  versionName + ":" + versionCode;
-
+/*
                 Log.e(TAG_ERROR, "**************************");
                 Log.e(TAG_ERROR, "Envìo de datos cargados Canjes");
 
@@ -589,10 +586,12 @@ public class Canjes extends AppCompatActivity {
                 Log.e(TAG_ERROR, fechahora);
                 Log.e(TAG_ERROR, uploadImage1);
                 Log.e(TAG_ERROR, uploadImage2);
+                Log.e(TAG_ERROR, sComentarios);
                 Log.e(TAG_ERROR, sArregloProductos);
+                Log.e(TAG_ERROR, llave);
                 Log.e(TAG_ERROR, UPLOAD_CANJES);
                 Log.e(TAG_ERROR, "**************************");
-
+ */
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(pidPromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
                 data.put(UPLOAD_LONGITUD, String.valueOf(pLongitud));
@@ -602,6 +601,8 @@ public class Canjes extends AppCompatActivity {
                 data.put(UPLOAD_FECHAHORA, fechahora);
                 data.put(UPLOAD_IMAGEN, uploadImage1);
                 data.put(UPLOAD_IMAGEN1, uploadImage2);
+                data.put(UPLOAD_LLAVE, llave);
+                data.put(UPLOAD_COMENTARIOS,sComentarios);
                 data.put(UPLOAD_ARREGLOPRODUCTO,sArregloProductos);
 
                 data.put(UPLOAD_VERSION, sVerApp);
@@ -618,28 +619,20 @@ public class Canjes extends AppCompatActivity {
                 AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
                 int i = almacenaImagen.BorraFotoEnviada(iFoto1);
                 int j = almacenaImagen.BorraFotoEnviada(iFoto2);
-                Log.e(TAG_ERROR, "Se Borro la foto almacenada " + iFoto1);
-                Log.e(TAG_ERROR, "Se Borro la foto almacenada " + iFoto2);
-                Log.e(TAG_ERROR, "Respuesta " + s);
+
                 // **************************************
                 // Si se pudo cargar la foto entonces debe de borrar la foto almacenada y los de canjes len a tocal
                 if (s == TAG_CARGA_FOTO_EXITOSA) {
                     Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
                     imagenFoto1.setImageResource(android.R.color.transparent);
                     imagenFoto2.setImageResource(android.R.color.transparent);
-                    Log.e(TAG_ERROR, "********************");
-                    Log.e(TAG_ERROR, String.valueOf(pidPromotor));
-                    Log.e(TAG_ERROR, String.valueOf(pidRuta));
-                    almacenaImagen.borra_canjes(pidPromotor, pidRuta);
+                    almacenaImagen.borra_canjes(pidRuta, pidPromotor,llave);
                 }
                 else{
                     Toast.makeText(getApplicationContext(), s , Toast.LENGTH_LONG).show();
                     imagenFoto1.setImageResource(android.R.color.transparent);
                     imagenFoto2.setImageResource(android.R.color.transparent);
-                    Log.e(TAG_ERROR, "********************");
-                    Log.e(TAG_ERROR, String.valueOf(pidPromotor));
-                    Log.e(TAG_ERROR, String.valueOf(pidRuta));
-                    almacenaImagen.borra_canjes(pidPromotor, pidRuta);
+                    almacenaImagen.borra_canjes(pidRuta, pidPromotor,llave);
                 }
                 finish();
                 // **************************************

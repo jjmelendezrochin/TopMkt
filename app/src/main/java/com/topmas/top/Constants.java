@@ -33,7 +33,6 @@ public final class Constants {
     public static final String TAG_DESCRIPCIONPRODUCTO = "descripcionproducto";
     public static final String TAG_APLICA = "aplica";
     public static final String TAG_CATEGORIAPRODUCTO = "categoriaproducto";
-
     public static final String TAG_UPC = "upc";
     public static final String TAG_POSICION = "posicion";
     public static final String TAG_CANTIDADCAJA = "cantidad_caja";
@@ -46,12 +45,11 @@ public final class Constants {
     public static final String TAG_CATEGORIA2 = "categoria2";
     public static final String TAG_ruta = "ruta";
     public static final String TAG_NOMBREEMPRESA = "nombreempresa";
-
     public static final int CONST_ACCESORED = 1;
     public static final int CONST_ACCESOLOCAL = 2;
 
-    //TODO Aqui se cambia para crear nueva bd y tablas
-    public static final String DATABASE_NAME = "topmas_102a";
+    // TODO Aqui se cambia para crear nueva bd y tablas
+    public static final String DATABASE_NAME = "topmk_15";
     public static final int DATABASE_VERSION = 1;
 
     public static final String TAG_PROD = "PROD";

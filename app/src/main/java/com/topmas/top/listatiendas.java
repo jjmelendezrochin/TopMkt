@@ -299,9 +299,10 @@ public class listatiendas extends AppCompatActivity {
         int iPromociones = almacenaImagen.ObtenRegistros(12);           // Obtiene la lista de promociones
         int iCaducidad = almacenaImagen.ObtenRegistros(14);             // Obtiene la lista de caducidades
         int iErrores = almacenaImagen.ObtenRegistros(16);               // Obtiene la lista de los errores
-        int iCompetenciaPromocion = almacenaImagen.ObtenRegistros(18); // Obtiene la lista de los registros competencia promoción
+        int iCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);  // Obtiene la lista de los registros competencia promoción
+        int iCanjes = almacenaImagen.ObtenRegistros(20);             // Obtiene la lista de canjes
 
-        int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion);
+        int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
 
         if ((iPendientes>0) && funciones.RevisarConexion(this.getApplicationContext())){
             // **************************
@@ -350,7 +351,8 @@ public class listatiendas extends AppCompatActivity {
                 int iCaducidad = almacenaImagen.ObtenRegistros(14);
                 int iErrores = almacenaImagen.ObtenRegistros(16);
                 int iCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);
-                int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion);
+                int iCanjes = almacenaImagen.ObtenRegistros(20);
+                int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
 
                 if (iPendientes>0) {
                     AlertDialog.Builder alerta = new AlertDialog.Builder(listatiendas.this);
@@ -360,6 +362,7 @@ public class listatiendas extends AppCompatActivity {
                             iRegistrosCompetencia + " fotos competencia  y/o " +
                             iCaducidad + " registros de caducidad y/o " +
                             iCompetenciaPromocion + " registros de competencia promoción y/o " +
+                            iCanjes + " registros de canjes y/o " +
                             iErrores + " registros de errores " +
                             " no olvide conectarse en cuanto tenga señal suficiente, para colocar sus fotos en plataforma (pulsar SI para salir)";
 
@@ -488,14 +491,16 @@ public class listatiendas extends AppCompatActivity {
 
     //************************************
     // Clase que carga las fotos guardadas, precios, competencia, promoción, caducidad, errores
+    // Que se encuentren en el teléfono cargados en modo desconectado para luego subirlos en modo conectado
     class CargaFotos extends AsyncTask<Void, Void, String> {
-        int iMagenesGuardadas = 0;
-        int iPreciosCambiados = 0;
-        int iRegistrosCompetencia = 0;
-        int iPromociones = 0;
-        int iCaducidad = 0;
-        int iErrores = 0;
-        int iCompetenciaPromocion = 0;
+        int iMagenesGuardadas = 0;      // Imagenes guardadas
+        int iPreciosCambiados = 0;      // Precios cambiados
+        int iRegistrosCompetencia = 0;  // Registros competencia
+        int iPromociones = 0;           // Promociones
+        int iCaducidad = 0;             // Caducidades
+        int iErrores = 0;               // Errores
+        int iCompetenciaPromocion = 0;  // Datos de competencia promoción
+        int iCanjes = 0;                // Datos de canjes
 
         int i =0;
         @Override
@@ -513,8 +518,9 @@ public class listatiendas extends AppCompatActivity {
             iCaducidad = almacenaImagen.ObtenRegistros(14);
             iErrores = almacenaImagen.ObtenRegistros(16);
             iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
+            iCanjes = almacenaImagen.ObtenRegistros(20);
 
-            int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion);
+            int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
 
             LayoutProgreso.setVisibility(View.VISIBLE);
             LayoutProgreso1.setVisibility(View.VISIBLE);
@@ -525,9 +531,6 @@ public class listatiendas extends AppCompatActivity {
 
             while (progressStatus < iSumaCuentas) {
                 progressStatus += 1;
-                // Log.e(TAG_ERROR, "-- progressStatus " + progressStatus);
-                // Update the progress bar and display the
-                //current value in the text view
                 handler.post(new Runnable() {
                     @SuppressLint("SetTextI18n")
                     public void run() {
@@ -542,6 +545,7 @@ public class listatiendas extends AppCompatActivity {
                         iCaducidad = almacenaImagen.ObtenRegistros(14);
                         iErrores = almacenaImagen.ObtenRegistros(16);
                         iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
+                        iCanjes = almacenaImagen.ObtenRegistros(20);
 
                         if (iMagenesGuardadas>0){
                             i = almacenaImagen.Colocarfoto();
@@ -581,6 +585,13 @@ public class listatiendas extends AppCompatActivity {
                             textoAvance.setText("Cargando competencia promoción " + progressStatus + "/" + progressBar.getMax());
                             textoAvance.setGravity(Gravity.CENTER);
                         }
+                        else if(iCanjes>0){
+                            Log.e(TAG_ERROR, "Cargando canjes " + String.valueOf(i));
+                            // i = almacenaImagen.ColocaCompetenciaPromocion();
+                            // j = almacenaImagen.ColocaCompetenciaPromocionComplemento();
+                            textoAvance.setText("Cargando canjes" + progressStatus + "/" + progressBar.getMax());
+                            textoAvance.setGravity(Gravity.CENTER);
+                        }
 
                         try {
                             Thread.sleep(500);
@@ -611,6 +622,7 @@ public class listatiendas extends AppCompatActivity {
 
     //************************************
     // Clase que consulta las tiendas
+    //  Obtiene la de  informacion de todos los catalogos para luego compararla con los de sqlite  e insertar lo nuevo
     class ConsultaTiendas extends AsyncTask<Void, Void, String> {
         String sRuta = "";
         String data = "";
@@ -620,10 +632,10 @@ public class listatiendas extends AppCompatActivity {
         @Override
         protected void onPreExecute()
         {
-            // TODO /Promotor/obtenertiendaspromotor6.php
             // ****************************************************
-            // Se utilizaba /Promotor/obtenertiendaspromotor5.php
-            // Pero no quitaba las tiendas visitadas de los supervisores hasta la versiòn 2.32
+            // TODO EN ESTA SECCIÓN SE DESCARGAN TODOS LOS DATOS
+            //  Obtiene la de  informacion de todos los catalogos para luego compararla con los de sqlite  e insertar lo nuevo
+            // TODO /Promotor/obtenertiendaspromotor6.php
             // ****************************************************
 
             String sTienda= txtBuscar.getText().toString().trim();
@@ -845,7 +857,6 @@ public class listatiendas extends AppCompatActivity {
                             jsonObjConf = jsonChidNode.getJSONObject(TAG_SOLICITAINV);
                             solicita[t] = Integer.parseInt(jsonObjConf.getString(TAG_solicita));
                             t++;
-
                         }
                     }
 

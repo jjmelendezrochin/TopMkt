@@ -69,6 +69,8 @@ public class Foto extends AppCompatActivity {
     public static final String UPLOAD_VERSION = "version_app";
     public static final String UPLOAD_SINDATOS = "sindatos";
     public static final String UPLOAD_ARREGLOPRODUCTO = "arregloproductos";
+    public static final String UPLOAD_IDCANJE = "idcanje";
+    public static final String UPLOAD_COMENTARIOS = "comentarios";
     public static final String UPLOAD_FABRICANTE = "fabricante";
     public static final String UPLOAD_MARCA = "marca";
     public static final String UPLOAD_MODELO = "modelo";
@@ -90,7 +92,7 @@ public class Foto extends AppCompatActivity {
     public static final String UPLOAD_USUARIO = "usuario";
     public static final String UPLOAD_SECCION = "seccion";
     public static final String UPLOAD_ERROR = "error";
-
+    public static final String UPLOAD_LLAVE = "llave";
     private int idpromotor = 0;
     private String idempresa = "";
     String idUsuario = "";

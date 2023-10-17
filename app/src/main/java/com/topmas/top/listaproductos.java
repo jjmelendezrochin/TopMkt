@@ -373,7 +373,7 @@ public class listaproductos extends AppCompatActivity {
             upc1[k] = upc[k];
 
             // Lista los productos
-            Log.e(TAG_ERROR, descripcionproducto1[k]);
+            // Log.e(TAG_ERROR, descripcionproducto1[k]);
         }
 
         if (iCuentaProductos == 0) {
