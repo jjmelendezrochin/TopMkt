@@ -562,7 +562,6 @@ public class Canjes extends AppCompatActivity {
                 // Obtención de datos de llave
                 almacenaImagen.consulta_total_canjes();
                 llave = almacenaImagen.inserta_canjes(pidRuta, pidPromotor,iFoto1,iFoto2, sComentarios);
-                //almacenaImagen.consulta_total_canjes();
 
                 HashMap<String,String> data = new HashMap<>();
 

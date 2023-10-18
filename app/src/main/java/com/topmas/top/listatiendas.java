@@ -287,7 +287,10 @@ public class listatiendas extends AppCompatActivity {
             //e.printStackTrace();
         }
 
-        // *****************************
+        // TODO ****************************
+        // TODO Aqui se consultan todos los datos desde Web para importarlos hacia la base de datos local de Sqlite
+        // TODO ****************************
+
         // En este proceso se verifica si existen registros en la tabla de almacenfotos
         // Si es asi tiene que leer los datos y colocarlos en el proceso que cargan información
         // para finalmente truncar la tabla y continuar el proceso
@@ -549,7 +552,6 @@ public class listatiendas extends AppCompatActivity {
 
                         if (iMagenesGuardadas>0){
                             i = almacenaImagen.Colocarfoto();
-                            // Log.e(TAG_ERROR, "Fotos Cargadas " + String.valueOf(i));
                             textoAvance.setText("Cargando fotos " + progressStatus + "/" + progressBar.getMax());
                             textoAvance.setGravity(Gravity.CENTER);
                         }
@@ -632,11 +634,10 @@ public class listatiendas extends AppCompatActivity {
         @Override
         protected void onPreExecute()
         {
-            // ****************************************************
-            // TODO EN ESTA SECCIÓN SE DESCARGAN TODOS LOS DATOS
-            //  Obtiene la de  informacion de todos los catalogos para luego compararla con los de sqlite  e insertar lo nuevo
-            // TODO /Promotor/obtenertiendaspromotor6.php
-            // ****************************************************
+            // TODO ****************************
+            // TODO EN ESTA SECCIÓN SE DESCARGAN TODOS LOS DATOS desde /Promotor/obtenertiendaspromotor6.php
+            // TODO Obtiene la de  informacion de todos los catalogos para luego compararla con los de sqlite  e insertar lo nuevo
+            // TODO ****************************
 
             String sTienda= txtBuscar.getText().toString().trim();
             if (sTienda.equals("")) {

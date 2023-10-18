@@ -2663,6 +2663,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int i = 0;
 
         SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db1 = getWritableDatabase();
         String sSql = "Select distinct id, idpromotor, latitud, longitud, fechahora, idoperacion, idusuario, idruta, imagen  " +
                 " from almacenfotos " +
                 " where idoperacion<5 " +
@@ -2704,26 +2705,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         String.valueOf(_idruta),
                         String.valueOf(_imagen)
                 );
-/*
-                Log.e(TAG_ERROR, "*******************");
-                Log.e(TAG_ERROR, "Cargando datos consultados");
-                Log.e(TAG_ERROR, String.valueOf(_idpromotor));
-                Log.e(TAG_ERROR, String.valueOf(_latitud));
-                Log.e(TAG_ERROR, String.valueOf(_longitud));
-                Log.e(TAG_ERROR, String.valueOf(_fechahora));
-                Log.e(TAG_ERROR, String.valueOf(_idoperacion));
-                Log.e(TAG_ERROR, String.valueOf(_idusuario));
-                Log.e(TAG_ERROR, String.valueOf(_idruta));
-                // Log.e(TAG_ERROR, String.valueOf(_imagen));
-                Log.e(TAG_ERROR, "*******************");
-*/
+
                 i++;
                 // *****************************
                 // Borrando el registro recien colocado
-                SQLiteDatabase db1 = getReadableDatabase();
                 String sBorrado = "Delete from almacenfotos where id = " + _id + ";";
                 db1.execSQL(sBorrado);
-                // Log.e("Borrado", sBorrado);
                 // *****************************
                 cursor.moveToNext();
             }
@@ -2738,6 +2725,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         } finally {
             assert cursor != null;
             db.close();
+            db1.close();
         }
     }
 
@@ -2866,7 +2854,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         " where  idproducto = '" + _idproducto + "' " + " and idpromotor = '" + _idpromotor + "' " +
                        " and idruta = '" + _idruta + "' and DATE(fda) = DATE(CURRENT_DATE)";
                 db1.execSQL(sAct);
-                // Log.e("Borrado", sAct);
                 // *****************************
                 cursor.moveToNext();
             }
@@ -2880,8 +2867,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // Por si hay una excepcion
         } finally {
             assert cursor != null;
-            db1.close();
             db.close();
+            db1.close();
         }
     }
 
@@ -3050,13 +3037,14 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String _presentacion;
         String _actividadbtl;
         String _canjes;
+        int _idfoto;
 
         SQLiteDatabase db = getReadableDatabase();
-        SQLiteDatabase db1 = getReadableDatabase();
+        SQLiteDatabase db1 = getWritableDatabase();
 
         String sSql = "Select distinct af.id, af.idpromotor, af.latitud, af.longitud, af.fechahora, af.idoperacion, af.idusuario, af.idruta, af.imagen  " +
                 " , c.producto, c.precio, c.presentacion, c.idempaque, c.demostrador, " +
-                " c.exhibidor, c.emplaye, c.actividadbtl, c.canjes, c.idcompetencia " +
+                " c.exhibidor, c.emplaye, c.actividadbtl, c.canjes, c.idcompetencia, c.idfoto " +
                 " from almacenfotos af inner join competencia c on af.id = c.idfoto" +
                 " where af.idoperacion=5 " +
                 " order by af.id asc limit 1;";
@@ -3087,6 +3075,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _actividadbtl = cursor.getString(16);
                 _canjes = cursor.getString(17);
                 _idcompetencia = cursor.getInt(18);
+                _idfoto = cursor.getInt(19);
 
                 // Espera un segundo
                 Handler handler = new Handler();
@@ -3120,13 +3109,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 i++;
                 // *****************************
                 // Borrando el registro recien colocado
+                db1.beginTransaction();
                 String sBorrado = "Delete from almacenfotos where id = " + _id + ";";
                 db1.execSQL(sBorrado);
-                // Log.e(TAG_ERROR, sBorrado);
-                sBorrado = "Delete from competencia where idcompetencia = " + _idcompetencia + ";";
-                db1.execSQL(sBorrado);
-
-                //Log.e(TAG_ERROR, sBorrado);
+                String sBorrado0 = "Delete from competencia where idcompetencia = " + _idcompetencia + ";";
+                db1.execSQL(sBorrado0);
+                db1.setTransactionSuccessful();
                 // *****************************
                 cursor.moveToNext();
             }
@@ -3294,6 +3282,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String _fechahora;
 
         SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db1 = getWritableDatabase();
         String sSql = "Select fabricante, marca, modelo, board ,hardware ,serie ,uid ,android_id ,resolucion ,tamaniopantalla ,densidad ,bootloader ,user_value ,host_value ,version ,api_value ,build_id ,build_time ,fingerprint ,usuario, seccion, error ,fechahora from errores where procesado = 0;";
 
         Log.e(TAG_ERROR, sSql);
@@ -3335,37 +3324,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                     }
                 }, 1000);   //1 second
 
-                // *******************
-                // Subir errores
-                /*
-                Log.e(TAG_ERROR, "****************************");
-                Log.e(TAG_ERROR, "Llamando al proceso de carga de errores");
-                Log.e(TAG_ERROR,   _fabricante);
-                Log.e(TAG_ERROR,   _marca);
-                Log.e(TAG_ERROR,   _modelo);
-                Log.e(TAG_ERROR,   _board);
-                Log.e(TAG_ERROR,   _hardware);
-                Log.e(TAG_ERROR,   _serie);
-                Log.e(TAG_ERROR,   _uid);
-                Log.e(TAG_ERROR,   _android_id);
-                Log.e(TAG_ERROR,   _resolucion);
-                Log.e(TAG_ERROR,   _tamaniopantalla);
-                Log.e(TAG_ERROR,   _densidad);
-                Log.e(TAG_ERROR,   _bootloader);
-                Log.e(TAG_ERROR,   _user_value);
-                Log.e(TAG_ERROR,   _host_value);
-                Log.e(TAG_ERROR,   _version);
-                Log.e(TAG_ERROR,   _api_value);
-                Log.e(TAG_ERROR,   _build_id);
-                Log.e(TAG_ERROR,   _build_time);
-                Log.e(TAG_ERROR,   _fingerprint);
-                Log.e(TAG_ERROR,   "usuario " + _usuario);
-                Log.e(TAG_ERROR,   "seccion " + _seccion);
-                Log.e(TAG_ERROR,   "error "  +_error);
-                Log.e(TAG_ERROR,   "fechahora " + _fechahora);
-                Log.e(TAG_ERROR, "****************************");
-                 */
-
                 cargaErrores(
                         _fabricante,
                         _marca,
@@ -3398,10 +3356,9 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             cursor.close();
             // *****************************
             // Borrando el registro recien colocado
-            SQLiteDatabase db1 = getReadableDatabase();
+
             String sBorrado = "Delete from errores where procesado = 0;";
             db1.execSQL(sBorrado);
-            db1.close();
             // Log.e(TAG_ERROR, sBorrado);
             // *****************************
             return i;
@@ -3412,6 +3369,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         } finally {
             assert cursor != null;
             db.close();
+            db1.close();
         }
     }
 
@@ -3593,11 +3551,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String _imagen;
         String _lote;
         String _caducidad;
-
+        int _idfoto;
 
         SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db1 = getWritableDatabase();
         String sSql = "Select distinct af.id, af.idpromotor, af.latitud, af.longitud, af.fechahora, af.idoperacion, af.idusuario, af.idruta, af.imagen  " +
-                " , c.idproducto, c.lote, c.caducidad, c.piezas, c.idcaducidad" +
+                " , c.idproducto, c.lote, c.caducidad, c.piezas, c.idcaducidad, c.idfoto" +
                 " from almacenfotos af inner join caducidad c on af.id = c.idfoto" +
                 " where af.idoperacion=6 " +
                 " order by af.id asc limit 1;";
@@ -3624,6 +3583,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _caducidad = cursor.getString(11);
                 _piezas = cursor.getInt(12);
                 _idcaducidad = cursor.getInt(13);
+                _idfoto = cursor.getInt(14);
 
                 // Espera un segundo
                 Handler handler = new Handler();
@@ -3653,8 +3613,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 i++;
                 // *****************************
                 // Borrando el registro recien colocado
+                db1.beginTransaction();
                 String sBorrado = "Delete from caducidad where idcaducidad = " + _idcaducidad + ";";
-                db.execSQL(sBorrado);
+                db1.execSQL(sBorrado);
+                String sBorrado1 = "Delete from almacenfotos where id in (" + _idfoto + ");";
+                db1.execSQL(sBorrado1);
+                db1.setTransactionSuccessful();
                 //Log.e(TAG_ERROR, sBorrado);
                 // *****************************
                 cursor.moveToNext();
@@ -3668,6 +3632,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         } finally {
             assert cursor != null;
             db.close();
+            db1.close();
         }
     }
 
@@ -3884,6 +3849,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
         int i = 0;
         SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db1 = getWritableDatabase();
         String sSql = "Select idpromocion, idpromotor, idruta, fecha, aplica from promociones_tiendas where mod = 1";
         Log.e(TAG_ERROR, sSql);
         Cursor cursor;
@@ -3921,7 +3887,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 // *****************************
                 // Borrando el registro recien colocado
                 String sBorrado = "Delete from promociones_tiendas where idpromocion = " + _idpromocion + ";";
-                db.execSQL(sBorrado);
+                db1.execSQL(sBorrado);
                 Log.e(TAG_ERROR, sBorrado);
                 // *****************************
                 cursor.moveToNext();
@@ -3937,6 +3903,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         } finally {
             assert cursor != null;
             db.close();
+            db1.close();
         }
     }
 
@@ -4017,8 +3984,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int _idfoto1 = 0;
 
         SQLiteDatabase db = getReadableDatabase();
-
-
         //********************************************
         // Primer cursor
         String sSql = "Select distinct  c.idcompetenciapromo, af.idpromotor, af.latitud, af.longitud, af.idusuario, 8 as idoperacion, af.idruta, " +
@@ -4226,7 +4191,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     // Obtiene datos para subir foto de la tabla competencia promocion complemento
     public int ColocaCompetenciaPromocionComplemento()
     {
-        // Log.e(TAG_ERROR, "** Dentro de coloca competencia promocion **");
         int i = 0;
         int _idpromotor;
         double _latitud;
@@ -4250,7 +4214,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int _idfoto1 = 0;
 
         SQLiteDatabase db = getReadableDatabase();
-
+        SQLiteDatabase db1 = getWritableDatabase();
         //********************************************
         // Primer cursor
         String sSql = "Select distinct  c.idcompetenciapromo, af.idpromotor, af.latitud, af.longitud, af.idusuario, 8 as idoperacion, af.idruta, " +
@@ -4323,12 +4287,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 i++;
                 // *****************************
                 // Borrando el registro recien colocado de competencia_promocion asi como las fotos
+                db1.beginTransaction();
                 String sBorrado = "Delete from competencia_promocion where idcompetenciapromo = " + _idcompetenciapromo + ";";
-                db.execSQL(sBorrado);
-                // Log.e(TAG_ERROR,sBorrado);
+                db1.execSQL(sBorrado);
                 String sBorrado1 = "Delete from almacenfotos where id in (" + _idfoto + "," + _idfoto1 + ");";
-                db.execSQL(sBorrado1);
-                // Log.e(TAG_ERROR,sBorrado1);
+                db1.execSQL(sBorrado1);
+                db1.setTransactionSuccessful();
                 // *****************************
                 cursor.moveToNext();
             }
@@ -4342,6 +4306,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         } finally {
             assert cursor != null;
             db.close();
+            db1.close();
         }
     }
 
