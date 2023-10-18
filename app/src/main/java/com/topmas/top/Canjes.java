@@ -573,25 +573,7 @@ public class Canjes extends AppCompatActivity {
                 int versionCode = BuildConfig.VERSION_CODE;
                 String versionName = BuildConfig.VERSION_NAME;
                 String sVerApp =  versionName + ":" + versionCode;
-/*
-                Log.e(TAG_ERROR, "**************************");
-                Log.e(TAG_ERROR, "Envìo de datos cargados Canjes");
 
-                Log.e(TAG_ERROR, String.valueOf(pidPromotor));
-                Log.e(TAG_ERROR, String.valueOf(pLatitud));
-                Log.e(TAG_ERROR, String.valueOf(pLongitud));
-                Log.e(TAG_ERROR, String.valueOf(idUsuario));
-                Log.e(TAG_ERROR, String.valueOf(idoperacion));
-                Log.e(TAG_ERROR, String.valueOf(pidRuta));
-                Log.e(TAG_ERROR, fechahora);
-                Log.e(TAG_ERROR, uploadImage1);
-                Log.e(TAG_ERROR, uploadImage2);
-                Log.e(TAG_ERROR, sComentarios);
-                Log.e(TAG_ERROR, sArregloProductos);
-                Log.e(TAG_ERROR, llave);
-                Log.e(TAG_ERROR, UPLOAD_CANJES);
-                Log.e(TAG_ERROR, "**************************");
- */
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(pidPromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
                 data.put(UPLOAD_LONGITUD, String.valueOf(pLongitud));
