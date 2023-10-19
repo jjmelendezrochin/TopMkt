@@ -341,7 +341,7 @@ public class Competencia_Promocion extends AppCompatActivity {
                     int ifrentes = cajano_frentes.getText().toString().length();
                     int idescuento = cajapor_descuento.getText().toString().length();
                     int icomentarios = cajacomentario.getText().toString().length();
-
+/*
                     Log.e(TAG_ERROR, String.valueOf(imagen1));
                     Log.e(TAG_ERROR, String.valueOf(imagen2));
                     Log.e(TAG_ERROR, "Participa " + String.valueOf(iparticipa));
@@ -349,6 +349,8 @@ public class Competencia_Promocion extends AppCompatActivity {
                     Log.e(TAG_ERROR, "Descuento " +String.valueOf(idescuento));
                     Log.e(TAG_ERROR, "Comentarios " +String.valueOf(icomentarios));
                     Log.e(TAG_ERROR, "Producto " +String.valueOf(idproducto));
+
+ */
 
                     if (    imagen1.equals("imagen1 nula") ||
                             imagen2.equals("imagen2 nula") ||

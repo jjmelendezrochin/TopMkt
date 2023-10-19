@@ -288,7 +288,7 @@ public class listatiendas extends AppCompatActivity {
         }
 
         // TODO ****************************
-        // TODO Aqui se consultan todos los datos desde Web para importarlos hacia la base de datos local de Sqlite
+        // TODO Aqui consulta todos los datos en el telefono para subirlos a WEB
         // TODO ****************************
 
         // En este proceso se verifica si existen registros en la tabla de almacenfotos
@@ -588,9 +588,9 @@ public class listatiendas extends AppCompatActivity {
                             textoAvance.setGravity(Gravity.CENTER);
                         }
                         else if(iCanjes>0){
-                            Log.e(TAG_ERROR, "Cargando canjes " + String.valueOf(i));
-                            // i = almacenaImagen.ColocaCompetenciaPromocion();
-                            // j = almacenaImagen.ColocaCompetenciaPromocionComplemento();
+                            //Log.e(TAG_ERROR, "Cargando canjes " + String.valueOf(i));
+                             i = almacenaImagen.ColocaCanjes();
+                            // j = almacenaImagen.ColocaCanjesComplemento();
                             textoAvance.setText("Cargando canjes" + progressStatus + "/" + progressBar.getMax());
                             textoAvance.setGravity(Gravity.CENTER);
                         }
@@ -646,7 +646,7 @@ public class listatiendas extends AppCompatActivity {
             else{
                 sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor6.php?idpromotor=" + pidPromotor + "&tienda=" + sTienda + "&idempresa=" + pIdempresa;
             }
-            Log.e(TAG_ERROR, "Consulta Tiendas " + sRuta);
+            // Log.e(TAG_ERROR, "Consulta Tiendas " + sRuta);
 
             super.onPreExecute();
             pDialog = new ProgressDialog(listatiendas.this);

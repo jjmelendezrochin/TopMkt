@@ -5,10 +5,12 @@ import static com.topmas.top.Caducidad.UPLOAD_caducidad;
 import static com.topmas.top.Caducidad.UPLOAD_idproducto;
 import static com.topmas.top.Caducidad.UPLOAD_lote;
 import static com.topmas.top.Caducidad.UPLOAD_piezas;
+import static com.topmas.top.Canjes.UPLOAD_CANJES_COMPLEMENTO;
 import static com.topmas.top.Competencia.UPLOAD_COMPETENCIA;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_COMENTARIOS;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_COMPETENCIA_PROMOCION;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_COMPETENCIA_PROMOCION_COMPLEMENTO;
+import static com.topmas.top.Canjes.UPLOAD_CANJES;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_CON_SIN_PARTICIPACION;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_IDPRODUCTO;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_NO_FRENTES;
@@ -42,6 +44,7 @@ import static com.topmas.top.Constants.TAG_USUARIO;
 import static com.topmas.top.Constants.TAG_producto;
 import static com.topmas.top.Foto.UPLOAD_ANDROID_ID;
 import static com.topmas.top.Foto.UPLOAD_API_VALUE;
+import static com.topmas.top.Foto.UPLOAD_ARREGLOPRODUCTO;
 import static com.topmas.top.Foto.UPLOAD_BOARD;
 import static com.topmas.top.Foto.UPLOAD_BOOTLOADER;
 import static com.topmas.top.Foto.UPLOAD_BUILD_ID;
@@ -61,6 +64,7 @@ import static com.topmas.top.Foto.UPLOAD_IDUSUARIO;
 import static com.topmas.top.Foto.UPLOAD_IMAGEN;
 import static com.topmas.top.Foto.UPLOAD_IMAGEN1;
 import static com.topmas.top.Foto.UPLOAD_LATITUD;
+import static com.topmas.top.Foto.UPLOAD_LLAVE;
 import static com.topmas.top.Foto.UPLOAD_LONGITUD;
 import static com.topmas.top.Foto.UPLOAD_MARCA;
 import static com.topmas.top.Foto.UPLOAD_MODELO;
@@ -4132,30 +4136,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(contexto.getApplicationContext());
                 idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
 
-                /*
-                Log.e(TAG_ERROR, "**************************");
-                Log.e(TAG_ERROR, "Envìo de datos cargados Competencia_Promocion");
-
-                Log.e(TAG_ERROR, String.valueOf(idpromotor));
-                Log.e(TAG_ERROR, String.valueOf(pLatitud));
-                Log.e(TAG_ERROR, String.valueOf(pLongitud));
-                Log.e(TAG_ERROR, String.valueOf(idUsuario));
-                Log.e(TAG_ERROR, String.valueOf(idoperacion));
-                Log.e(TAG_ERROR, String.valueOf(idRuta));
-                Log.e(TAG_ERROR, _fechahora);
-                Log.e(TAG_ERROR, uploadImage1);
-                Log.e(TAG_ERROR, uploadImage2);
-                Log.e(TAG_ERROR, String.valueOf(iconPromo));
-                Log.e(TAG_ERROR, String.valueOf(por_participa));
-                Log.e(TAG_ERROR, String.valueOf(no_frentes));
-                Log.e(TAG_ERROR, String.valueOf(por_descuento));
-                Log.e(TAG_ERROR, _comentario);
-                Log.e(TAG_ERROR, String.valueOf(idproducto));
-                Log.e(TAG_ERROR, String.valueOf(precio));
-                Log.e(TAG_ERROR, String.valueOf(UPLOAD_COMPETENCIA_PROMOCION));
-                Log.e(TAG_ERROR, "**************************");
-                */
-
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
                 data.put(UPLOAD_LONGITUD, String.valueOf(pLongitud));
@@ -4450,7 +4430,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                     "values ('" + ocanje.get_ruta() + "','" + ocanje.get_promotor() + "','" + ocanje.get_producto() +
                     "','" + ocanje.get_cantidad() + "','" + fechahora1  + "','');";
         }
-        Log.e(TAG_INFO, "Inserciòn canjes " + sSql);
+        // Log.e(TAG_INFO, "Inserciòn canjes " + sSql);
         try {
             db.execSQL(sSql);
             return 1;
@@ -4541,8 +4521,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 " where  idpromotor = '" + _idpromotor + "' " +
                 " and idruta = '" + _idruta + "' " +
                 " and llave = ''";
-        Log.e(TAG_ERROR, sSql);
-        // db.beginTransaction();
         try {
             cursor = db.rawQuery(sSql, null);
             while (cursor.moveToNext()) {
@@ -4573,9 +4551,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
 
         sSql = "  Select p.upc , c.cantidad from canjes_productos c inner join cat_productos p on c.idproducto = p.idproducto" +
-                " where c.cantidad>0 and c.idpromotor = '" + _idpromotor + "' and c.idruta = '" + _idruta + "'";
-        Log.e(TAG_ERROR, sSql);
-        // db.beginTransaction();
+                " where c.cantidad>0 and c.idpromotor = '" + _idpromotor + "' and c.idruta = '" + _idruta + "' and c.llave = ''";
+
         try {
             cursor = db.rawQuery(sSql, null);
             while (cursor.moveToNext()) {
@@ -4613,10 +4590,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 " and idruta = '" + String.valueOf(idRuta)  + "'" +
                 " and idpromotor = '" + String.valueOf(idPromotor)  + "'";
         sSql =  " delete from canjes where llave = '" + llave + "'" +
-                " and idruta = '" + String.valueOf(idRuta)  + "'' " +
-                " and idpromotor = " + String.valueOf(idPromotor)+ "'";
-        //Log.e(TAG_INFO,  sSql1);
-        //Log.e(TAG_INFO, sSql);
+                " and idruta = '" + String.valueOf(idRuta)  + "'" +
+                " and idpromotor = '" + String.valueOf(idPromotor)+ "'";
         db.beginTransaction();
         try {
             db.execSQL(sSql1);
@@ -4655,8 +4630,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 iCta = cursor.getInt(0);
             }
             cursor.close();
-            // Log.e(TAG_INFO, "CONSULTA CANJES = " + sSql);
-            // Log.e(TAG_INFO, "CUENTA = " + String.valueOf(iCta));
             return iCta;
         } catch (Exception e) {
             Log.e(TAG_ERROR, e.getMessage());
@@ -4681,14 +4654,13 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             cursor = db.rawQuery(sSql, null);
             while (cursor.moveToNext()) {
                 /*
-                Log.e(TAG_INFO, String.valueOf(cursor.getInt(0)));
-                Log.e(TAG_INFO, String.valueOf(cursor.getInt(1)));
-                Log.e(TAG_INFO, String.valueOf(cursor.getInt(2)));
-                Log.e(TAG_INFO, String.valueOf(cursor.getInt(3)));
-                Log.e(TAG_INFO, String.valueOf(cursor.getInt(4)));
-                Log.e(TAG_INFO, cursor.getString(5));
-                Log.e(TAG_INFO, cursor.getString(6));
-
+                Log.e(TAG_INFO,  String.valueOf(cursor.getInt(0)));
+                Log.e(TAG_INFO,  String.valueOf(cursor.getInt(1)));
+                Log.e(TAG_INFO,  String.valueOf(cursor.getInt(2)));
+                Log.e(TAG_INFO,  String.valueOf(cursor.getInt(3)));
+                Log.e(TAG_INFO,  String.valueOf(cursor.getInt(4)));
+                Log.e(TAG_INFO, cursor.getString (5));
+                Log.e(TAG_INFO, cursor.getString (6));
                  */
                 iCta++;
             }
@@ -4797,5 +4769,391 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             db1.close();
             db.close();
         }
+    }
+
+
+    // **********************************
+    // TODO Coloca cajes en modo desconectado etapa 1
+    // Obtiene datos para subir foto de la tabla competencia promocion
+    // Los coloca en la web cuando la conexión este disponible
+    public int ColocaCanjes()
+    {
+        int i = 0;
+        int _id;
+        int _idpromotor;
+        double _latitud;
+        double _longitud;
+        String _idusuario = "";
+        int _idoperacion= 9;
+        int _idruta = 0;
+        String _fechahora="";
+        String _image = "";
+        String _image1 = "";
+        String _llave = "";
+        String _comentario = "";
+        String _sVerApp;
+
+        SQLiteDatabase db = getReadableDatabase();
+        //********************************************
+        // Primer cursor
+        String sSql = "Select distinct  c.id,  af.idpromotor, af.latitud, af.longitud, af.idusuario, 9 as idoperacion, af.idruta,   " +
+                " af.fechahora, af.imagen as image,  '' as image1, c.llave, c.comentario " +
+                " from canjes c  " +
+                " inner join almacenfotos af on af.id = c.idfoto " +
+                " order by c.id asc limit 1;";
+
+        // Log.e(TAG_ERROR, sSql);
+        Cursor cursor;
+        cursor = db.rawQuery(sSql, null);
+        try {
+            // ************************************
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                _id= cursor.getInt(0);
+                _idpromotor = cursor.getInt(1);
+                _latitud = cursor.getDouble(2);
+                _longitud = cursor.getDouble(3);
+                _idusuario = cursor.getString(4);
+                _idoperacion = cursor.getInt(5);
+                _idruta = cursor.getInt(6);
+                _fechahora = cursor.getString(7);
+                _image = cursor.getString(8);
+                _image1 = cursor.getString(9);
+                _llave = cursor.getString(10);
+                _comentario = cursor.getString(11);
+
+                int versionCode = BuildConfig.VERSION_CODE;
+                String versionName = BuildConfig.VERSION_NAME;
+                _sVerApp =  versionName + ":" + versionCode;
+
+                // Espera un segundo
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        // yourMethod();
+                    }
+                }, 1000);   //1 second
+
+                String sArregloProductos = this.consulta_cadena_canjes_tienda_promotor(_idpromotor, _idruta);
+                String SinDatos= "1";
+                // *******************
+                // Subir imagen
+                cargaCanjes(
+                        String.valueOf(_idpromotor),
+                        String.valueOf(_latitud),
+                        String.valueOf(_longitud),
+                        String.valueOf(_idusuario),
+                        String.valueOf(_idoperacion),
+                        String.valueOf(_idruta),
+                        String.valueOf(_fechahora),
+                        String.valueOf(_image),
+                        String.valueOf(_image1),
+                        _llave,
+                        _comentario,
+                        sArregloProductos,
+                        _sVerApp
+                );
+                i++;
+
+                // *****************************
+                cursor.moveToNext();
+            }
+            cursor.close();
+
+            return i;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            Log.e(TAG_ERROR, "Error en tabla al consultar canjes etapa1" + Resultado);
+            Toast.makeText(this.contexto, ERROR_FOTO + "Error en tabla al consultar canjes etapa1" + Resultado, Toast.LENGTH_LONG).show();
+            return 0;
+        } finally {
+            assert cursor != null;
+            db.close();
+        }
+    }
+
+    private void cargaCanjes(
+            String _idpromotor,
+            String _pLatitud,
+            String _pLongitud,
+            String _idusuario,
+            String _idoperacion,
+            String _idRuta,
+            String _fechahora,
+            String _uploadImage1,
+            String _uploadImage2,
+            String _llave,
+            String _comentario,
+            String _arregloproductos,
+            String _sVerApp
+    )
+    {
+        class EstableceCanjes extends AsyncTask<String, Void, String> {
+
+            private RequestHandler rh = new RequestHandler();
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                HashMap<String, String> data = new HashMap<>();
+                String idpromotor   = params[0];
+                String pLatitud     = params[1];
+                String pLongitud    = params[2];
+                String idUsuario    = params[3];
+                String idoperacion  = params[4];
+                String idRuta      = params[5];
+                String fechahora   = params[6];
+                String uploadImage1= params[7];
+                String uploadImage2= params[8];
+                String llave       = params[9];
+                String sComentarios= params[10];
+                String sArregloProductos  = params[11];
+                String sVerApp      = params[12];
+
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(contexto.getApplicationContext());
+                idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
+
+                data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
+                data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
+                data.put(UPLOAD_LONGITUD, String.valueOf(pLongitud));
+                data.put(UPLOAD_IDUSUARIO, idUsuario);
+                data.put(UPLOAD_IDOPERACION, String.valueOf(idoperacion));
+                data.put(UPLOAD_IDRUTA, String.valueOf(idRuta));
+                data.put(UPLOAD_FECHAHORA, fechahora);
+                data.put(UPLOAD_IMAGEN, uploadImage1);
+                data.put(UPLOAD_IMAGEN1, uploadImage2);
+                data.put(UPLOAD_LLAVE, llave);
+                data.put(Foto.UPLOAD_COMENTARIOS,sComentarios);
+                data.put(UPLOAD_ARREGLOPRODUCTO,sArregloProductos);
+
+                data.put(UPLOAD_VERSION, sVerApp);
+                data.put(UPLOAD_SINDATOS, "0");
+
+                return rh.sendPostRequest(UPLOAD_CANJES,data);
+            }
+        }
+
+        EstableceCanjes ui = new EstableceCanjes();
+        ui.execute( _idpromotor,
+                _pLatitud,
+                _pLongitud,
+                _idusuario,
+                _idoperacion,
+                _idRuta,
+                _fechahora,
+                _uploadImage1,
+                _uploadImage2,
+                _llave,
+                _comentario,
+                _arregloproductos,
+                _sVerApp);
+    }
+
+    // **********************************
+    // TODO Coloca canjes en modo desconectado etapa 2
+    // Obtiene datos para subir foto de la tabla competencia promocion complemento
+    public int ColocaCanjesComplemento()
+    {
+        int i = 0;
+        int _id;
+        int _idpromotor;
+        double _latitud;
+        double _longitud;
+        String _idusuario = "";
+        int _idoperacion= 9;
+        int _idruta = 0;
+        String _fechahora="";
+        String _image = "";
+        String _image1 = "";
+        String _llave = "";
+        String _comentario = "";
+        String _sVerApp;
+        int _idfoto = 0;
+        int _idfoto1 = 0;
+
+        SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db1 = getWritableDatabase();
+        //********************************************
+        // Segundo cursor
+        String sSql = "Select distinct  c.id,  af.idpromotor, af.latitud, af.longitud, af.idusuario, 9 as idoperacion, af.idruta,   " +
+                " af.fechahora, '' as image,  af.imagen1 as image1, c.llave, c.comentario, c.idfoto, c.idfoto1 " +
+                " from canjes c  " +
+                " inner join almacenfotos af on af.id = c.idfoto1 " +
+                " order by c.id asc limit 1;";
+
+        // Log.e(TAG_ERROR, sSql);
+        Cursor cursor;
+        cursor = db.rawQuery(sSql, null);
+        try {
+            // ************************************
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                _id= cursor.getInt(0);
+                _idpromotor = cursor.getInt(1);
+                _latitud = cursor.getDouble(2);
+                _longitud = cursor.getDouble(3);
+                _idusuario = cursor.getString(4);
+                _idoperacion = cursor.getInt(5);
+                _idruta = cursor.getInt(6);
+                _fechahora = cursor.getString(7);
+                _image = cursor.getString(8);
+                _image1 = cursor.getString(9);
+                _llave = cursor.getString(10);
+                _comentario = cursor.getString(11);
+                _idfoto = cursor.getInt(12);
+                _idfoto1= cursor.getInt(13);
+
+                int versionCode = BuildConfig.VERSION_CODE;
+                String versionName = BuildConfig.VERSION_NAME;
+                _sVerApp =  versionName + ":" + versionCode;
+
+                // Espera un segundo
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        // yourMethod();
+                    }
+                }, 1000);   //1 second
+
+                String sArregloProductos = this.consulta_cadena_canjes_tienda_promotor(_idpromotor, _idruta);
+                String SinDatos= "1";
+                // *******************
+                // Subir imagen
+                cargaCanjesComplemento(
+                        String.valueOf(_idpromotor),
+                        String.valueOf(_latitud),
+                        String.valueOf(_longitud),
+                        String.valueOf(_idusuario),
+                        String.valueOf(_idoperacion),
+                        String.valueOf(_idruta),
+                        String.valueOf(_fechahora),
+                        String.valueOf(_image),
+                        String.valueOf(_image1),
+                        _llave,
+                        _comentario,
+                        sArregloProductos,
+                        _sVerApp
+                );
+                i++;
+                // *****************************
+                // Borrando el registro recien colocado de competencia_promocion asi como las fotos
+                db1.beginTransaction();
+                String sBorrado0 = "Delete from canjes_productos where llave = '" + _llave + "';";
+                db1.execSQL(sBorrado0);
+                String sBorrado = "Delete from canjes where llave = '" + _llave + "';";
+                db1.execSQL(sBorrado);
+                String sBorrado1 = "Delete from almacenfotos where id in (" + _idfoto + "," + _idfoto1 + ");";
+                db1.execSQL(sBorrado1);
+                db1.setTransactionSuccessful();
+                // *****************************
+                cursor.moveToNext();
+            }
+            cursor.close();
+            return i;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            Log.e(TAG_ERROR, " Error en tabla al consultar competencia_promocion c2" + Resultado);
+            Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar competencia_promocion c2" + Resultado, Toast.LENGTH_LONG).show();
+            return 0;
+        } finally {
+            assert cursor != null;
+            db.close();
+            db1.close();
+        }
+    }
+
+    private void cargaCanjesComplemento(
+            String _idpromotor,
+            String _pLatitud,
+            String _pLongitud,
+            String _idusuario,
+            String _idoperacion,
+            String _idRuta,
+            String _fechahora,
+            String _uploadImage1,
+            String _uploadImage2,
+            String _llave,
+            String _comentario,
+            String _arregloproductos,
+            String _sVerApp
+    )
+    {
+        class EstableceCanjesComplemento extends AsyncTask<String, Void, String> {
+
+            private RequestHandler rh = new RequestHandler();
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                HashMap<String, String> data = new HashMap<>();
+                String idpromotor   = params[0];
+                String pLatitud     = params[1];
+                String pLongitud    = params[2];
+                String idUsuario    = params[3];
+                String idoperacion  = params[4];
+                String idRuta      = params[5];
+                String fechahora   = params[6];
+                String uploadImage1= params[7];
+                String uploadImage2= params[8];
+                String llave       = params[9];
+                String sComentarios= params[10];
+                String sArregloProductos  = params[11];
+                String sVerApp      = params[12];
+
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(contexto.getApplicationContext());
+                idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
+
+                data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
+                data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
+                data.put(UPLOAD_LONGITUD, String.valueOf(pLongitud));
+                data.put(UPLOAD_IDUSUARIO, idUsuario);
+                data.put(UPLOAD_IDOPERACION, String.valueOf(idoperacion));
+                data.put(UPLOAD_IDRUTA, String.valueOf(idRuta));
+                data.put(UPLOAD_FECHAHORA, fechahora);
+                data.put(UPLOAD_IMAGEN, uploadImage1);
+                data.put(UPLOAD_IMAGEN1, uploadImage2);
+                data.put(UPLOAD_LLAVE, llave);
+                data.put(Foto.UPLOAD_COMENTARIOS,sComentarios);
+                data.put(UPLOAD_ARREGLOPRODUCTO,sArregloProductos);
+
+                data.put(UPLOAD_VERSION, sVerApp);
+                data.put(UPLOAD_SINDATOS, "0");
+
+                return rh.sendPostRequest(UPLOAD_CANJES_COMPLEMENTO,data);
+            }
+        }
+
+        EstableceCanjesComplemento ui = new EstableceCanjesComplemento();
+        ui.execute( _idpromotor,
+                _pLatitud,
+                _pLongitud,
+                _idusuario,
+                _idoperacion,
+                _idRuta,
+                _fechahora,
+                _uploadImage1,
+                _uploadImage2,
+                _llave,
+                _comentario,
+                _arregloproductos,
+                _sVerApp);
     }
 }

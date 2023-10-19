@@ -88,10 +88,12 @@ public class OnItemClickListenerAdaptadorProductosCanjes implements AdapterView.
         idruta = cajaruta.getText().toString();
         idproducto = cajaproducto.getText().toString();
         upc = cajaupc.getText().toString();
-
+/*
         Log.e(TAG_ERROR, "idruta " + idruta);
         Log.e(TAG_ERROR, "idproducto " + idproducto);
         Log.e(TAG_ERROR, "upc " + upc);
+
+ */
 
         Intent Producto = new Intent(context, Producto.class);
         Producto.putExtra(TAG_IDPRODUCTO, Integer.parseInt(idproducto));

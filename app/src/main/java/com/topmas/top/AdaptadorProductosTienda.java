@@ -80,10 +80,6 @@ public class AdaptadorProductosTienda extends BaseAdapter {
         TextView cajaproducto = (TextView) view.findViewById(R.id.txtProducto);
         TextView cajaupc = (TextView) view.findViewById(R.id.upc_producto);
 
-        //Log.e(TAG_ERROR,  " ** position " + position);
-        //Log.e(TAG_ERROR,  " ** arreglo " + ArrDescripciones[position]);
-        //Log.e(TAG_ERROR,  " ** cuenta " + ArrDescripciones.length);
-
         try {
             if (!ArrDescripciones[position].equals("") &&
                     ArrDescripciones[position] != null ) {
@@ -96,8 +92,6 @@ public class AdaptadorProductosTienda extends BaseAdapter {
                             // Log.e(TAG_ERROR, "1. No Hay imagen " + String.valueOf(position));
                             sRutaImagen = TAG_SERVIDOR +  "/ImagenesProductos/" +
                                     String.valueOf(ArrProductos[position]) + "_" + ArrUpcs[position] + ".png";
-                            //Log.e(TAG_ERROR, "Ruta imagen1 " + sRutaImagen);
-                            //Log.e(TAG_ERROR, "Posicion " + position);
                             MuestraImagen(sRutaImagen,
                                     imagen,
                                      almacenaImagen,
@@ -108,11 +102,9 @@ public class AdaptadorProductosTienda extends BaseAdapter {
                             imagen.setImageBitmap(funciones.ObtenImagen(position));
                         }
                     } catch (NullPointerException e) {
-                         // Log.e(TAG_ERROR, "1a. No Hay imagen "+ String.valueOf( position));
-                        // funciones.RegistraError(pName, "AdaptadorProductosTienda, establecepromocion", e, context, this.context);
                         sRutaImagen = "https://www.topmas.mx/TopMas/ImagenesProductos/" +
                                 String.valueOf(ArrProductos[position]) + "_" + ArrUpcs[position] + ".png";
-                        Log.e(TAG_ERROR, "Ruta imagen2 " + sRutaImagen);
+                        // Log.e(TAG_ERROR, "Ruta imagen2 " + sRutaImagen);
                         MuestraImagen(sRutaImagen,
                                 imagen,
                                 almacenaImagen,

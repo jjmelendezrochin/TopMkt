@@ -247,11 +247,7 @@ public class Producto extends AppCompatActivity {
                             pidproducto
                             );
                 }
-                /*
-                else {
-                    // Log.e(TAG_ERROR, "2. Hay imagen "+ String.valueOf( position));
-                    imagenProducto.setImageBitmap(funciones.ObtenImagen(pposicion));
-                }*/
+
             } catch (NullPointerException e) {
                 // Log.e(TAG_ERROR, "1a. No Hay imagen "+ ( pposicion));
                 // funciones.RegistraError(pName, "Producto ,cmdGuardarPrecio.setOnClickListener", e, Producto.this,getApplicationContext());

@@ -5,7 +5,6 @@ import static com.topmas.top.Constants.CONST_ACCESOLOCAL;
 import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_DIRECCION;
-import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
 import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
@@ -14,7 +13,6 @@ import static com.topmas.top.Constants.TAG_USUARIO;
 import static com.topmas.top.Foto.UPLOAD_ARREGLOPRODUCTO;
 import static com.topmas.top.Foto.UPLOAD_COMENTARIOS;
 import static com.topmas.top.Foto.UPLOAD_FECHAHORA;
-import static com.topmas.top.Foto.UPLOAD_IDCANJE;
 import static com.topmas.top.Foto.UPLOAD_IDOPERACION;
 import static com.topmas.top.Foto.UPLOAD_IDPROMOTOR;
 import static com.topmas.top.Foto.UPLOAD_IDRUTA;
@@ -105,6 +103,7 @@ public class Canjes extends AppCompatActivity {
     String pdireccion = "";
     String ptienda = "";
     public static final String UPLOAD_CANJES = TAG_SERVIDOR + "/PhotoUpload/upload_canjes.php";
+    public static final String UPLOAD_CANJES_COMPLEMENTO = TAG_SERVIDOR + "/PhotoUpload/upload_canjes_complemento.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -327,7 +326,6 @@ public class Canjes extends AppCompatActivity {
                     // *****************
                     // Obteniendo los valores de aquellos productos con cantidad de este promotor y ruta
                     sArregloProductos = almacenaImagen.consulta_cadena_canjes_tienda_promotor(pidPromotor, pidRuta);
-                    Log.e(TAG_ERROR, sArregloProductos + "1");
                     // *****************************
                     // Verifica la forma en que subirá los datos
                     if (funciones.RevisarConexion(getApplicationContext())) {
@@ -508,7 +506,7 @@ public class Canjes extends AppCompatActivity {
             upc1[k] = upc[k];
 
             // Lista los productos
-            Log.e(TAG_ERROR, descripcionproducto1[k]);
+            // Log.e(TAG_ERROR, descripcionproducto1[k]);
         }
 
         if (iCuentaProductos == 0) {
@@ -537,7 +535,6 @@ public class Canjes extends AppCompatActivity {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                Log.e(TAG_ERROR, sArregloProductos + "1");
                 pDialog = new ProgressDialog(Canjes.this);
                 pDialog.setMessage("Enviando datos ...");
                 pDialog.setIndeterminate(false);
@@ -560,8 +557,11 @@ public class Canjes extends AppCompatActivity {
                 String uploadImage2 = almacenaImagen.getStringImage(bitmap2);
 
                 // Obtención de datos de llave
-                almacenaImagen.consulta_total_canjes();
+                // almacenaImagen.consulta_total_canjes();
                 llave = almacenaImagen.inserta_canjes(pidRuta, pidPromotor,iFoto1,iFoto2, sComentarios);
+                //Log.e(TAG_ERROR, "***********************");
+                almacenaImagen.consulta_total_canjes();
+                //Log.e(TAG_ERROR, "***********************");
 
                 HashMap<String,String> data = new HashMap<>();
 
@@ -608,12 +608,16 @@ public class Canjes extends AppCompatActivity {
                     imagenFoto1.setImageResource(android.R.color.transparent);
                     imagenFoto2.setImageResource(android.R.color.transparent);
                     almacenaImagen.borra_canjes(pidRuta, pidPromotor,llave);
+                    //Log.e(TAG_ERROR, "***********************");
+                    almacenaImagen.consulta_total_canjes();
                 }
                 else{
                     Toast.makeText(getApplicationContext(), s , Toast.LENGTH_LONG).show();
                     imagenFoto1.setImageResource(android.R.color.transparent);
                     imagenFoto2.setImageResource(android.R.color.transparent);
                     almacenaImagen.borra_canjes(pidRuta, pidPromotor,llave);
+                    //Log.e(TAG_ERROR, "***********************");
+                    almacenaImagen.consulta_total_canjes();
                 }
                 finish();
                 // **************************************
@@ -624,7 +628,7 @@ public class Canjes extends AppCompatActivity {
             UploadImagenesCanjes ui = new UploadImagenesCanjes();
             Bitmap bm1=((BitmapDrawable)imagenFoto1.getDrawable()).getBitmap();
             Bitmap bm2=((BitmapDrawable)imagenFoto2.getDrawable()).getBitmap();
-            Log.e(TAG_ERROR, sArregloProductos);
+            // Log.e(TAG_ERROR, sArregloProductos);
             ui.execute(bm1, bm2);
         }
         catch( java.lang.NullPointerException e)
