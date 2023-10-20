@@ -2124,7 +2124,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // db.setTransactionSuccessful();
         } catch (Exception ex) {
             String Resultado = ex.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al truncar tablas " + Resultado, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al truncar tablas " + Resultado, Toast.LENGTH_LONG).show();
             // Log.e(TAG_ERROR, ex.getMessage());
         } finally {
             // db.endTransaction();
@@ -3243,14 +3243,16 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int iCuentaCaducidad = this.ObtenRegistros(14);
         int iCuentaErrores = this.ObtenRegistros(16);
         int iCuentaCompetenciaPromocion = this.ObtenRegistros(18);
+        int iCuentaCanjes = this.ObtenRegistros(20);
 
-        String sMensaje = "Usted tiene " + String.valueOf(iCuenta) + " imágenes almacenadas y/o " +
-                iCuentaPreciosCambiados + " precios cambiados, y/o " +
-                iCuentaPromociones + " promociones, y/o " +
-                iCuentaRegistrosCompetencia + " registros de competencia, y/o " +
-                iCuentaCaducidad  + " registros de caducidad , y/o " +
-                iCuentaCompetenciaPromocion + " registros de competencia promoción y/o " +
-                iCuentaErrores  + " registros de errores";
+        String sMensaje = "Usted tiene " + "\n" + String.valueOf(iCuenta) + " imágenes almacenadas "  + "\n" +
+                iCuentaPreciosCambiados + " precios cambiados, "  + "\n" +
+                iCuentaPromociones + " promociones, "  + "\n" +
+                iCuentaRegistrosCompetencia + " datos de competencia,"  + "\n" +
+                iCuentaCaducidad  + " datos de caducidad, "  + "\n" +
+                iCuentaCompetenciaPromocion + " datos de competencia promoción, "  + "\n" +
+                iCuentaErrores  + " datos de error(es) "  + "\n" +
+                iCuentaCanjes + " datos de canjes";
 
         Toast.makeText(this.contexto, sMensaje, Toast.LENGTH_LONG).show();
     }
@@ -3289,7 +3291,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db1 = getWritableDatabase();
         String sSql = "Select fabricante, marca, modelo, board ,hardware ,serie ,uid ,android_id ,resolucion ,tamaniopantalla ,densidad ,bootloader ,user_value ,host_value ,version ,api_value ,build_id ,build_time ,fingerprint ,usuario, seccion, error ,fechahora from errores where procesado = 0;";
 
-        Log.e(TAG_ERROR, sSql);
+        // Log.e(TAG_ERROR, sSql);
         Cursor cursor;
         cursor = db.rawQuery(sSql, null);
         try {
@@ -3446,35 +3448,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 String  error= params[21];
                 String  fechahora= params[22];
 
-                // *******************
-                // Subir errores
-                Log.e(TAG_ERROR, "****************************");
-                Log.e(TAG_ERROR, "Llamando al proceso de carga de errores");
-                Log.e(TAG_ERROR,   fabricante);
-                Log.e(TAG_ERROR,   marca);
-                Log.e(TAG_ERROR,   modelo);
-                Log.e(TAG_ERROR,   board);
-                Log.e(TAG_ERROR,   hardware);
-                Log.e(TAG_ERROR,   serie);
-                Log.e(TAG_ERROR,   uid);
-                Log.e(TAG_ERROR,   android_id);
-                Log.e(TAG_ERROR,   resolucion);
-                Log.e(TAG_ERROR,   tamaniopantalla);
-                Log.e(TAG_ERROR,   densidad);
-                Log.e(TAG_ERROR,   bootloader);
-                Log.e(TAG_ERROR,   user_value);
-                Log.e(TAG_ERROR,   host_value);
-                Log.e(TAG_ERROR,   version);
-                Log.e(TAG_ERROR,   api_value);
-                Log.e(TAG_ERROR,   build_id);
-                Log.e(TAG_ERROR,   build_time);
-                Log.e(TAG_ERROR,   fingerprint);
-                Log.e(TAG_ERROR,   "usuario " +  usuario);
-                Log.e(TAG_ERROR,   "seccion "  + seccion);
-                Log.e(TAG_ERROR,   "error "  + error);
-                Log.e(TAG_ERROR,   "fechahora "  + fechahora);
-                Log.e(TAG_ERROR, "****************************");
-
                 data.put(UPLOAD_FABRICANTE, fabricante);
                 data.put(UPLOAD_MARCA,marca);
                 data.put(UPLOAD_MODELO,modelo);
@@ -3499,10 +3472,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 data.put(UPLOAD_ERROR,error);
                 data.put(UPLOAD_FECHAHORA,fechahora);
 
-                Log.e(TAG_ERROR, "*************");
-                Log.e(TAG_ERROR, "Llamando al proceso que guarda los errores");
-                Log.e(TAG_ERROR, UPLOAD_ERRORES);
-                Log.e(TAG_ERROR, "*************");
                 return rh.sendPostRequest(UPLOAD_ERRORES,data);
             }
         }
@@ -4538,7 +4507,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     }
 
     // **********************************
-    // TODO Método para consultar la cadena  de canejes por tienda y promotor
+    // TODO Método para consultar la cadena  de canjes por tienda y promotor
     public String consulta_cadena_canjes_tienda_promotor(
             int _idpromotor,
             int _idruta
@@ -4573,37 +4542,136 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     }
 
     // **********************************
-    // TODO Método para borrar canjes
-    public int borra_canjes(
-            int idRuta,
-            int idPromotor,
+    // TODO Método para consultar la cadena  de canjes por tienda y promotor
+    public String consulta_cadena_canjes_tienda_promotor_llave(
+            int _idpromotor,
+            int _idruta,
+            String _llave
+    ) {
+        String sSql;
+        Cursor cursor = null;
+        String sProducto = "";
+        int cantidad = 0;
+        String sRetorno = "";
+        SQLiteDatabase db = getReadableDatabase();
+
+        sSql = "  Select p.upc , c.cantidad from canjes_productos c " +
+                " inner join cat_productos p on c.idproducto = p.idproducto" +
+                " where c.cantidad>0 " +
+                " and c.idpromotor = '" + _idpromotor + "'" +
+                " and c.idruta = '" + _idruta + "'" +
+                " and c.llave = '" + _llave + "'";
+
+        // Log.e(TAG_producto, sSql);
+        try {
+            cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                sProducto = cursor.getString(0);
+                cantidad = cursor.getInt(1);
+                sRetorno += String.valueOf(sProducto)+"="+String.valueOf(cantidad)+"|";
+            }
+            cursor.close();
+            sRetorno = sRetorno.substring(0, sRetorno.length()-1);
+            return sRetorno;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            this.inserta_error1(idUsuario, e, "consulta_cadena_canjes_tienda_promotor_llave" );
+            return sRetorno;
+        } finally {
+            db.close();
+        }
+    }
+
+
+    // **********************************
+    // TODO Método para borrar canjes_almacenfotos
+    public int borra_canjes_almacenfotos(
             String llave
     ) {
         String sSql=null;
-        String sSql1=null;
         String sSql2=null;
         Cursor cursor = null;
-        Cursor cursor1 = null;
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db0 = getReadableDatabase();
+        SQLiteDatabase db1 = getWritableDatabase();
+        int idfoto=0;
+        int idfoto1=0;
 
-        sSql1 = " delete from canjes_productos where llave = '" + llave + "'" +
-                " and idruta = '" + String.valueOf(idRuta)  + "'" +
-                " and idpromotor = '" + String.valueOf(idPromotor)  + "'";
-        sSql =  " delete from canjes where llave = '" + llave + "'" +
-                " and idruta = '" + String.valueOf(idRuta)  + "'" +
-                " and idpromotor = '" + String.valueOf(idPromotor)+ "'";
-        db.beginTransaction();
+        //  CONSULTANDO el idfoto e idfoto1 para borrar ambas fotos
+        sSql = " Select idfoto, idfoto1 from canjes where llave = '" + llave + "'";
         try {
-            db.execSQL(sSql1);
-            db.execSQL(sSql);
-            db.setTransactionSuccessful();
+            cursor = db0.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                idfoto = cursor.getInt(0);
+                idfoto1 = cursor.getInt(1);
+            }
+            cursor.close();
+
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            this.inserta_error1(idUsuario, e, "borra canjes_almacenfotos" );
+        }
+
+        sSql2 = "delete from almacenfotos where id in (" + idfoto + "," + idfoto1 + ");";
+
+        try {
+            db1.execSQL(sSql2);
+            // Log.e(TAG_ERROR, sSql2);
             return 1;
         } catch (Exception e) {
             Log.e(TAG_ERROR, e.getMessage());
-            this.inserta_error1(idUsuario, e, "borra_canjes" );
+            this.inserta_error1(idUsuario, e, "borra canjes_almacenfotos" );
             return 0;
         } finally {
-            db.close();
+            db0.close();
+            db1.close();
+        }
+    }
+
+    // **********************************
+    // TODO Método para borrar canjes_productos
+    public int borra_canjes_productos(
+            String llave
+    ) {
+        String sSql=null;
+        String sSql2=null;
+        Cursor cursor = null;
+
+        SQLiteDatabase db1 = getWritableDatabase();
+        sSql =  "delete from canjes_productos where llave = '" + llave + "';";
+
+        try {
+            db1.execSQL(sSql);
+            // Log.e(TAG_ERROR, sSql);
+            return 1;
+        } catch (Exception e) {
+            Log.e(TAG_ERROR, e.getMessage());
+            this.inserta_error1(idUsuario, e, "borra canjes_productos" );
+            return 0;
+        } finally {
+            db1.close();
+        }
+    }
+
+    // **********************************
+    // TODO Método para borrar canjes
+    public int borra_canjes(
+            String llave
+    ) {
+        String sSql=null;
+        SQLiteDatabase db1 = getWritableDatabase();
+
+        sSql =  "delete from canjes where llave = '" + llave + "';";
+
+        try {
+            db1.execSQL(sSql);
+            // Log.e(TAG_ERROR, sSql);
+            return 1;
+        } catch (Exception e) {
+            Log.e(TAG_ERROR, e.getMessage());
+            this.inserta_error1(idUsuario, e, "borra canjes" );
+            return 0;
+        } finally {
+            db1.close();
         }
     }
 
@@ -4648,20 +4716,22 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int iCta = 0;
         SQLiteDatabase db = getWritableDatabase();
 
-        sSql = " Select * from canjes_productos";
+        sSql = " Select * from canjes";
 
         try {
             cursor = db.rawQuery(sSql, null);
             while (cursor.moveToNext()) {
-                /*
-                Log.e(TAG_INFO,  String.valueOf(cursor.getInt(0)));
-                Log.e(TAG_INFO,  String.valueOf(cursor.getInt(1)));
-                Log.e(TAG_INFO,  String.valueOf(cursor.getInt(2)));
-                Log.e(TAG_INFO,  String.valueOf(cursor.getInt(3)));
-                Log.e(TAG_INFO,  String.valueOf(cursor.getInt(4)));
-                Log.e(TAG_INFO, cursor.getString (5));
-                Log.e(TAG_INFO, cursor.getString (6));
-                 */
+
+                Log.e(TAG_INFO,  "id "  +String.valueOf(cursor.getInt(0)));
+                Log.e(TAG_INFO,  "idruta "  +String.valueOf(cursor.getInt(1)));
+                Log.e(TAG_INFO,  "idpromotor "  +String.valueOf(cursor.getInt(2)));
+                Log.e(TAG_INFO,  "idfoto "  +String.valueOf(cursor.getInt(3)));
+                Log.e(TAG_INFO,  "idfoto1 "  +String.valueOf(cursor.getInt(4)));
+                Log.e(TAG_INFO, "comentario "  +cursor.getString (5));
+                Log.e(TAG_INFO, "fechahora "  + cursor.getString (6));
+                Log.e(TAG_INFO, "llave "  + cursor.getString (7));
+                Log.e(TAG_INFO, "-------------- ");
+                /* */
                 iCta++;
             }
             cursor.close();
@@ -4732,10 +4802,10 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             } else {
                 sSql = "   Insert into canjes(idruta, idpromotor, idfoto, idfoto1, fechahora, comentario, llave)" +
                         " values(" + _idruta + "," + _idpromotor + "," +  _idfoto + "," + _idfoto1 +
-                        ",cast(CURRENT_DATE as date) ,'" + _comentario + "', '" + llave + "');";
+                        ",datetime(\"now\",\"localtime\") ,'" + _comentario + "', '" + llave + "');";
             }
-            //Log.e(TAG_INFO, " ***** inserción canjes " );
-            //Log.e(TAG_INFO, sSql);
+            // Log.e(TAG_INFO, " ***** inserción canjes " );
+            // Log.e(TAG_INFO, sSql);
             db.execSQL(sSql);
             //Log.e(TAG_INFO, " ***** inserción exitosa  ***** " );
 
@@ -4800,6 +4870,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 " af.fechahora, af.imagen as image,  '' as image1, c.llave, c.comentario " +
                 " from canjes c  " +
                 " inner join almacenfotos af on af.id = c.idfoto " +
+                " where cast(af.fechahora as date) = cast(DATE() AS date) " +
                 " order by c.id asc limit 1;";
 
         // Log.e(TAG_ERROR, sSql);
@@ -4834,7 +4905,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                     }
                 }, 1000);   //1 second
 
-                String sArregloProductos = this.consulta_cadena_canjes_tienda_promotor(_idpromotor, _idruta);
+                String sArregloProductos = this.consulta_cadena_canjes_tienda_promotor_llave(_idpromotor, _idruta, _llave);
                 String SinDatos= "1";
                 // *******************
                 // Subir imagen
@@ -4851,7 +4922,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         _llave,
                         _comentario,
                         sArregloProductos,
-                        _sVerApp
+                        _sVerApp,
+                        SinDatos
                 );
                 i++;
 
@@ -4885,7 +4957,9 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String _llave,
             String _comentario,
             String _arregloproductos,
-            String _sVerApp
+            String _sVerApp,
+            String _SinDatos
+
     )
     {
         class EstableceCanjes extends AsyncTask<String, Void, String> {
@@ -4918,9 +4992,31 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 String sComentarios= params[10];
                 String sArregloProductos  = params[11];
                 String sVerApp      = params[12];
+                String SinDatos     = params[13];
 
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(contexto.getApplicationContext());
                 idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
+
+                /*
+                Log.e(TAG_ERROR, "*************************");
+                Log.e(TAG_ERROR, "Carga de canjes");
+                Log.e(TAG_ERROR, "idpromotor "  + String.valueOf(idpromotor));
+                Log.e(TAG_ERROR, "platitud "  + String.valueOf(pLatitud));
+                Log.e(TAG_ERROR, "plongitud "  + String.valueOf(pLongitud));
+                Log.e(TAG_ERROR, "idusuario "  + idUsuario);
+                Log.e(TAG_ERROR, "idoperacion "  + String.valueOf(idoperacion));
+                Log.e(TAG_ERROR, "idRuta "  + String.valueOf(idRuta));
+                Log.e(TAG_ERROR, "fechahora "  + fechahora);
+                Log.e(TAG_ERROR, "uploadImage1 "  + uploadImage1);
+                Log.e(TAG_ERROR, "uploadImage2 "  + uploadImage2);
+                Log.e(TAG_ERROR, "llave "  + llave);
+                Log.e(TAG_ERROR,"sComentarios "  + sComentarios);
+                Log.e(TAG_ERROR,"sArregloProductos "  + sArregloProductos);
+                Log.e(TAG_ERROR,"SinDatos "  + SinDatos);
+                Log.e(TAG_ERROR,UPLOAD_CANJES);
+                Log.e(TAG_ERROR, "*************************");
+
+                 */
 
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
@@ -4936,7 +5032,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 data.put(UPLOAD_ARREGLOPRODUCTO,sArregloProductos);
 
                 data.put(UPLOAD_VERSION, sVerApp);
-                data.put(UPLOAD_SINDATOS, "0");
+                data.put(UPLOAD_SINDATOS, SinDatos);
 
                 return rh.sendPostRequest(UPLOAD_CANJES,data);
             }
@@ -4955,7 +5051,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _llave,
                 _comentario,
                 _arregloproductos,
-                _sVerApp);
+                _sVerApp,
+                _SinDatos);
     }
 
     // **********************************
@@ -4969,7 +5066,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         double _latitud;
         double _longitud;
         String _idusuario = "";
-        int _idoperacion= 9;
+        int _idoperacion= 10;
         int _idruta = 0;
         String _fechahora="";
         String _image = "";
@@ -4981,13 +5078,14 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int _idfoto1 = 0;
 
         SQLiteDatabase db = getReadableDatabase();
-        SQLiteDatabase db1 = getWritableDatabase();
+
         //********************************************
         // Segundo cursor
-        String sSql = "Select distinct  c.id,  af.idpromotor, af.latitud, af.longitud, af.idusuario, 9 as idoperacion, af.idruta,   " +
-                " af.fechahora, '' as image,  af.imagen1 as image1, c.llave, c.comentario, c.idfoto, c.idfoto1 " +
+        String sSql = "Select distinct  c.id,  af.idpromotor, af.latitud, af.longitud, af.idusuario, 10 as idoperacion, af.idruta,   " +
+                " af.fechahora, '' as image,  af.imagen as image1, c.llave, c.comentario, c.idfoto, c.idfoto1 " +
                 " from canjes c  " +
                 " inner join almacenfotos af on af.id = c.idfoto1 " +
+                " where cast(af.fechahora as date) = cast(DATE() AS date) " +
                 " order by c.id asc limit 1;";
 
         // Log.e(TAG_ERROR, sSql);
@@ -5024,8 +5122,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                     }
                 }, 1000);   //1 second
 
-                String sArregloProductos = this.consulta_cadena_canjes_tienda_promotor(_idpromotor, _idruta);
-                String SinDatos= "1";
+                String sArregloProductos = this.consulta_cadena_canjes_tienda_promotor_llave(_idpromotor, _idruta, _llave);
+                String _sinDatos= "1";
                 // *******************
                 // Subir imagen
                 cargaCanjesComplemento(
@@ -5041,33 +5139,25 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         _llave,
                         _comentario,
                         sArregloProductos,
-                        _sVerApp
+                        _sVerApp,
+                        _sinDatos
                 );
                 i++;
-                // *****************************
-                // Borrando el registro recien colocado de competencia_promocion asi como las fotos
-                db1.beginTransaction();
-                String sBorrado0 = "Delete from canjes_productos where llave = '" + _llave + "';";
-                db1.execSQL(sBorrado0);
-                String sBorrado = "Delete from canjes where llave = '" + _llave + "';";
-                db1.execSQL(sBorrado);
-                String sBorrado1 = "Delete from almacenfotos where id in (" + _idfoto + "," + _idfoto1 + ");";
-                db1.execSQL(sBorrado1);
-                db1.setTransactionSuccessful();
-                // *****************************
+                this.borra_canjes_almacenfotos(_llave);
+                this.borra_canjes_productos(_llave);
+                this.borra_canjes(_llave);
                 cursor.moveToNext();
             }
             cursor.close();
             return i;
         } catch (Exception e) {
             String Resultado = e.getMessage();
-            Log.e(TAG_ERROR, " Error en tabla al consultar competencia_promocion c2" + Resultado);
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar competencia_promocion c2" + Resultado, Toast.LENGTH_LONG).show();
+            Log.e(TAG_ERROR, " Error en tabla al consultar complento c2 " + Resultado);
+            Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar compmento c2" + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
             assert cursor != null;
             db.close();
-            db1.close();
         }
     }
 
@@ -5084,7 +5174,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String _llave,
             String _comentario,
             String _arregloproductos,
-            String _sVerApp
+            String _sVerApp,
+            String _sSinDatos
     )
     {
         class EstableceCanjesComplemento extends AsyncTask<String, Void, String> {
@@ -5117,9 +5208,30 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 String sComentarios= params[10];
                 String sArregloProductos  = params[11];
                 String sVerApp      = params[12];
+                String sSinDatos    = params[13];
 
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(contexto.getApplicationContext());
                 idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
+/*
+                Log.e(TAG_ERROR, "*************************");
+                Log.e(TAG_ERROR, "Carga de canjes complemento");
+                Log.e(TAG_ERROR, "idpromotor "  + String.valueOf(idpromotor));
+                Log.e(TAG_ERROR, "platitud "  + String.valueOf(pLatitud));
+                Log.e(TAG_ERROR, "plongitud "  + String.valueOf(pLongitud));
+                Log.e(TAG_ERROR, "idusuario "  + idUsuario);
+                Log.e(TAG_ERROR, "idoperacion "  + String.valueOf(idoperacion));
+                Log.e(TAG_ERROR, "idRuta "  + String.valueOf(idRuta));
+                Log.e(TAG_ERROR, "fechahora "  + fechahora);
+                Log.e(TAG_ERROR, "uploadImage1 "  + uploadImage1);
+                Log.e(TAG_ERROR, "uploadImage2 "  + uploadImage2);
+                Log.e(TAG_ERROR, "llave "  + llave);
+                Log.e(TAG_ERROR,"sComentarios "  + sComentarios);
+                Log.e(TAG_ERROR,"sArregloProductos "  + sArregloProductos);
+                Log.e(TAG_ERROR,"sSinDatos "  + sSinDatos);
+                Log.e(TAG_ERROR,UPLOAD_CANJES_COMPLEMENTO);
+                Log.e(TAG_ERROR, "*************************");
+
+ */
 
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
@@ -5132,10 +5244,11 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 data.put(UPLOAD_IMAGEN1, uploadImage2);
                 data.put(UPLOAD_LLAVE, llave);
                 data.put(Foto.UPLOAD_COMENTARIOS,sComentarios);
+
                 data.put(UPLOAD_ARREGLOPRODUCTO,sArregloProductos);
 
                 data.put(UPLOAD_VERSION, sVerApp);
-                data.put(UPLOAD_SINDATOS, "0");
+                data.put(UPLOAD_SINDATOS, sSinDatos);
 
                 return rh.sendPostRequest(UPLOAD_CANJES_COMPLEMENTO,data);
             }
@@ -5154,6 +5267,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _llave,
                 _comentario,
                 _arregloproductos,
-                _sVerApp);
+                _sVerApp,
+                _sSinDatos);
     }
 }

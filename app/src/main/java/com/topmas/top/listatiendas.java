@@ -288,7 +288,7 @@ public class listatiendas extends AppCompatActivity {
         }
 
         // TODO ****************************
-        // TODO Aqui consulta todos los datos en el telefono para subirlos a WEB
+        // TODO EN ESTA SECCION SE CARGAN TODOS LOS DATOS ALMACENADOS EN EL TELEFONO HACIA LA PLATAFORMA
         // TODO ****************************
 
         // En este proceso se verifica si existen registros en la tabla de almacenfotos
@@ -303,7 +303,7 @@ public class listatiendas extends AppCompatActivity {
         int iCaducidad = almacenaImagen.ObtenRegistros(14);             // Obtiene la lista de caducidades
         int iErrores = almacenaImagen.ObtenRegistros(16);               // Obtiene la lista de los errores
         int iCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);  // Obtiene la lista de los registros competencia promoción
-        int iCanjes = almacenaImagen.ObtenRegistros(20);             // Obtiene la lista de canjes
+        int iCanjes = almacenaImagen.ObtenRegistros(20);                // Obtiene la lista de canjes
 
         int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
 
@@ -347,27 +347,29 @@ public class listatiendas extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
-                int iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
-                int iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
-                int iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
-                int iPromociones = almacenaImagen.ObtenRegistros(12);
-                int iCaducidad = almacenaImagen.ObtenRegistros(14);
-                int iErrores = almacenaImagen.ObtenRegistros(16);
-                int iCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);
-                int iCanjes = almacenaImagen.ObtenRegistros(20);
-                int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
+                int iCuenta = almacenaImagen.ObtenRegistros(0);
+                int iCuentaPreciosCambiados = almacenaImagen.ObtenRegistros(9);
+                int iCuentaPromociones = almacenaImagen.ObtenRegistros(10);
+                int iCuentaRegistrosCompetencia = almacenaImagen.ObtenRegistros(12);
+                int iCuentaCaducidad = almacenaImagen.ObtenRegistros(14);
+                int iCuentaErrores = almacenaImagen.ObtenRegistros(16);
+                int iCuentaCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);
+                int iCuentaCanjes = almacenaImagen.ObtenRegistros(20);
+                int iPendientes = (iCuenta+iCuentaPreciosCambiados+iCuentaPromociones+iCuentaRegistrosCompetencia+
+                        iCuentaCaducidad+iCuentaErrores+iCuentaCompetenciaPromocion+iCuentaCanjes);
 
                 if (iPendientes>0) {
                     AlertDialog.Builder alerta = new AlertDialog.Builder(listatiendas.this);
-                    sMensaje = "Usted tiene " + String.valueOf(iMagenesGuardadas) + " imágenes almacenadas y/o " +
-                            iPreciosCambiados + " precios cambiados y/o " +
-                            iPromociones + " promociones y/o " +
-                            iRegistrosCompetencia + " fotos competencia  y/o " +
-                            iCaducidad + " registros de caducidad y/o " +
-                            iCompetenciaPromocion + " registros de competencia promoción y/o " +
-                            iCanjes + " registros de canjes y/o " +
-                            iErrores + " registros de errores " +
-                            " no olvide conectarse en cuanto tenga señal suficiente, para colocar sus fotos en plataforma (pulsar SI para salir)";
+                    String sMensaje = "Usted tiene " + "\n" + String.valueOf(iCuenta) + " imágenes almacenadas "  + "\n" +
+                            iCuentaPreciosCambiados + " precios cambiados, "  + "\n" +
+                            iCuentaPromociones + " promociones, "  + "\n" +
+                            iCuentaRegistrosCompetencia + " datos de competencia,"  + "\n" +
+                            iCuentaCaducidad  + " datos de caducidad, "  + "\n" +
+                            iCuentaCompetenciaPromocion + " datos de competencia promoción, "  + "\n" +
+                            iCuentaErrores  + " datos de error(es) "  + "\n" +
+                            iCuentaCanjes + " datos de canjes" + "\n" +
+                            "No olvide conectarse en cuanto tenga señal suficiente, para colocar sus fotos en plataforma" + "\n" +
+                            "(pulsar SI para salir)";
 
                     alerta.setMessage(sMensaje)
                             .setCancelable(false)
@@ -581,16 +583,17 @@ public class listatiendas extends AppCompatActivity {
                             textoAvance.setGravity(Gravity.CENTER);
                         }
                         else if(iCompetenciaPromocion>0){
-                            Log.e(TAG_ERROR, "Cargando competencia promoción " + String.valueOf(i));
+                            // Log.e(TAG_ERROR, "Cargando competencia promoción " + String.valueOf(i));
                             i = almacenaImagen.ColocaCompetenciaPromocion();
                             j = almacenaImagen.ColocaCompetenciaPromocionComplemento();
                             textoAvance.setText("Cargando competencia promoción " + progressStatus + "/" + progressBar.getMax());
                             textoAvance.setGravity(Gravity.CENTER);
                         }
                         else if(iCanjes>0){
-                            //Log.e(TAG_ERROR, "Cargando canjes " + String.valueOf(i));
+                            // Log.e(TAG_ERROR, "ColocaCanjes()");
                              i = almacenaImagen.ColocaCanjes();
-                            // j = almacenaImagen.ColocaCanjesComplemento();
+                            // Log.e(TAG_ERROR, "ColocaCanjesComplemento()");
+                             j = almacenaImagen.ColocaCanjesComplemento();
                             textoAvance.setText("Cargando canjes" + progressStatus + "/" + progressBar.getMax());
                             textoAvance.setGravity(Gravity.CENTER);
                         }
@@ -635,8 +638,7 @@ public class listatiendas extends AppCompatActivity {
         protected void onPreExecute()
         {
             // TODO ****************************
-            // TODO EN ESTA SECCIÓN SE DESCARGAN TODOS LOS DATOS desde /Promotor/obtenertiendaspromotor6.php
-            // TODO Obtiene la de  informacion de todos los catalogos para luego compararla con los de sqlite  e insertar lo nuevo
+            // TODO EN ESTA SECCIÓN SE DESCARGAN TODOS LOS DATOS DESDE LA PLATAFORMA USANDO EL API /Promotor/obtenertiendaspromotor6.php Obtiene la de  informacion de todos los catalogos para luego compararla con los de sqlite  e insertar lo nuevo
             // TODO ****************************
 
             String sTienda= txtBuscar.getText().toString().trim();

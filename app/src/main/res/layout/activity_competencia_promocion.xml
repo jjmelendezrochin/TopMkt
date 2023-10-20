@@ -319,18 +319,38 @@
                     android:textColor="@color/colorFuente"
                     android:textSize="@dimen/tamanioletraproductos" />
 
+            </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/Bloque5"
+                android:layout_below="@+id/Bloque4f"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margen_arriba"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:hint="Comentario"
+                    android:id="@+id/txtcomentario"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="5dp"
+                    android:textSize="@dimen/tamanioletraproductos"
+                    android:background="@drawable/caja_bordesredondeados"
+                    android:ems="10"
+                    android:paddingStart="20dp"
+                    android:textColor="@color/verdeCorporativo" />
             </LinearLayout>
 
 
-               <LinearLayout
-                android:id="@+id/Bloque5"
+            <LinearLayout
+                android:id="@+id/Bloque6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margen_arriba"
                 android:gravity="center_horizontal|center_vertical"
                 android:orientation="horizontal"
-                android:layout_below="@+id/Bloque4f">
+                android:layout_below="@+id/Bloque5">
 
                 <Button
                     android:id="@+id/cmdGuardar"

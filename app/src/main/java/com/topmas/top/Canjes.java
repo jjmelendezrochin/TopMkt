@@ -5,6 +5,7 @@ import static com.topmas.top.Constants.CONST_ACCESOLOCAL;
 import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_DIRECCION;
+import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
 import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
@@ -335,7 +336,7 @@ public class Canjes extends AppCompatActivity {
                         // Implementar el guardado de datodo no conectado.
                         AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
                         llave = almacenaImagen.inserta_canjes(pidRuta, pidPromotor,iFoto1,iFoto2, sComentarios);
-                        Log.e(TAG_INFO, "* Valor de resultado de inserción  de llave " + llave);
+                        // Log.e(TAG_INFO, "* Valor de resultado de inserción  de llave " + llave);
                         if (llave.length()>0)
                         {
                             Toast.makeText(getApplicationContext(), "Dato almacenado en el teléfono",Toast.LENGTH_LONG).show();
@@ -347,14 +348,15 @@ public class Canjes extends AppCompatActivity {
                     // Toast.makeText(getApplicationContext(), " Guardando valores", Toast.LENGTH_LONG).show();
                 } catch (NullPointerException e) {
                     /**/Toast.makeText(getApplicationContext(), " Todas las imágenes son requeridas", Toast.LENGTH_LONG).show();
-                    Log.e(TAG_INFO,  e.toString());
+                    // Log.e(TAG_INFO,  e.toString());
                 } catch (NumberFormatException e) {
                    /**/ Toast.makeText(getApplicationContext(), " Todas las imágenes y campos deben tener valores 2", Toast.LENGTH_LONG).show();
-                    Log.e(TAG_INFO,  e.toString());
+                    // Log.e(TAG_INFO,  e.toString());
                 }
             }
         });
 
+        almacenaImagen.consulta_total_canjes();
 
     }
 
@@ -560,9 +562,9 @@ public class Canjes extends AppCompatActivity {
                 // almacenaImagen.consulta_total_canjes();
                 llave = almacenaImagen.inserta_canjes(pidRuta, pidPromotor,iFoto1,iFoto2, sComentarios);
                 //Log.e(TAG_ERROR, "***********************");
-                almacenaImagen.consulta_total_canjes();
+                //almacenaImagen.consulta_total_canjes();
                 //Log.e(TAG_ERROR, "***********************");
-
+                String SinDatos= "0";
                 HashMap<String,String> data = new HashMap<>();
 
                 Calendar c = Calendar.getInstance();
@@ -572,6 +574,25 @@ public class Canjes extends AppCompatActivity {
                 int versionCode = BuildConfig.VERSION_CODE;
                 String versionName = BuildConfig.VERSION_NAME;
                 String sVerApp =  versionName + ":" + versionCode;
+/*
+                Log.e(TAG_INFO,  "*****************************");
+                Log.e(TAG_INFO,  String.valueOf(pidPromotor));
+                Log.e(TAG_INFO,  String.valueOf(pLatitud));
+                Log.e(TAG_INFO,  String.valueOf(pLongitud));
+                Log.e(TAG_INFO, idUsuario);
+                Log.e(TAG_INFO,  String.valueOf(idoperacion));
+                Log.e(TAG_INFO,  String.valueOf(pidRuta));
+                Log.e(TAG_INFO, fechahora);
+                Log.e(TAG_INFO, uploadImage1);
+                Log.e(TAG_INFO, uploadImage2);
+                Log.e(TAG_INFO, llave);
+                Log.e(TAG_INFO, sComentarios);
+                Log.e(TAG_INFO, sArregloProductos);
+                Log.e(TAG_INFO, sVerApp);
+                Log.e(TAG_INFO, SinDatos);
+                Log.e(TAG_INFO,  "*****************************");
+
+ */
 
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(pidPromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
@@ -587,7 +608,7 @@ public class Canjes extends AppCompatActivity {
                 data.put(UPLOAD_ARREGLOPRODUCTO,sArregloProductos);
 
                 data.put(UPLOAD_VERSION, sVerApp);
-                data.put(UPLOAD_SINDATOS, "0");
+                data.put(UPLOAD_SINDATOS, SinDatos);
 
                 return rh.sendPostRequest(UPLOAD_CANJES,data);
             }
@@ -607,17 +628,21 @@ public class Canjes extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
                     imagenFoto1.setImageResource(android.R.color.transparent);
                     imagenFoto2.setImageResource(android.R.color.transparent);
-                    almacenaImagen.borra_canjes(pidRuta, pidPromotor,llave);
-                    //Log.e(TAG_ERROR, "***********************");
-                    almacenaImagen.consulta_total_canjes();
+                    almacenaImagen.borra_canjes_almacenfotos(llave);
+                    almacenaImagen.borra_canjes_productos(llave);
+                    almacenaImagen.borra_canjes(llave);
+                    // Log.e(TAG_ERROR, "***********************");
+                    // almacenaImagen.consulta_total_canjes();
                 }
                 else{
                     Toast.makeText(getApplicationContext(), s , Toast.LENGTH_LONG).show();
                     imagenFoto1.setImageResource(android.R.color.transparent);
                     imagenFoto2.setImageResource(android.R.color.transparent);
-                    almacenaImagen.borra_canjes(pidRuta, pidPromotor,llave);
-                    //Log.e(TAG_ERROR, "***********************");
-                    almacenaImagen.consulta_total_canjes();
+                    almacenaImagen.borra_canjes_almacenfotos(llave);
+                    almacenaImagen.borra_canjes_productos(llave);
+                    almacenaImagen.borra_canjes(llave);
+                    // Log.e(TAG_ERROR, "***********************");
+                    // almacenaImagen.consulta_total_canjes();
                 }
                 finish();
                 // **************************************

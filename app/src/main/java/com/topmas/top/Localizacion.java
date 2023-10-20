@@ -29,8 +29,8 @@ public class Localizacion implements LocationListener {
         loc.getLongitude();
         sLatitud = String.valueOf(loc.getLatitude());
         sLongitud = String.valueOf(loc.getLongitude());
-        ////// Log.e(TAG_GEOPOSICION, "Latitud " + String.valueOf(sLatitud));
-        ////// Log.e(TAG_GEOPOSICION, "Longitud " + String.valueOf(sLongitud));
+        // Log.e(TAG_GEOPOSICION, "Latitud " + String.valueOf(sLatitud));
+        // Log.e(TAG_GEOPOSICION, "Longitud " + String.valueOf(sLongitud));
         usuario.setLatitud(Double.parseDouble(sLatitud));
         usuario.setLongitud(Double.parseDouble(sLongitud));
 

@@ -42,13 +42,12 @@ public class OnItemClickListenerAdaptadorProductosTiendas implements AdapterView
         Producto.putExtra(TAG_IDPRODUCTO, Integer.parseInt(idproducto));
         Producto.putExtra(TAG_IDRUTA, Integer.parseInt(idruta));
         Producto.putExtra(TAG_UPC,upc);
-        //Producto.putExtra(TAG_POSICION,posicion);
 
-        Log.e(TAG_ERROR, " *** idproducto " +idproducto);
-        Log.e(TAG_ERROR, " *** idruta " +idruta);
-        Log.e(TAG_ERROR, " *** upc " + upc);
-        //Log.e(TAG_ERROR, " *** posicion " + posicion);
-
+        // Producto.putExtra(TAG_POSICION,posicion);
+        // Log.e(TAG_ERROR, " *** idproducto " +idproducto);
+        // Log.e(TAG_ERROR, " *** idruta " +idruta);
+        // Log.e(TAG_ERROR, " *** upc " + upc);
+        // Log.e(TAG_ERROR, " *** posicion " + posicion);
         context.startActivity(Producto);
     }
 }

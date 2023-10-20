@@ -259,7 +259,7 @@ public class Competencia extends AppCompatActivity {
                     } else {
                         AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
                         int iResultado = almacenaImagen.inserta_competencia(producto,precio,presentacion,idEmpaque, idRuta, idpromotor, idemostrador, iexhibidor, iemplaye, actividadbtl,canjes,iFoto);
-                        Log.e(TAG_INFO, "* Valor de resultado de inserción  de competencia" + iResultado);
+                        // Log.e(TAG_INFO, "* Valor de resultado de inserción  de competencia" + iResultado);
                         if (iResultado>0)
                         {
                             Toast.makeText(getApplicationContext(), "Dato almacenado",Toast.LENGTH_LONG);

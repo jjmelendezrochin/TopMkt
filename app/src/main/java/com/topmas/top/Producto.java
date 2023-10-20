@@ -307,7 +307,7 @@ public class Producto extends AppCompatActivity {
         protected void onPreExecute() {
             // TODO /CatalogoProductos/obtenerproducto2.php
             sRuta = TAG_SERVIDOR + "/CatalogoProductos/obtenerproducto2.php?idproducto=" + pidproducto + "&idruta=" + pidruta + "&idempresa=" + pIdempresa;
-            Log.e("Ruta", sRuta);
+            // Log.e("Ruta", sRuta);
             super.onPreExecute();
         }
 

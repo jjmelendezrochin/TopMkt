@@ -197,7 +197,7 @@ public class listaproductos extends AppCompatActivity {
             } else {
                 sRuta = TAG_SERVIDOR + "/CatalogoProductos/obtenerproductostienda1.php?idruta=" + pidRuta + "&producto=%" + sProducto + "%&idempresa=" + pidEmpresa;
             }
-            Log.e(TAG_ERROR,  "La ruta de la api usada es:" + sRuta);
+            // Log.e(TAG_ERROR,  "La ruta de la api usada es:" + sRuta);
 
             //Log.e("Error", "La ruta de la api usada es:" + sRuta);
             super.onPreExecute();
