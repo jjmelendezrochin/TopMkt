@@ -585,6 +585,7 @@ public class listatiendas extends AppCompatActivity {
                         else if(iCompetenciaPromocion>0){
                             // Log.e(TAG_ERROR, "Cargando competencia promoción " + String.valueOf(i));
                             i = almacenaImagen.ColocaCompetenciaPromocion();
+                            // Log.e(TAG_ERROR, "Cargando competencia promoción complemento" + String.valueOf(i));
                             j = almacenaImagen.ColocaCompetenciaPromocionComplemento();
                             textoAvance.setText("Cargando competencia promoción " + progressStatus + "/" + progressBar.getMax());
                             textoAvance.setGravity(Gravity.CENTER);

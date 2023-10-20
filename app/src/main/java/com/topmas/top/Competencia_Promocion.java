@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -101,6 +102,7 @@ public class Competencia_Promocion extends AppCompatActivity {
     int no_frentes = 0;
     float precio =  0;
     String comentario = null;
+    int idCompetenciaPromo = 0;
 
     ProgressDialog pDialog;
 
@@ -365,20 +367,27 @@ public class Competencia_Promocion extends AppCompatActivity {
                     precio = Float.parseFloat(cajapor_descuento.getText().toString());
                     comentario = cajacomentario.getText().toString();
 
+                    AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
+
                     // *****************************
                     // Verifica la forma en que subirá los datos
                     if (funciones.RevisarConexion(getApplicationContext())) {
-                        UploadImagenesCompetenciaPromocion();
-                    } else {
-                        AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
-                        int iResultado = almacenaImagen.inserta_competencia_promocion(
+                        idCompetenciaPromo = almacenaImagen.inserta_competencia_promocion(
                                 idRuta, idpromotor,
                                 iFoto1,iFoto2,
                                 por_participa, no_frentes,
                                 iconPromo,0, comentario,
                                 idproducto, precio);
-                        Log.e(TAG_INFO, "* Valor de resultado de inserción  de competencia " + iResultado);
-                        if (iResultado>0)
+                        UploadImagenesCompetenciaPromocion();
+                    } else {
+                        idCompetenciaPromo = almacenaImagen.inserta_competencia_promocion(
+                                idRuta, idpromotor,
+                                iFoto1,iFoto2,
+                                por_participa, no_frentes,
+                                iconPromo,0, comentario,
+                                idproducto, precio);
+                        Log.e(TAG_INFO, "* Valor de resultado de inserción  de competencia " + idCompetenciaPromo);
+                        if (idCompetenciaPromo>0)
                         {
                             Toast.makeText(getApplicationContext(), "Dato almacenado en el teléfono",Toast.LENGTH_LONG).show();
                             finish();
@@ -567,11 +576,10 @@ public class Competencia_Promocion extends AppCompatActivity {
                 super.onPostExecute(s);
                 pDialog.dismiss();
 
+
                 AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
-                int i = almacenaImagen.BorraFotoEnviada(iFoto1);
-                int j = almacenaImagen.BorraFotoEnviada(iFoto2);
-                // Log.e(TAG_ERROR, "Se Borro la foto almacenada " + iFoto);
-                // Log.e(TAG_ERROR, "Respuesta  " + s);
+                almacenaImagen.BorraFotoEnviada(iFoto1, iFoto2);
+                almacenaImagen.borrar_competencia_promocion(idCompetenciaPromo);
                 // **************************************
                 // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
                 if (s == TAG_CARGA_FOTO_EXITOSA) {
