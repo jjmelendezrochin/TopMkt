@@ -53,7 +53,6 @@ public class listapromociones extends AppCompatActivity {
     private int iLongitudArreglo;
 
     private AlmacenaImagen almacenaImagen;
-    private Acceso formaacceso;
     private ProgressDialog pDialog;
     private Bitmap bitmap1 = null;
 

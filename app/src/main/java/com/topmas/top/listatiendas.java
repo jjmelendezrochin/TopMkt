@@ -128,7 +128,6 @@ public class listatiendas extends AppCompatActivity {
     private int iLongitudArreglo;
     private int iLongitudArregloTiendas;
     private AlmacenaImagen almacenaImagen;
-    private Acceso formaacceso;
     private int iNumTiendas = 0;
     private ProgressBar progressBar;
 
@@ -490,7 +489,6 @@ public class listatiendas extends AppCompatActivity {
 
         // ******************************
         // Establece la forma de acceso y muestra las tiendas
-        formaacceso.EstableceAcceso(CONST_ACCESOLOCAL);
         MuestraLista();
     }
 
@@ -995,7 +993,6 @@ public class listatiendas extends AppCompatActivity {
         @Override
         protected void onPostExecute(String file_url)
         {
-            formaacceso.EstableceAcceso(CONST_ACCESORED);
             pDialog.dismiss();
             MuestraLista();
         }

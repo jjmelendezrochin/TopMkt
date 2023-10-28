@@ -68,7 +68,7 @@ public class listaproductos extends AppCompatActivity {
     private ListView lista;
 
     private AlmacenaImagen almacenaImagen;
-    private Acceso formaacceso;
+
     private ProgressDialog pDialog;
 
     // Este numero debe de ser el numero de registros de la tabla
@@ -348,7 +348,6 @@ public class listaproductos extends AppCompatActivity {
         }
         // ******************************
         // Establece la forma de acceso y muestra las tiendas
-        Acceso.EstableceAcceso(CONST_ACCESOLOCAL);
         MuestraLista();
     }
 

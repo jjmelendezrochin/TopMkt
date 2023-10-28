@@ -99,7 +99,6 @@ public class Foto extends AppCompatActivity {
     private double pLatitud = 0;
     private double pLongitud = 0;
     private int iResp=0;            // Es el id de la tabla almacenfoto de la foto recien subida
-    private Acceso formaacceso;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     ImageView imagenFoto;
@@ -228,7 +227,7 @@ public class Foto extends AppCompatActivity {
                 // Context context = getApplicationContext();
                 Context contexto = getApplicationContext().getApplicationContext();
                 int iFotosTienda = almacenaImagen.ObtenFotosTienda(idRuta);
-                if (iFotosTienda>=10){
+                if (iFotosTienda>=20){
                     Toast.makeText(getApplicationContext() , " Solo se permiten 10 fotos por tienda " ,Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -289,13 +288,12 @@ public class Foto extends AppCompatActivity {
                 }
                 else {
                     // ************************************************
-                    int iFormaAcceso = formaacceso.ObtieneAcceso();
+
                     // Si el acceso es local entonces guardara los datos de las imagenes
                     // en la tabla local de imagenes
                     // tambien la guarda  antes de enviarla ya que se detecto que en ocasiones
                     // después de haber tomado la foto no se envia correctamente
-
-                    if (iFormaAcceso == CONST_ACCESOLOCAL){
+                    if (!funciones.RevisarConexion(getApplicationContext())) {
                         Toast.makeText(getApplicationContext(),"Las Fotos almacenadas, se enviarán cuando tenga datos", Toast.LENGTH_LONG).show();
                         finish();
                     }
@@ -307,6 +305,7 @@ public class Foto extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(),"No hay conexion favor de verificar, la foto ya esta guardada, en la siguiente conexión se subirá a la plataforma", Toast.LENGTH_LONG).show();
                         }
                     }
+
                 }
             }
         });

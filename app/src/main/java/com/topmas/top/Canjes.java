@@ -483,7 +483,6 @@ public class Canjes extends AppCompatActivity {
         }
         // ******************************
         // Establece la forma de acceso y muestra las tiendas
-        Acceso.EstableceAcceso(CONST_ACCESOLOCAL);
         MuestraLista();
     }
 
