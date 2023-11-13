@@ -20,8 +20,8 @@
     <string name="buscar_producto">"buscar productos"</string>
 
     <!-- TODO aqui se coloca el usuario y clave por default -->
-    <string name="resUsuario"></string>   <!-- jguerrero1,    prueba1, schavez,  aromero -->
-    <string name="resClave"></string>          <!-- 12345,         12345,    56789,    56789 -->
+    <string name="resUsuario">jguerrero1</string>   <!-- jguerrero1,    prueba1, schavez,  aromero -->
+    <string name="resClave">12345</string>          <!-- 12345,         12345,    56789,    56789 -->
     <string name="fotocompetencia">Foto competencia</string>
     <string name="fotocaducidad">Foto caducidad</string>
     <string name="textocaducidad">Caducidad</string>

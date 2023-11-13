@@ -1,5 +1,6 @@
 package com.topmas.top;
 
+import static androidx.core.content.ContextCompat.startActivity;
 import static com.topmas.top.Caducidad.UPLOAD_CADUCIDAD;
 import static com.topmas.top.Caducidad.UPLOAD_caducidad;
 import static com.topmas.top.Caducidad.UPLOAD_idproducto;
@@ -80,8 +81,11 @@ import static com.topmas.top.Foto.UPLOAD_USUARIO;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
 import static com.topmas.top.Promocion.PROMOCION_URL;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -90,9 +94,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.icu.text.DecimalFormat;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Base64;
@@ -100,8 +107,13 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -5283,5 +5295,79 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _arregloproductos,
                 _sVerApp,
                 _sSinDatos);
+    }
+
+    // *************************************
+    // Exportación de tabla de fotos
+    public void exportarCSV() throws IOException {
+        File carpeta = new File(Environment.getExternalStorageDirectory() + "/ExportarSQLiteCSV");
+        String archivo = carpeta.toString() + "/" + "almacenfotos.csv";
+
+        boolean isCreate = false;
+        if(!carpeta.exists()) {
+            isCreate = carpeta.mkdir();
+        }
+        SQLiteDatabase db = getWritableDatabase();
+
+        try {
+
+            FileWriter fileWriter = new FileWriter(archivo);
+            Cursor fila = db.rawQuery("select * from almacenfotos where idoperacion<5", null);
+
+            if(fila != null && fila.getCount() != 0) {
+                fila.moveToFirst();
+                do {
+                    fileWriter.append(fila.getString(0));
+                    fileWriter.append(",");
+                    fileWriter.append(fila.getString(1));
+                    fileWriter.append(",");
+                    fileWriter.append(fila.getString(2));
+                    fileWriter.append(",");
+                    fileWriter.append(fila.getString(3));
+                    fileWriter.append(",");
+                    fileWriter.append(fila.getString(4));
+                    fileWriter.append(",");
+                    fileWriter.append(fila.getString(5));
+                    fileWriter.append(",");
+                    fileWriter.append(fila.getString(6));
+                    fileWriter.append(",");
+                    fileWriter.append(fila.getString(7));
+                    fileWriter.append(",");
+                    fileWriter.append(fila.getString(8));
+                    fileWriter.append("\n");
+                } while(fila.moveToNext());
+            } else {
+                Toast.makeText(contexto, "No hay registros.", Toast.LENGTH_LONG).show();
+            }
+
+            db.close();
+            fileWriter.close();
+            
+            Log.e(TAG_INFO, "ARCHIVO "+ "file:/"+ archivo);
+            // *****************************
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+            emailIntent.setType("message/rfc822");
+            emailIntent.setData(Uri.parse("mailto:"));
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, "jjcorp2001@hotmail.com");
+            emailIntent.putExtra(Intent.EXTRA_CC, "jjcorp2001a@gmail.com");
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "asunto");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "mensaje");
+            emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:/"+archivo));
+            emailIntent.setType("text/plain"); //indicamos el tipo de dato
+            emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(contexto, emailIntent,null);
+            // *****************************
+            Toast.makeText(contexto, "SE CREO EL ARCHIVO CSV EXITOSAMENTE", Toast.LENGTH_LONG).show();
+
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            Log.e(TAG_ERROR, " Error en tabla almacenfotos " + Resultado);
+            Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar la tabla almacenfotos" + Resultado, Toast.LENGTH_LONG).show();;
+        } finally {
+            db.close();
+        }
     }
 }

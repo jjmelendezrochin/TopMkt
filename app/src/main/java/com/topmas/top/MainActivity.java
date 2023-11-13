@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
             version.setText(String.format("Versión %s:%d", versionName, versionCode));
         } else {
             version.setTextColor(Color.BLUE);
-            version.setText("Versión " + versionapp + " disponible");
+            version.setText("Versión " + versionName + " " + versionCode);
         }
     }
 

@@ -1,6 +1,8 @@
 package com.topmas.top;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,11 +11,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import static android.widget.Toast.LENGTH_LONG;
 import static android.widget.Toast.makeText;
+import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_ACCESSTOKEN;
 import static com.topmas.top.Constants.TAG_CONSULTAENWEB;
 import static com.topmas.top.Constants.TAG_DIRECCION;
@@ -24,11 +29,14 @@ import static com.topmas.top.Constants.TAG_IDEMPRESA;
 import static com.topmas.top.Constants.TAG_IDFORMATO;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
+import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_LATITUD;
 import static com.topmas.top.Constants.TAG_LONGITUD;
 import static com.topmas.top.Constants.TAG_NAME;
 import static com.topmas.top.Constants.TAG_OPERACION;
 import static com.topmas.top.Constants.TAG_TIENDA;
+
+import java.io.IOException;
 
 public class MenuTienda extends AppCompatActivity
 {
@@ -39,6 +47,8 @@ public class MenuTienda extends AppCompatActivity
     String tienda = "";
     String direccion = "";
     int idformato = 0;
+    int pidEmpresa = 0;
+    int permissions = 0;
     AlmacenaImagen almacenaImagen;
     private Funciones funciones = new Funciones();
     private final Usuario usr = new Usuario();
@@ -58,10 +68,16 @@ public class MenuTienda extends AppCompatActivity
         almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
         idformato = almacenaImagen.ObtenFormato(idruta);
         TextView txtTipoconexion = findViewById(R.id.formaConexion);
+        permissions = ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         if (pidpromotor == 0){
             pidpromotor = usr.getid();
         }
+
+        // Obteniendo la empresa
+        pidEmpresa = Integer.parseInt(usr.getidempresa());
+        //Log.e(TAG_ERROR, "Empresa seleccionada " + pidEmpresa);
 
         //****************************
         // Revisa el tipo de conexión
@@ -80,6 +96,17 @@ public class MenuTienda extends AppCompatActivity
 
         TextView txtTituloTienda = findViewById(R.id.TituloMenu);
         txtTituloTienda.setText(tienda.toUpperCase());
+
+
+        //****************************
+        // Permisos
+        if ( permissions != PackageManager.PERMISSION_GRANTED) {
+            Log.i("Mensaje", "No se tiene permiso para realizar generar un  archivo.");
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 225);
+        } else {
+            Log.i("Mensaje", "Se tiene permiso!");
+        }
 
         //****************************
         // Lista de tiendas
@@ -122,6 +149,26 @@ public class MenuTienda extends AppCompatActivity
         ImageView imgcheckout = findViewById(R.id.checkout);
         ImageView imganaquelin = findViewById(R.id.imganaquelin);
         ImageView imagnaquelout = findViewById(R.id.imagnaquelout);
+        ImageView imgevidenciaexhibicion = findViewById(R.id.imgevidenciaexhibicion);
+        ImageView imgproductomenu = findViewById(R.id.imgproductomenu);
+        ImageView imgreporteresurtido = findViewById(R.id.imgreporteresurtido);
+        ImageView imgCaducidad = findViewById(R.id.imgCaducidad);
+        ImageView imgCompetencia1 = findViewById(R.id.imgCompetencia1);
+        ImageView imgCanejes = findViewById(R.id.imgCanjes);
+        FloatingActionButton fab1 = findViewById(R.id.fab1);
+        FloatingActionButton fab2 = findViewById(R.id.fab2);
+        fab2.setVisibility(View.INVISIBLE);
+
+        // *****************************
+        // Verifica la empresa seleccionada para mostrar/ocultar iconos
+        if (pidEmpresa==2){     // SANTA CLARA
+            imgCanejes.setVisibility(View.VISIBLE);
+            imgCompetencia1.setVisibility(View.INVISIBLE);
+        }
+        if (pidEmpresa==9){     // ALULA
+            imgCanejes.setVisibility(View.INVISIBLE);
+            imgCompetencia1.setVisibility(View.VISIBLE);
+        }
 
         // *****************************
         // Verifica si tiene un servicio GPS fake
@@ -204,7 +251,6 @@ public class MenuTienda extends AppCompatActivity
 
         // ****************************
         // Promociones usando el botón de imgevidenciaexhibicion
-        ImageView imgevidenciaexhibicion = findViewById(R.id.imgevidenciaexhibicion);
         imgevidenciaexhibicion.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent ListaPromociones = new Intent(getApplicationContext(), listapromociones.class);
@@ -222,7 +268,6 @@ public class MenuTienda extends AppCompatActivity
 
         //****************************
         // Imagen Lista de productos
-        ImageView imgproductomenu = findViewById(R.id.imgproductomenu);
         imgproductomenu.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent ListaProductos = new Intent(getApplicationContext(), listaproductos.class);
@@ -238,7 +283,6 @@ public class MenuTienda extends AppCompatActivity
 
         //****************************
         // Imagen Competencia
-        ImageView imgreporteresurtido = findViewById(R.id.imgreporteresurtido);
         imgreporteresurtido.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent competencia = new Intent(getApplicationContext(), Competencia.class);
@@ -249,7 +293,6 @@ public class MenuTienda extends AppCompatActivity
 
         //****************************
         // Imagen Caducidad
-        ImageView imgCaducidad = findViewById(R.id.imgCaducidad);
         imgCaducidad.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent caducidad = new Intent(getApplicationContext(), Caducidad.class);
@@ -260,7 +303,6 @@ public class MenuTienda extends AppCompatActivity
 
         //****************************
         // Imagen Competencia1
-        ImageView imgCompetencia1 = findViewById(R.id.imgCompetencia1);
         imgCompetencia1.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent competencia1 = new Intent(getApplicationContext(), Competencia_Promocion.class);
@@ -271,7 +313,6 @@ public class MenuTienda extends AppCompatActivity
 
         //****************************
         // Imagen Canjes
-        ImageView imgCanejes = findViewById(R.id.imgCanjes);
         imgCanejes.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent canjes = new Intent(getApplicationContext(), Canjes.class);
@@ -287,13 +328,28 @@ public class MenuTienda extends AppCompatActivity
 
         //****************************
         // Muestra datos almacenados
-        FloatingActionButton fab1 = findViewById(R.id.fab1);
 
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 almacenaImagen = new AlmacenaImagen(getApplicationContext());
                 almacenaImagen.muestradatosAlmacenados();
+            }
+        });
+
+        //****************************
+        // Exportación de datos
+
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlmacenaImagen almacenaImagen1 = new AlmacenaImagen(getApplicationContext());
+                try {
+                    almacenaImagen1.exportarCSV();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                //Toast.makeText(getApplicationContext(), " Exportación de datos", Toast.LENGTH_LONG).show();
             }
         });
 
