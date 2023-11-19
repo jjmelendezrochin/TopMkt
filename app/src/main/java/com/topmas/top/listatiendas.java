@@ -74,6 +74,7 @@ import static com.topmas.top.Constants.TAG_IDPRODUCTOFORMATOPRECIO;
 import static com.topmas.top.Constants.TAG_IDPROMOCION;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
+import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_INICIO;
 import static com.topmas.top.Constants.TAG_LATITUD;
 import static com.topmas.top.Constants.TAG_LONGITUD;
@@ -233,6 +234,11 @@ public class listatiendas extends AppCompatActivity {
         pToken = i.getStringExtra(TAG_ACCESSTOKEN);
         pExpira = i.getStringExtra(TAG_EXPIRESIN);
         pConsultaenWeb = i.getIntExtra(TAG_CONSULTAENWEB, pConsultaenWeb);
+
+        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
+            funciones.RegistraError(pName, "listatiendas setDefaultUncaughtExceptionHandler", (Exception) throwable, listatiendas.this, getApplicationContext());
+        });
+
         // Obtiene el idpromotor si no trae este valor
         // Log.e(TAG_ERROR, "* Promotor " + pidPromotor);
         if (pidPromotor==0)
@@ -354,6 +360,7 @@ public class listatiendas extends AppCompatActivity {
                 int iCuentaErrores = almacenaImagen.ObtenRegistros(16);
                 int iCuentaCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);
                 int iCuentaCanjes = almacenaImagen.ObtenRegistros(20);
+                //int iCtaFake = almacenaImagen.ObtenRegistros(22);
                 int iPendientes = (iCuenta+iCuentaPreciosCambiados+iCuentaPromociones+iCuentaRegistrosCompetencia+
                         iCuentaCaducidad+iCuentaErrores+iCuentaCompetenciaPromocion+iCuentaCanjes);
 
@@ -465,31 +472,36 @@ public class listatiendas extends AppCompatActivity {
     // Muestra la lista de las tiendas registradas en el teléfono
     public void MuestraTiendasTelefono(String sTienda){
 
-        iNumTiendas = almacenaImagen.ObtenRegistrosTiendas(pidPromotor, sTienda);
-        iLongitudArreglo = iNumTiendas;
+        try {
+            iNumTiendas = almacenaImagen.ObtenRegistrosTiendas(pidPromotor, sTienda);
+            iLongitudArreglo = iNumTiendas;
 
-        // Log.e(TAG_ERROR, "** Dentro de MuestraTiendasTelefono ");
-        // Log.e(TAG_ERROR, "** iNumTiendas " + iNumTiendas);
+            // Log.e(TAG_ERROR, "** Dentro de MuestraTiendasTelefono ");
+            // Log.e(TAG_ERROR, "** iNumTiendas " + iNumTiendas);
 
-        int[] Rutas = almacenaImagen.ObtenRutas(pidPromotor, sTienda);
-        String[] Determinantes = almacenaImagen.ObtenDeterminantes(pidPromotor, sTienda);
-        String[] Tiendas = almacenaImagen.ObtenTiendas(pidPromotor, sTienda);
-        String[] Direcciones = almacenaImagen.ObtenDirecciones(pidPromotor, sTienda);
-        double[] Latitudes = almacenaImagen.ObtenLatitudes(pidPromotor, sTienda);
-        double[] Longitudes = almacenaImagen.ObtenLongitudes(pidPromotor, sTienda);
+            int[] Rutas = almacenaImagen.ObtenRutas(pidPromotor, sTienda);
+            String[] Determinantes = almacenaImagen.ObtenDeterminantes(pidPromotor, sTienda);
+            String[] Tiendas = almacenaImagen.ObtenTiendas(pidPromotor, sTienda);
+            String[] Direcciones = almacenaImagen.ObtenDirecciones(pidPromotor, sTienda);
+            double[] Latitudes = almacenaImagen.ObtenLatitudes(pidPromotor, sTienda);
+            double[] Longitudes = almacenaImagen.ObtenLongitudes(pidPromotor, sTienda);
 
-        for (int k = 0; k < iNumTiendas; k++) {
-            ruta[k] = Rutas[k];
-            determinante[k] = Determinantes[k];
-            tienda[k] = Tiendas[k];
-            direccion[k] = Direcciones[k];
-            latitud[k] = Latitudes[k];
-            longitud[k] = Longitudes[k];
+            for (int k = 0; k < iNumTiendas; k++) {
+                ruta[k] = Rutas[k];
+                determinante[k] = Determinantes[k];
+                tienda[k] = Tiendas[k];
+                direccion[k] = Direcciones[k];
+                latitud[k] = Latitudes[k];
+                longitud[k] = Longitudes[k];
+            }
+
+            // ******************************
+            // Establece la forma de acceso y muestra las tiendas
+            MuestraLista();
         }
-
-        // ******************************
-        // Establece la forma de acceso y muestra las tiendas
-        MuestraLista();
+        catch (java.lang.ArrayIndexOutOfBoundsException e){
+            Toast.makeText(this, TAG_INFO + " Se presento una inconsistencia, favor de intentar nuevamente " + e.toString() , Toast.LENGTH_LONG).show();
+        }
     }
 
     //************************************

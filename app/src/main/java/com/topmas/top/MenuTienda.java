@@ -24,6 +24,7 @@ import static com.topmas.top.Constants.TAG_IDEMPRESA;
 import static com.topmas.top.Constants.TAG_IDFORMATO;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
+import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_LATITUD;
 import static com.topmas.top.Constants.TAG_LONGITUD;
 import static com.topmas.top.Constants.TAG_NAME;
@@ -42,6 +43,7 @@ public class MenuTienda extends AppCompatActivity
     AlmacenaImagen almacenaImagen;
     private Funciones funciones = new Funciones();
     private final Usuario usr = new Usuario();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,9 @@ public class MenuTienda extends AppCompatActivity
         if (pidpromotor == 0){
             pidpromotor = usr.getid();
         }
+        //****************************
+        // Obteniendo la empresa desde la que se firmo el usuario
+        String pidEmpresa =  usr.getidempresa();
 
         //****************************
         // Revisa el tipo de conexión
@@ -122,10 +127,10 @@ public class MenuTienda extends AppCompatActivity
         ImageView imgcheckout = findViewById(R.id.checkout);
         ImageView imganaquelin = findViewById(R.id.imganaquelin);
         ImageView imagnaquelout = findViewById(R.id.imagnaquelout);
+        ImageView imgCanjes = findViewById(R.id.imgCanjes);
 
         // *****************************
         // Verifica si tiene un servicio GPS fake
-        Funciones funciones = new Funciones();
         boolean bResp = funciones.areThereMockPermissionApps(this.getApplicationContext());
         String sResultado =  "Se esta utilizando una aplicación no permitida en su teléfono, favor de contactar al área de sistemas para mayor información, esta información se va a grabar en la bitácora para seguimiento";
         /*
@@ -153,6 +158,17 @@ public class MenuTienda extends AppCompatActivity
         imgcheckout.setVisibility(View.VISIBLE);
         imganaquelin.setVisibility(View.VISIBLE);
         imagnaquelout.setVisibility(View.VISIBLE);
+
+        // Log.e(TAG_INFO, "La empresa es " + pidEmpresa);
+        // Canjes solo visibles para Santa Clara
+        if (pidEmpresa.equals("2")){
+            imgCanjes.setVisibility(View.VISIBLE);
+            //Log.e(TAG_INFO, "Visible" );
+        }
+        else{
+            imgCanjes.setVisibility(View.GONE);
+            //Log.e(TAG_INFO, "Oculta" );
+        }
 
         //****************************
         // Check in
@@ -271,8 +287,8 @@ public class MenuTienda extends AppCompatActivity
 
         //****************************
         // Imagen Canjes
-        ImageView imgCanejes = findViewById(R.id.imgCanjes);
-        imgCanejes.setOnClickListener(new View.OnClickListener(){
+
+        imgCanjes.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent canjes = new Intent(getApplicationContext(), Canjes.class);
                 canjes.putExtra(TAG_IDRUTA, idruta);
