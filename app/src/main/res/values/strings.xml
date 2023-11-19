@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Top+</string>
+    <string name="resume">  Actualizar datos  </string>
+    <string name="tomarfoto">Tomar foto</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCYDVCKX3ha2pr9R1uS77PM8iodtDY8ZH4</string>
+
+    <string name="imagenconfoto">Imagen con foto</string>
+    <string name="subir">Subir</string>
+    <string name="nosubir">No Subir</string>
+    <string name="izq"><![CDATA[<<]]></string>
+    <string name="der"><![CDATA[>>]]></string>
+    <string name="imagen">imagen</string>
+    <string name="check_in">Check-in</string>
+    <string name="check_out">Check-out</string>
+
+    <string name="fotoent">Foto Inv. Entrada</string>
+    <string name="fotosal">Foto Inv. Salida</string>
+    <string name="Version">Version</string>
+    <string name="buscar_tienda">"buscar tienda "</string>
+    <string name="buscar_producto">"buscar productos"</string>
+
+    <!-- TODO aqui se coloca el usuario y clave por default -->
+    <string name="resUsuario"></string>   <!-- jguerrero1 (SCL),  prueba1 (ALU),  schavez (ALU),   -->
+    <string name="resClave"></string>     <!-- 12345,                     12345,          56789,    -->
+    <string name="fotocompetencia">Foto competencia</string>
+    <string name="fotocaducidad">Foto caducidad</string>
+    <string name="textocaducidad">Caducidad</string>
+
+    <string name="start">Inicio</string>
+    <string name="end">Fin</string>
+
+    <string name="ok">ok</string>
+    <string name="cancel">cancel</string>
+
+    <string name="username">username</string>
+    <string name="password">password</string>
+
+</resources>
