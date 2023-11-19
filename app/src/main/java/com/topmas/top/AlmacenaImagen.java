@@ -1886,6 +1886,9 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             case 20:
                 sSql = "Select count(*) from canjes;";
                 break;
+            case 22:
+                sSql = "Select count(*) from fake;";
+                break;
         }
 
         Cursor cursor = null;
@@ -1896,13 +1899,18 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             }
             cursor.close();
             // Log.e(TAG_INFO,"Resultado " + iResultado);
-        } catch (Exception e) {
+        }
+         catch (AssertionError e) {
+             String Resultado = e.getMessage();
+             // Log.e(TAG_ERROR, sSql);
+         }
+         catch (Exception e) {
             String Resultado = e.getMessage();
-            // Log.e(TAG_ERROR, sSql);
+            Log.e(TAG_ERROR, sSql);
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener registros " + Resultado, Toast.LENGTH_LONG).show();
             // Por si hay una excepcion
         } finally {
-            assert cursor != null;
+            //assert cursor != null;
             db.close();
         }
         return iResultado;
@@ -3268,6 +3276,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int iCuentaErrores = this.ObtenRegistros(16);
         int iCuentaCompetenciaPromocion = this.ObtenRegistros(18);
         int iCuentaCanjes = this.ObtenRegistros(20);
+        int iCtaFake = this.ObtenRegistros(22);
 
         String sMensaje = "Usted tiene " + "\n" + String.valueOf(iCuenta) + " imágenes almacenadas "  + "\n" +
                 iCuentaPreciosCambiados + " precios cambiados, "  + "\n" +
