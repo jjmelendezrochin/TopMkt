@@ -212,6 +212,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
         android:layout_margin="@dimen/appbar_padding"
+        android:visibility="gone"
         app:srcCompat="@drawable/cloud" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

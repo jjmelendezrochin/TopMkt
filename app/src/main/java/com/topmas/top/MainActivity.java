@@ -382,8 +382,8 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Error = e.getMessage();
                 funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService", e, MainActivity.this, getApplicationContext());
-                Toast.makeText(getApplicationContext(), " Error al obtener los datos del promotor " +  Error,Toast.LENGTH_LONG).show();
-
+                Toast.makeText(getApplicationContext(), " Error al obtener los datos del promotor, favor de intentar nuevamente en un sitio con mayor señal" +  Error,Toast.LENGTH_LONG).show();
+                this.cancel(true);
             } finally {
                 try {
                     reader.close();
