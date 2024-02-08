@@ -851,7 +851,7 @@ public class listatiendas extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_ACTIV))
                         {
-                            // Solicita informacion de activ
+                            // Solicita informacion de actividad
                             jsonObjAct = jsonChidNode.getJSONObject(TAG_ACTIV);
                             idactividad[r] = Integer.parseInt(jsonObjAct.getString(TAG_IDACTIVIDAD));
                             actividad[r] = jsonObjAct.getString(TAG_ACTIVIDAD);
