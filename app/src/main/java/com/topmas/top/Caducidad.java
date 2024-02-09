@@ -409,15 +409,8 @@ public class Caducidad extends AppCompatActivity {
                 // Log.e(TAG_ERROR, "Respuesta  " + s);
                 // **************************************
                 // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
-                if (s == TAG_CARGA_FOTO_EXITOSA) {
-                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
-                    imagenFoto.setImageResource(android.R.color.transparent);
-
-                }
-                else{
-                    Toast.makeText(getApplicationContext(), s , Toast.LENGTH_LONG).show();
-                    imagenFoto.setImageResource(android.R.color.transparent);
-                }
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+                imagenFoto.setImageResource(android.R.color.transparent);
                 LimpiaCajas();
                 finish();
             }
