@@ -591,10 +591,13 @@ public class Producto extends AppCompatActivity {
                 //funciones.ColocaImagen(position, bitmap);
             }
         }
-        // Lamada a cargar y guardar imágen
-        ImageLoadTask imageLoadTask =
-                new ImageLoadTask(_url, _imageView, _almacenaImagen, _idproducto);
-        imageLoadTask.execute();
+
+        if (funciones.RevisarConexion(getApplicationContext())) {
+            // Lamada a cargar y guardar imágen
+            ImageLoadTask imageLoadTask =
+                    new ImageLoadTask(_url, _imageView, _almacenaImagen, _idproducto);
+            imageLoadTask.execute();
+        }
     }
 
 }

@@ -15,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -267,7 +268,14 @@ public class listatiendas extends AppCompatActivity {
                             dialog.cancel();
                         }
                     });
-            alerta.show();
+
+            try {
+                alerta.show();
+            }
+            catch (WindowManager.BadTokenException e) {
+                Toast.makeText(getApplicationContext(), sMensaje,Toast.LENGTH_LONG);
+            }
+
             return;
         }
         // Establece el idusuario

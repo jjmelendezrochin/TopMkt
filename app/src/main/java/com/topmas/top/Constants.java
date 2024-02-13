@@ -113,6 +113,7 @@ public final class Constants {
     public static final String TAG_alias = "alias";
 
     // Generales
-    public static final String TAG_SERVIDOR = "http://www.topmas.mx/TopMas";        // SERVIDOR AMBIENTE PRODUCCION
-    //public static final String TAG_SERVIDOR = "http://www.jjcorp.com.mx/TopMkt";        // SERVIDOR AMBIENTE PRUEBAS
+    // public static final String TAG_SERVIDOR = "http://162.215.218.165/TopMas";        // SERVIDOR AMBIENTE PRODUCCION (GENERA UN  ERROR Y NO FUNCIONA,SE HIZO LA PRUEBA Y SE REGRESO AL NOMBRE EL DIA 10/02/2023)
+    public static final String TAG_SERVIDOR = "http://www.topmas.mx/TopMas";             // SERVIDOR AMBIENTE PRODUCCION
+    //public static final String TAG_SERVIDOR = "http://www.jjcorp.com.mx/TopMkt";       // SERVIDOR AMBIENTE PRUEBAS
 }

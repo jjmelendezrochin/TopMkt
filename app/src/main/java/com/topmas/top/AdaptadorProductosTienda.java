@@ -15,6 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -102,8 +103,14 @@ public class AdaptadorProductosTienda extends BaseAdapter {
                             imagen.setImageBitmap(funciones.ObtenImagen(position));
                         }
                     } catch (NullPointerException e) {
+                        /*
                         sRutaImagen = "https://www.topmas.mx/TopMas/ImagenesProductos/" +
                                 String.valueOf(ArrProductos[position]) + "_" + ArrUpcs[position] + ".png";
+                        */
+
+                        sRutaImagen = TAG_SERVIDOR +  "/ImagenesProductos/" +
+                                String.valueOf(ArrProductos[position]) + "_" + ArrUpcs[position] + ".png";
+
                         // Log.e(TAG_ERROR, "Ruta imagen2 " + sRutaImagen);
                         MuestraImagen(sRutaImagen,
                                 imagen,
@@ -176,10 +183,12 @@ public class AdaptadorProductosTienda extends BaseAdapter {
                     connection.connect();
                     InputStream input = connection.getInputStream();
                     return BitmapFactory.decodeStream(input);
+                } catch (FileNotFoundException e1) {
+                    funciones.RegistraError(pName, "AdaptadorProductosTienda, MuestraImagen (FileNotFoundException)", e1, context, context);
                 } catch (Exception e) {
                     funciones.RegistraError(pName, "AdaptadorProductosTienda, MuestraImagen", e, context, context);
-                    // e.printStackTrace();
                 }
+
                 return null;
             }
 
@@ -192,9 +201,11 @@ public class AdaptadorProductosTienda extends BaseAdapter {
                 funciones.ColocaImagen(position, bitmap);
             }
         }
-        // Lamada a cargar y guardar imágen
-        ImageLoadTask imageLoadTask =
-                new ImageLoadTask(_url, _imageView, _almacenaImagen, _idproducto, _position);
-        imageLoadTask.execute();
+        if (funciones.RevisarConexion(this.context)) {
+            // Lamada a cargar y guardar imágen
+            ImageLoadTask imageLoadTask =
+                    new ImageLoadTask(_url, _imageView, _almacenaImagen, _idproducto, _position);
+            imageLoadTask.execute();
+        }
     }
 }

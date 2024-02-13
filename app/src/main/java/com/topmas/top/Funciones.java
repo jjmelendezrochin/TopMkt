@@ -69,12 +69,7 @@ public class Funciones {
     public boolean RevisarConexion(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
-        // Si hay conexión a Internet en este momento
-        //Toast.makeText(context, "Hay conexion", Toast.LENGTH_LONG).show();
-        // No hay conexión a Internet en este momento
-        // Toast.makeText(context, "No Hay conexion", Toast.LENGTH_LONG).show();
-        return networkInfo != null && networkInfo.isConnected();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 
     // *******************************

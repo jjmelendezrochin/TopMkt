@@ -134,6 +134,12 @@ public class Foto extends AppCompatActivity {
             idpromotor = usr.getid();
         }
 
+        // Si la ruta es 0 se debe especificar una ruta valida
+        if (idRuta == 0) {
+            Toast.makeText(getApplicationContext(), " Esta ruta es invalida, favor de especificar una ruta correcta", Toast.LENGTH_LONG).show();
+            super.onBackPressed();
+        }
+
         // ***************************************
         // Obtiene el nombre del usuario en y promotor las preferencias
         SharedPreferences preferencias =
@@ -228,7 +234,7 @@ public class Foto extends AppCompatActivity {
                 Context contexto = getApplicationContext().getApplicationContext();
                 int iFotosTienda = almacenaImagen.ObtenFotosTienda(idRuta);
                 if (iFotosTienda>=20){
-                    Toast.makeText(getApplicationContext() , " Solo se permiten 10 fotos por tienda " ,Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext() , " Solo se permiten 20 fotos por tienda " ,Toast.LENGTH_LONG).show();
                     return;
                 }
                 // ********************
@@ -250,7 +256,7 @@ public class Foto extends AppCompatActivity {
 
                     }
                 } catch (Exception ex) {
-                    funciones.RegistraError(idUsuario, "Foto setDefaultUncaughtExceptionHandler", (Exception) ex, Foto.this, getApplicationContext());
+                    funciones.RegistraError(idUsuario, "Foto setDefaultUncaughtExceptionHandler1", (Exception) ex, Foto.this, getApplicationContext());
                     // Log.e(TAG_ERROR, "Error camara " + ex.getMessage());
                     Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al tomar la foto " +  ex.getMessage(),Toast.LENGTH_LONG).show();
                 }
@@ -338,8 +344,10 @@ public class Foto extends AppCompatActivity {
                 // Consulta operacion para saber si esa operacion ya se registro para esa ruta ese promotor y operacion
                 // Si cualquiera de estas condiciones se cumple en automático el proceso
                 // saca al promotor del intent y no puede continuar
-                ConsultaOperacion consulta = new ConsultaOperacion();
-                consulta.execute();
+                if (funciones.RevisarConexion(getApplicationContext())) {
+                    ConsultaOperacion consulta = new ConsultaOperacion();
+                    consulta.execute();
+                }
             }
         }
         // ***************************
@@ -705,6 +713,7 @@ public class Foto extends AppCompatActivity {
             } catch (Exception ex) {
                 funciones.RegistraError(idUsuario, "Foto,ConsultaOperacion", ex, Foto.this, getApplicationContext());
                 Error = ex.getMessage();
+                return null;
             }
 
             // **************************

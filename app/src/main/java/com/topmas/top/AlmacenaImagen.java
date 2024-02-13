@@ -940,12 +940,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql = "Insert into listatiendas(idpromotor, idruta, determinante, tienda, direccioncompleta, latitud, longitud)" +
                 "values (" + _idpromotor + "," + _idruta + "," + _determinante + ",'" + _tienda + "','" + _direccioncompleta + "'," + _latitud + "," + _longitud + ");";
         // Log.e(TAG_INFO, "sSql " + sSql);
-        // db.beginTransaction();
         try {
-            db.execSQL(sSql);
-            // Log.e(TAG_INFO, "insercion en la tabla listatiendas");
-            // db.setTransactionSuccessful();
-            return 1;
+            if (db.isOpen())
+            {
+                db.execSQL(sSql);
+                return 1;
+            }
         } catch (Exception e) {
             String Resultado = e.getMessage();
             this.inserta_error1(idUsuario, e, "insertatienda" );
@@ -955,6 +955,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
             // db.endTransaction();
             // db.close();
+            return 1;
         }
     }
 
@@ -2370,8 +2371,10 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     // **********************************
     // Regresa un cursos para llenar el spinner de actividades
     public Cursor CursorEmpresas(){
+        //Log.e(TAG_ERROR, "7");
         SQLiteDatabase db = getReadableDatabase();
         try {
+            // Log.e(TAG_ERROR, "8");
             return db.query("cat_empresa", null,null,null,null,null, "alias");
         }
         catch ( SQLException e)
@@ -3740,13 +3743,17 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         // db.beginTransaction();
         try {
+            int versionCode = BuildConfig.VERSION_CODE;
+            String versionName = BuildConfig.VERSION_NAME;
+            String sVersionApp = versionName.trim() + ":" + String.valueOf(versionCode).trim();
+
             sSql = "Insert into errores (fabricante, marca, modelo ,board ,hardware ,serie ,uid ,android_id ,resolucion ,tamaniopantalla ,densidad ," +
                     "bootloader ,user_value ,host_value ,version ,api_value ,build_id ,build_time ,fingerprint ,usuario, seccion, error ,fechahora , procesado ) " +
             " values ('" + oinfo.get_fabricante() + "','" +  oinfo.get_marca() + "','" + oinfo.get_modelo() + "', '" + oinfo.get_board() +
                     "', '" + oinfo.get_hardware() +"','" + oinfo.get_serie() +"','" + oinfo.get_uid() +
                     "', '" + oinfo.get_android_id() + "','" +  oinfo.get_resolucion() + "','" + oinfo.get_tamaniopantalla() +
                     "', '" + oinfo.get_densidad() + "','" + oinfo.get_bootloader() +"','" + oinfo.get_user_value() +"','" + oinfo.get_host_value() +
-                    "', '" + oinfo.get_version() + "','" +  oinfo.get_api_level() + "','" + oinfo.get_build_id() +
+                    "', '" + sVersionApp + "','" +  oinfo.get_api_level() + "','" + oinfo.get_build_id() +
                     "', '" + oinfo.get_build_time() + "','" + oinfo.get_fingerprint() +"','" + oinfo.get_usuario() +"','" + oinfo.get_seccion()
                     +"','" + oinfo.get_error() + "', '" + fechahora1 + "','0');";
             db.execSQL(sSql);
@@ -3817,13 +3824,17 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         // db.beginTransaction();
         try {
+            int versionCode = BuildConfig.VERSION_CODE;
+            String versionName = BuildConfig.VERSION_NAME;
+            String sVersionApp = versionName.trim() + ":" + String.valueOf(versionCode).trim();
+
             sSql = "Insert into errores (fabricante, marca, modelo ,board ,hardware ,serie ,uid ,android_id ,resolucion ,tamaniopantalla ,densidad ," +
                     "bootloader ,user_value ,host_value ,version ,api_value ,build_id ,build_time ,fingerprint ,usuario, seccion, error ,fechahora , procesado ) " +
                     " values ('" + oinfo.get_fabricante() + "','" +  oinfo.get_marca() + "','" + oinfo.get_modelo() + "', '" + oinfo.get_board() +
                     "', '" + oinfo.get_hardware() +"','" + oinfo.get_serie() +"','" + oinfo.get_uid() +
                     "', '" + oinfo.get_android_id() + "','" +  oinfo.get_resolucion() + "','" + oinfo.get_tamaniopantalla() +
                     "', '" + oinfo.get_densidad() + "','" + oinfo.get_bootloader() +"','" + oinfo.get_user_value() +"','" + oinfo.get_host_value() +
-                    "', '" + oinfo.get_version() + "','" +  oinfo.get_api_level() + "','" + oinfo.get_build_id() +
+                    "', '" + sVersionApp + "','" +  oinfo.get_api_level() + "','" + oinfo.get_build_id() +
                     "', '" + oinfo.get_build_time() + "','" + oinfo.get_fingerprint() +"','" + oinfo.get_usuario() +"','" + oinfo.get_seccion()
                     +"','" + oinfo.get_error() + "', '" + fechahora1 + "','0');";
             db.execSQL(sSql);

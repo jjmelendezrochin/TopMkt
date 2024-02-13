@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
             funciones.RegistraError(pName, "MainActivity setDefaultUncaughtExceptionHandler", (Exception) throwable, MainActivity.this, getApplicationContext());
         });
 
+        // Log.e(TAG_ERROR, "1");
         try {
             almacenaImagen = new AlmacenaImagen(getApplicationContext());
             versionapp = almacenaImagen.ConsultaVersionApp();
@@ -101,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
             txtPwd = findViewById(R.id.txtPwd);
             spCliente = findViewById(R.id.spinClientes);
 
+            // Log.e(TAG_ERROR, "2");
+
             // *****************************
             // llenando los datos de la lista de catalogo empresas
             SharedPreferences preferencias =
@@ -112,28 +115,34 @@ public class MainActivity extends AppCompatActivity {
 
             almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
             iCtaEmpresas = almacenaImagen.ObtenRegistros(15);
-            //Log.e("Empresas", Integer.toString(iCtaEmpresas));
+            // Log.e(TAG_ERROR, "3");
 
             if (iCtaEmpresas == 0) {
                 // Verifica si hay conexión para descargar las empresas
                 String sMensaje = "No hay conexión a internet y/o el usuario no se encontro, favor de verificar (Debe ingresar al menos una vez a la plataforma para poder visualizar los datos en modo desconectado)";
+                // Log.e(TAG_ERROR, "4a");
                 if (!funciones.RevisarConexion(getApplicationContext())) {
                     Toast.makeText(MainActivity.this, sMensaje, Toast.LENGTH_LONG).show();
                     //funciones.RegistraLog(sMensaje, txtUsuario.toString());
+                    // Log.e(TAG_ERROR, "4a1");
                 } else {
                     // **************************
                     // Descarga las empresas
+                    // Log.e(TAG_ERROR, "4a2");
                     CargaEmpresas cargaEmpresas = new CargaEmpresas();
                     cargaEmpresas.execute(pidEmpresaSel);
                     // *****************************
                 }
             } else {
+                // Log.e(TAG_ERROR, "4b");
                 // Consulta las empresas del catálogo y las pone en el spinner
                 if (pidEmpresaSel == "") {
                     pidEmpresaSel = "1";
                 }
+
                 LlenaSpinnerEmpresas(Integer.valueOf(pidEmpresaSel));
             }
+
 
         } catch (Exception e) {
             //e.printStackTrace();
@@ -207,8 +216,11 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     // **************************************
                     // Llamado a la consulta del servicio web por si hay conexión
-                    ConsultaWebService consulta = new ConsultaWebService();
-                    consulta.execute();
+                    if (funciones.RevisarConexion(getApplicationContext()))
+                    {
+                        ConsultaWebService consulta = new ConsultaWebService();
+                        consulta.execute();
+                    }
                 }
             }
         });
@@ -290,7 +302,9 @@ public class MainActivity extends AppCompatActivity {
     protected void LlenaSpinnerEmpresas(int pidEmpresaSel) {
         // *****************************
         // llenando los datos de la lista de empresas
+        // Log.e(TAG_ERROR, "5");
         try {
+            // Log.e(TAG_ERROR, "6");
             Cursor c = almacenaImagen.CursorEmpresas();
             if (c==null)
             {
@@ -299,13 +313,14 @@ public class MainActivity extends AppCompatActivity {
             else{
                 // Log.e("Cursor", "No nulo" );
             }
+            // Log.e(TAG_ERROR, "9");
             String[] from = new String[]{TAG_alias};
             int[] to = new int[]{android.R.id.text1};
             // This is your simple cursor adapter
             SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, c, from, to);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             Spinner s = findViewById(R.id.spinClientes);
-
+            // Log.e(TAG_ERROR, "10");
             s.setAdapter(adapter);
             /*
             Aqui se genera un error no des comentar
@@ -545,7 +560,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             // TODO /CatalogoProductos/obtenerempresas.php
             sRuta = TAG_SERVIDOR + "/Promotor/obtenerempresas.php";
-            // Log.e(TAG_ERROR, sRuta);
+            Log.e(TAG_ERROR, sRuta);
 
             super.onPreExecute();
             pDialog = new ProgressDialog(MainActivity.this);
@@ -560,11 +575,13 @@ public class MainActivity extends AppCompatActivity {
             pidEmpresaSel = params[0];
             BufferedReader reader = null;
             String sRespuesta = null;
+            // Log.e(TAG_ERROR, "a");
 
             try {
                 // Defined URL where to send data
                 URL url = new URL(sRuta);
 
+                // Log.e(TAG_ERROR, "b");
                 // Send POST data request
                 URLConnection conn = url.openConnection();
                 conn.setDoOutput(true);
@@ -572,6 +589,7 @@ public class MainActivity extends AppCompatActivity {
                         conn.getOutputStream());
                 wr.write(data);
                 wr.flush();
+                // Log.e(TAG_ERROR, "c");
                 // Get the server response
                 reader = new BufferedReader(new InputStreamReader(
                         conn.getInputStream()));
@@ -585,13 +603,14 @@ public class MainActivity extends AppCompatActivity {
 
                 // Append Server Response To Content String
                 sRespuesta = sb.toString();
-
+                // Log.e(TAG_ERROR, "d");
                 // **************************
                 // Proceso de lectura de datos
                 if (Error != null) {
                     String Resultado = "Se generó el siguiente error : " + Error;
                 } else {
                     try {
+                        // Log.e(TAG_ERROR, "e");
                         JSONObject jsonResponse, jsonChidNode, jsonObjEmpresa;
                         JSONArray jsonarray;
                         // Revisando la respusta
@@ -599,27 +618,32 @@ public class MainActivity extends AppCompatActivity {
                         jsonResponse = new JSONObject(sRespuesta);
                         jsonarray = jsonResponse.getJSONArray(TAG_RESPUESTA);       // Arreglo
                         int iLongitudArreglo = jsonarray.length();
+                        // Log.e(TAG_ERROR, "f");
                         if (iLongitudArreglo > 0) {
                             almacenaImagen.TruncarTabla(15);
                         }
 
+                        // Log.e(TAG_ERROR, "g");
                         for (int i = 0; i < iLongitudArreglo; i++) {
                             jsonChidNode = jsonarray.getJSONObject(i);
+                            // Log.e(TAG_ERROR, "h");
                             // almacenaImagen.inserta_empresa(0, "Seleccionar", "***");
                             if (jsonChidNode.has(TAG_EMPRESA)) {
                                 jsonObjEmpresa = jsonChidNode.getJSONObject(TAG_EMPRESA);
                                 // Colocacion de datos en los arreglos
 
+                                // Log.e(TAG_ERROR, "i");
                                 idEmpresa[i] = Integer.parseInt(jsonObjEmpresa.getString(TAG_IDEMPRESA));
                                 nombreEmpresa[i] = jsonObjEmpresa.getString(TAG_nombreempresa);
                                 aliasEmpresa[i] = jsonObjEmpresa.getString(TAG_alias);
                                 almacenaImagen.inserta_empresa(idEmpresa[i], nombreEmpresa[i], aliasEmpresa[i]);
-
+                                // Log.e(TAG_ERROR, "j");
                             }
                         }
 
                     } catch (JSONException e) {
                         String Resultado = "Se generó el siguiente error : " + e.toString();
+                        // Log.e(TAG_ERROR, "k");
                         funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService Cargar Empresas", e, MainActivity.this, getApplicationContext());
                     }
                 }
@@ -627,7 +651,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception ex) {
                 Error = ex.getMessage();
                 funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService Cargar Empresas 1", ex, MainActivity.this, getApplicationContext());
-                // Log.e(TAG_ERROR, Error);
+                Log.e(TAG_ERROR, Error);
             } finally {
                 try {
                     reader.close();
@@ -645,7 +669,9 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String file_url) {
             // Verificando si tiene un dato
             if (pidEmpresaSel != "") {
+                // Log.e(TAG_ERROR, "l");
                 LlenaSpinnerEmpresas(Integer.valueOf(pidEmpresaSel));
+                // Log.e(TAG_ERROR, "m");
             }
             pDialog.dismiss();
         }
