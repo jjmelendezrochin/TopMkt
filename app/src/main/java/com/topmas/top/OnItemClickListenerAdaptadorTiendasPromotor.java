@@ -37,11 +37,11 @@ public class OnItemClickListenerAdaptadorTiendasPromotor implements AdapterView.
         }
 
         double longitud;
-        if (txtlongitud.getText().toString() == "" || txtlongitud.getText().toString() == null ){
+        if (txtlongitud.getText().toString() == "" || txtlongitud.getText().toString() == null || txtlongitud.getText().toString() == "null" ){
             longitud = 0;
         }
         else{
-            longitud = Double.parseDouble( txtlongitud.getText().toString());
+            longitud = Double.parseDouble(txtlongitud.getText().toString());
         }
 
         final String tienda = txtTienda.getText().toString();

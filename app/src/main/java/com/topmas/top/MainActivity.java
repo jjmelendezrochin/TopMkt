@@ -441,8 +441,10 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 } catch (JSONException e) {
-                    String Resultado = "Se generó el siguiente error : " + e.toString();
-                    funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService Proceso de lectura de datos", e, MainActivity.this, getApplicationContext());
+                    idpromotor = 0;
+                    pidpromotor = 0;
+                    // String Resultado = "Se generó el siguiente error : " + e.toString();
+                    // funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService Proceso de lectura de datos", e, MainActivity.this, getApplicationContext());
                     // Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al obtener las variables de tiendas " +  Resultado,Toast.LENGTH_LONG).show();
                 }
             }

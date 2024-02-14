@@ -193,7 +193,7 @@ public class MenuTienda extends AppCompatActivity
         // Inventario Entrada
         imganaquelin.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
-                Intent Foto = new Intent(getApplicationContext(), com.topmas.top.Foto.class);
+                Intent Foto = new Intent(getApplicationContext(), Foto.class);
                 Foto.putExtra(TAG_IDRUTA, Integer.valueOf(idruta));   // Inventario Entrada
                 Foto.putExtra(TAG_OPERACION, 3);
                 Foto.putExtra(TAG_IDPROMOTOR, pidpromotor); // idpromotor
@@ -205,7 +205,7 @@ public class MenuTienda extends AppCompatActivity
         // Inventario Salida
         imagnaquelout.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
-                Intent Foto = new Intent(getApplicationContext(), com.topmas.top.Foto.class);
+                Intent Foto = new Intent(getApplicationContext(), Foto.class);
                 Foto.putExtra(TAG_IDRUTA, Integer.valueOf(idruta));
                 Foto.putExtra(TAG_OPERACION, 4);    // Inventario Salida
                 Foto.putExtra(TAG_IDPROMOTOR, pidpromotor); // idpromotor

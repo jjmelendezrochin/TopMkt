@@ -1520,7 +1520,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             sSql = "Select idruta from listatiendas where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
         }
 
-
         Cursor cursor = null;
         int i = 0;
         try {

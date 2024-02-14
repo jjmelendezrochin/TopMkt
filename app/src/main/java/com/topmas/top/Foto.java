@@ -134,12 +134,6 @@ public class Foto extends AppCompatActivity {
             idpromotor = usr.getid();
         }
 
-        // Si la ruta es 0 se debe especificar una ruta valida
-        if (idRuta == 0) {
-            Toast.makeText(getApplicationContext(), " Esta ruta es invalida, favor de especificar una ruta correcta", Toast.LENGTH_LONG).show();
-            super.onBackPressed();
-        }
-
         // ***************************************
         // Obtiene el nombre del usuario en y promotor las preferencias
         SharedPreferences preferencias =
@@ -152,6 +146,18 @@ public class Foto extends AppCompatActivity {
         idempresa = usr.getidempresa();
         btnFoto = findViewById(R.id.btnFoto);
         //Log.e(TAG_ERROR, "idUsuario recibido " + idUsuario + " idpromotor " + idpromotor);
+
+        // Si la ruta es 0 se debe especificar una ruta valida
+        if (idRuta == 0) {
+            Toast.makeText(getApplicationContext(), " Esta ruta es invalida, favor de especificar una ruta correcta", Toast.LENGTH_LONG).show();
+            super.onBackPressed();
+        }
+
+        // Si la empresa es nulla es que se perdio el dato por lo que es conveniente volver a solicitarla de algun modo
+        if (idempresa == null){
+            Toast.makeText(getApplicationContext(), " Esta empresa es invalida, favor de especificar una ruta correcta", Toast.LENGTH_LONG).show();
+            super.onBackPressed();
+        }
 
         Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
             //log(throwable.getMessage(), thread.getId());
