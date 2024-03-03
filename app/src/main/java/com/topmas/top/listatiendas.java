@@ -552,7 +552,11 @@ public class listatiendas extends AppCompatActivity {
             progressBar.setMax(iSumaCuentas);
             progressBar.setProgress(0);
 
-            while (progressStatus < iSumaCuentas) {
+            // while (progressStatus < iSumaCuentas) {
+            // *********************************************
+            // TODO AQUI SE CONDICIONA A SUBIR UNICAMENTE 5 REGISTROS EN CADA CONEXION PARA QUE NO SE SATURE EL PROCESO
+            // *********************************************
+            while (progressStatus < 5) {
                 progressStatus += 1;
                 handler.post(new Runnable() {
                     @SuppressLint("SetTextI18n")

@@ -25,6 +25,7 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -202,6 +203,7 @@ public class Funciones {
     // ***************************************
     // Verifica cuantas Aplicaciones esta unsando GPS Fake
     public  boolean areThereMockPermissionApps(Context context) {
+        String PAQUETE_RADIO = "com.android.fmradio";
         int count = 0;
         try {
             PackageManager pm = context.getPackageManager();
@@ -217,12 +219,17 @@ public class Funciones {
                     String[] requestedPermissions = packageInfo.requestedPermissions;
 
                     if (requestedPermissions != null) {
+                        // Enlista el nombre de los paquetes
                         // Log.e("** paquete: ", packageInfo.packageName.toString());
                         for (int i = 0; i < requestedPermissions.length; i++) {
+                            // Enlista todos los permisos
                             // Log.e(" - Permiso ", String.valueOf(i)  +  " " +  requestedPermissions[i].toString());
                             if (requestedPermissions[i]
                                     .equals("android.permission.ACCESS_MOCK_LOCATION")
-                                    && !applicationInfo.packageName.equals(context.getPackageName())) {
+                                    && !applicationInfo.packageName.equals(context.getPackageName())
+                                    && (!packageInfo.packageName.toString().equals(PAQUETE_RADIO))
+                            ) {
+                                Log.e(" *** paquete ", String.valueOf(i)  +  " " +  applicationInfo.packageName.toString());
                                 count++;
                             }
                         }

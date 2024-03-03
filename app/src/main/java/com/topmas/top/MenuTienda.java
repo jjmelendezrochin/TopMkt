@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -55,6 +56,10 @@ public class MenuTienda extends AppCompatActivity
         almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
         idformato = almacenaImagen.ObtenFormato(idruta);
         TextView txtTipoconexion = findViewById(R.id.formaConexion);
+
+        //****************************
+        // Agregando el nombre al titulo
+        tienda = tienda + " "  + usr.getnombre();
 
         if (pidpromotor == 0){
             pidpromotor = usr.getid();
@@ -128,7 +133,7 @@ public class MenuTienda extends AppCompatActivity
         // Verifica si tiene un servicio GPS fake
         boolean bResp = funciones.areThereMockPermissionApps(this.getApplicationContext());
         String sResultado =  "Se esta utilizando una aplicación no permitida en su teléfono, favor de contactar al área de sistemas para mayor información, esta información se va a grabar en la bitácora para seguimiento";
-        /*
+
         if(bResp){
             AlmacenaImagen almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
             String sMotivo = "Fake GPS";
@@ -147,7 +152,7 @@ public class MenuTienda extends AppCompatActivity
             imganaquelin.setVisibility(View.VISIBLE);
             imagnaquelout.setVisibility(View.VISIBLE);
         }
-        */
+        /**/
 
         imgcheckin.setVisibility(View.VISIBLE);
         imgcheckout.setVisibility(View.VISIBLE);

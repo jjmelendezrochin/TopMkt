@@ -88,6 +88,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.CursorWindow;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -118,6 +119,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -1499,7 +1501,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // String Resultado = e.getMessage();
             // Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las actualizaciones de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             cursor.close();
             // db.close();
         }
@@ -1535,7 +1537,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             //String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las rutas de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -1570,7 +1572,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             //String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las determinantes de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             cursor.close();
             // db.close();
         }
@@ -1606,7 +1608,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             //String Resultado = e.getMessage();
             // Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener los nombres  de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             cursor.close();
             // db.close();
         }
@@ -1644,7 +1646,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             //String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las direcciones de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -1680,7 +1682,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // String Resultado = e.getMessage();
             // Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las latitudes de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -1718,7 +1720,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // Por si hay una excepcion
             // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -1758,7 +1760,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             //String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener registros del promotor " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         return (idpromotor > 0) ? idpromotor : iResultado;
@@ -1785,7 +1787,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // String Resultado = e.getMessage();
             // Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener el numero de promociones del formato " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         return iResultado;
@@ -1815,7 +1817,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // Log.e(TAG_ERROR, sSql);
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener registros " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         return iResultado;
@@ -1912,7 +1914,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener registros " + Resultado, Toast.LENGTH_LONG).show();
             // Por si hay una excepcion
         } finally {
-            //assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         return iResultado;
@@ -1941,7 +1943,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener el formato de una ruta " + Resultado, Toast.LENGTH_LONG).show();
             // Por si hay una excepcion
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         return iResultado;
@@ -1974,7 +1976,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // funciones.RegistraError(idUsuario, "AlmacenaImagen, downloadFile", e,  (Activity) AlmacenaImagen.this.contexto , AlmacenaImagen.this.contexto);
             // Por si hay una excepcion
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         return iResultado;
@@ -2049,7 +2051,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String Resultado = e.getMessage();
             Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener la versión de la app " + Resultado, Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         return versionapp;
@@ -2218,7 +2220,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las rutas de las tiendas " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -2253,7 +2255,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las descripciones de los prouductos " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -2286,7 +2288,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las categorias de las productos " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -2318,7 +2320,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las categorias de las productos " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -2482,7 +2484,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las promociones " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -2570,7 +2572,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener la promocion " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
@@ -2606,7 +2608,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las categorias de las productos " +  Resultado,Toast.LENGTH_LONG).show();
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         return arrobs;
@@ -2685,7 +2687,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             Log.e(TAG_ERROR, sTextoResultado);
             return null;
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             assert cursor1 != null;
             assert cursor2 != null;
             // db.close();
@@ -2712,10 +2714,14 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 " from almacenfotos " +
                 " where idoperacion<5 " +
                 " order by id asc limit 1;";
-        Cursor cursor;
-        cursor = db.rawQuery(sSql, null);
-        //oFoto estafoto;
         try {
+            Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
+            field.setAccessible(true);
+            field.set(null, 100 * 1024 * 1024); //the 100MB is the new size
+
+            Cursor cursor;
+            cursor = db.rawQuery(sSql, null);
+
             // ************************************
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -2761,12 +2767,13 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             return i;
         } catch (Exception e) {
             String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error en tab1a  al obtener el arreglo de tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(idUsuario, e, "Colocarfoto()" );
+            Toast.makeText(this.contexto, "E1 " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
             // Log.e(TAG_ERROR,Resultado);
             // Por si hay una excepcion
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
             // db1.close();
         }
@@ -2856,10 +2863,15 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql = "   Select distinct idruta, idproducto, idpromotor,  precioreal, invinicial, invfinal, idobs " +
                         " from vw_producto_ruta_fecha " +
                         " where mod = 1 order by fda asc limit 1;";
-        Cursor cursor;
-        cursor = db.rawQuery(sSql, null);
 
         try {
+            Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
+            field.setAccessible(true);
+            field.set(null, 100 * 1024 * 1024); //the 100MB is the new size
+
+            Cursor cursor;
+            cursor = db.rawQuery(sSql, null);
+
             // ************************************
             cursor.moveToFirst();
             while ( !cursor.isAfterLast()) {
@@ -2904,12 +2916,13 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             return i;
         } catch (Exception e) {
             String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error en tab1a  al obtener el arreglo de tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(idUsuario, e, "ColocaPreciosCambiados()" );
+            Toast.makeText(this.contexto, " E2 " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
             // Log.e(TAG_ERROR,Resultado);
             // Por si hay una excepcion
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
             // db1.close();
         }
@@ -3092,10 +3105,15 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 " where af.idoperacion=5 " +
                 " order by af.id asc limit 1;";
         // Log.e(TAG_ERROR, sSql);
-        Cursor cursor;
-        cursor = db.rawQuery(sSql, null);
-        //oFoto estafoto;
+
         try {
+            Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
+            field.setAccessible(true);
+            field.set(null, 100 * 1024 * 1024); //the 100MB is the new size
+
+            Cursor cursor;
+            cursor = db.rawQuery(sSql, null);
+
             // ************************************
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -3162,12 +3180,13 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             return i;
         } catch (Exception e) {
             String Resultado = e.getMessage();
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error en tab1a  al obtener el arreglo de tiendas " + Resultado, Toast.LENGTH_LONG).show();
+            this.inserta_error1(idUsuario, e, "ColocaCompetencia()" );
+            Toast.makeText(this.contexto,  "E3 " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
             // Log.e(TAG_ERROR,Resultado);
             // Por si hay una excepcion
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db1.close();
             // db.close();
         }
@@ -3410,7 +3429,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar errores " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
             // db1.close();
         }
@@ -3636,7 +3655,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar caducidad " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
             // db1.close();
         }
@@ -3915,7 +3934,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // Log.e(TAG_ERROR,Resultado);
             // Por si hay una excepcion
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
             // db1.close();
         }
@@ -4081,7 +4100,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar competencia_promocion c2" + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
     }
@@ -4290,7 +4309,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar competencia_promocion c2" + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // // db.close();
             // // db1.close();
         }
@@ -4428,7 +4447,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // funciones.RegistraError(idUsuario, "AlmacenaImagen, downloadFile", e,  (Activity) AlmacenaImagen.this.contexto , AlmacenaImagen.this.contexto);
             // Por si hay una excepcion
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
         return iResultado;
@@ -4986,7 +5005,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             Toast.makeText(this.contexto, ERROR_FOTO + "Error en tabla al consultar canjes etapa1" + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
     }
@@ -5203,7 +5222,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar compmento c2" + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
-            assert cursor != null;
+            // assert cursor != null;
             // db.close();
         }
     }

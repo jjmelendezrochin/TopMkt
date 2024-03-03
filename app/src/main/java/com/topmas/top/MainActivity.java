@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
+import android.database.CursorWindow;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -83,7 +85,16 @@ public class MainActivity extends AppCompatActivity {
             funciones.RegistraError(pName, "MainActivity setDefaultUncaughtExceptionHandler", (Exception) throwable, MainActivity.this, getApplicationContext());
         });
 
-        // Log.e(TAG_ERROR, "1");
+        try {
+            Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
+            field.setAccessible(true);
+            field.set(null, 100 * 1024 * 1024); //the 100MB is the new size
+        } catch (Exception e) {
+            AlmacenaImagen almacenaImagen1 = new AlmacenaImagen(this.getApplicationContext());
+            almacenaImagen1.inserta_error1("0", e, "MainActivity" );
+        }
+
+
         try {
             almacenaImagen = new AlmacenaImagen(getApplicationContext());
             versionapp = almacenaImagen.ConsultaVersionApp();
@@ -157,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                 String pNombre = txtUsuario.getText().toString();
                 String pClave = txtPwd.getText().toString();
 
-                /*
+
                 // *****************************
                 // Verifica si tiene un servicio GPS fake
                 Funciones funciones = new Funciones();
@@ -171,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), sResultado , Toast.LENGTH_LONG).show();
                     return;
                 }
-                */
+                /**/
 
                 // **************************************
                 /* Alamcena en la variable idempresa el valor seleccionado en el spinner */
