@@ -3,6 +3,7 @@ package com.topmas.top;
 import static com.topmas.top.Competencia.REQUEST_IMAGE_CAPTURE;
 import static com.topmas.top.Constants.CONST_ACCESOLOCAL;
 import static com.topmas.top.Constants.ERROR_FOTO;
+import static com.topmas.top.Constants.TAG_CARGA_FOTO_DISTANCIA;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_DIRECCION;
 import static com.topmas.top.Constants.TAG_ERROR;
@@ -622,16 +623,22 @@ public class Canjes extends AppCompatActivity {
                 int j = almacenaImagen.BorraFotoEnviada(iFoto2);
 
                 // **************************************
-                // Si se pudo cargar la foto entonces debe de borrar la foto almacenada y los de canjes len a tocal
-                if (s == TAG_CARGA_FOTO_EXITOSA) {
+                // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
+                if (s.equals(TAG_CARGA_FOTO_EXITOSA)) {
                     Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
                     imagenFoto1.setImageResource(android.R.color.transparent);
                     imagenFoto2.setImageResource(android.R.color.transparent);
                     almacenaImagen.borra_canjes_almacenfotos(llave);
                     almacenaImagen.borra_canjes_productos(llave);
                     almacenaImagen.borra_canjes(llave);
-                    // Log.e(TAG_ERROR, "***********************");
-                    // almacenaImagen.consulta_total_canjes();
+                }
+                else if (s.equals(TAG_CARGA_FOTO_DISTANCIA)) {
+                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+                    imagenFoto1.setImageResource(android.R.color.transparent);
+                    imagenFoto2.setImageResource(android.R.color.transparent);
+                    almacenaImagen.borra_canjes_almacenfotos(llave);
+                    almacenaImagen.borra_canjes_productos(llave);
+                    almacenaImagen.borra_canjes(llave);
                 }
                 else{
                     Toast.makeText(getApplicationContext(), s , Toast.LENGTH_LONG).show();
@@ -640,9 +647,8 @@ public class Canjes extends AppCompatActivity {
                     almacenaImagen.borra_canjes_almacenfotos(llave);
                     almacenaImagen.borra_canjes_productos(llave);
                     almacenaImagen.borra_canjes(llave);
-                    // Log.e(TAG_ERROR, "***********************");
-                    // almacenaImagen.consulta_total_canjes();
                 }
+
                 finish();
                 // **************************************
             }

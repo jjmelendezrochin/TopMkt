@@ -422,8 +422,7 @@ public class Foto extends AppCompatActivity {
 
                 AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
                 int i = almacenaImagen.BorraFotoEnviada(iResp);
-                // Log.e(TAG_ERROR, "Se Borro la foto almacenada " + iResp);
-                // Log.e(TAG_ERROR, "Respuesta  " + s);
+
                 // **************************************
                 // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
                 if (s.equals(TAG_CARGA_FOTO_EXITOSA)) {
@@ -450,6 +449,7 @@ public class Foto extends AppCompatActivity {
                     imgizq.setVisibility(View.VISIBLE);
                     imgder.setVisibility(View.VISIBLE);
                 }
+
                 finish();
                 // **************************************
             }

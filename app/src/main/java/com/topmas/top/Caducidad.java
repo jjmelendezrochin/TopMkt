@@ -43,6 +43,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import static com.topmas.top.Constants.ERROR_FOTO;
+import static com.topmas.top.Constants.TAG_CARGA_FOTO_DISTANCIA;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
@@ -405,14 +406,31 @@ public class Caducidad extends AppCompatActivity {
 
                 AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
                 int i = almacenaImagen.BorraFotoEnviada(iFoto);
-                // Log.e(TAG_ERROR, "Se Borro la foto almacenada " + iFoto);
-                // Log.e(TAG_ERROR, "Respuesta  " + s);
+
                 // **************************************
                 // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
-                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
-                imagenFoto.setImageResource(android.R.color.transparent);
-                LimpiaCajas();
+                if (s.equals(TAG_CARGA_FOTO_EXITOSA)) {
+                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+                    imagenFoto.setImageResource(android.R.color.transparent);
+                    imgizq.setVisibility(View.INVISIBLE);
+                    imgder.setVisibility(View.INVISIBLE);
+                    LimpiaCajas();
+                }
+                else if (s.equals(TAG_CARGA_FOTO_DISTANCIA)) {
+                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+                    imagenFoto.setImageResource(android.R.color.transparent);
+                    imgizq.setVisibility(View.VISIBLE);
+                    imgder.setVisibility(View.VISIBLE);
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), s , Toast.LENGTH_LONG).show();
+                    imagenFoto.setImageResource(android.R.color.transparent);
+                    imgizq.setVisibility(View.VISIBLE);
+                    imgder.setVisibility(View.VISIBLE);
+                }
+
                 finish();
+                // **************************************
             }
 
         }

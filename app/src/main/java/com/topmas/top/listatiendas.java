@@ -575,6 +575,7 @@ public class listatiendas extends AppCompatActivity {
                         iCanjes = almacenaImagen.ObtenRegistros(20);
 
                         if (iMagenesGuardadas>0){
+                            // Sube imagenes upload1.php
                             i = almacenaImagen.Colocarfoto();
                             textoAvance.setText("Cargando fotos " + progressStatus + "/" + progressBar.getMax());
                             textoAvance.setGravity(Gravity.CENTER);
@@ -585,6 +586,7 @@ public class listatiendas extends AppCompatActivity {
                             textoAvance.setGravity(Gravity.CENTER);
                         }
                         else if(iRegistrosCompetencia>0){
+                            // Sube imagenes upload_competencia.php
                             i = almacenaImagen.ColocaCompetencia();
                             textoAvance.setText("Cargando competencia " + progressStatus + "/" + progressBar.getMax());
                             textoAvance.setGravity(Gravity.CENTER);
@@ -595,6 +597,7 @@ public class listatiendas extends AppCompatActivity {
                             textoAvance.setGravity(Gravity.CENTER);
                         }
                         else if(iCaducidad>0){
+                            // Sube imagenes upload_caducidad.php
                             i = almacenaImagen.ColocaCaducidad();
                             textoAvance.setText("Cargando caducidad " + progressStatus + "/" + progressBar.getMax());
                             textoAvance.setGravity(Gravity.CENTER);
@@ -605,6 +608,7 @@ public class listatiendas extends AppCompatActivity {
                             textoAvance.setGravity(Gravity.CENTER);
                         }
                         else if(iCompetenciaPromocion>0){
+                            // Sube imagenes upload_competencia_promocion.php y upload_competencia_promocion_complemento.php
                             // Log.e(TAG_ERROR, "Cargando competencia promoción " + String.valueOf(i));
                             i = almacenaImagen.ColocaCompetenciaPromocion();
                             // Log.e(TAG_ERROR, "Cargando competencia promoción complemento" + String.valueOf(i));
@@ -613,6 +617,7 @@ public class listatiendas extends AppCompatActivity {
                             textoAvance.setGravity(Gravity.CENTER);
                         }
                         else if(iCanjes>0){
+                            // Sube imagenes upload_canjes.php y upload_canjes_complemento.php
                             // Log.e(TAG_ERROR, "ColocaCanjes()");
                              i = almacenaImagen.ColocaCanjes();
                             // Log.e(TAG_ERROR, "ColocaCanjesComplemento()");
@@ -629,7 +634,6 @@ public class listatiendas extends AppCompatActivity {
                         }
                     }
                 });
-
             }
             return null;
         }

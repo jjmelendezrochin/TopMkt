@@ -24,6 +24,8 @@ import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_ACTIVIDADBTL;
 import static com.topmas.top.Constants.TAG_APLICA;
 import static com.topmas.top.Constants.TAG_CANJES;
+import static com.topmas.top.Constants.TAG_CARGA_FOTO_DISTANCIA;
+import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_IDEMOSTRADOR;
 import static com.topmas.top.Constants.TAG_IDEMPAQUE;
@@ -4368,6 +4370,18 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
+                // **************************************
+                // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
+                if (s.equals(TAG_CARGA_FOTO_EXITOSA)) {
+                    // Se pudo subir la imagen
+                }
+                else if (s.equals(TAG_CARGA_FOTO_DISTANCIA)) {
+                    // No se pudo subir la imagen por distancia
+                }
+                else{
+                    // No se pudo subir la imagen por otro motivo
+                }
+                // **************************************
             }
 
             @Override
@@ -5255,7 +5269,22 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
             @Override
             protected void onPostExecute(String s) {
+
                 super.onPostExecute(s);
+                // **************************************
+                // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
+                if (s.equals(TAG_CARGA_FOTO_EXITOSA)) {
+                    // Se pudo subir la imagen
+                }
+                else if (s.equals(TAG_CARGA_FOTO_DISTANCIA)) {
+                    // No se pudo subir la imagen por distancia
+                }
+                else{
+                    // No se pudo subir la imagen por otro motivo
+                }
+
+                // **************************************
+
             }
 
             @Override

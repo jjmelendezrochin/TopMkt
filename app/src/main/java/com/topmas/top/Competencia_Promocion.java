@@ -2,6 +2,7 @@ package com.topmas.top;
 
 import static com.topmas.top.Competencia.REQUEST_IMAGE_CAPTURE;
 import static com.topmas.top.Constants.ERROR_FOTO;
+import static com.topmas.top.Constants.TAG_CARGA_FOTO_DISTANCIA;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
@@ -576,13 +577,18 @@ public class Competencia_Promocion extends AppCompatActivity {
                 super.onPostExecute(s);
                 pDialog.dismiss();
 
-
                 AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
-                almacenaImagen.BorraFotoEnviada(iFoto1, iFoto2);
-                almacenaImagen.borrar_competencia_promocion(idCompetenciaPromo);
+
                 // **************************************
                 // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
-                if (s == TAG_CARGA_FOTO_EXITOSA) {
+                if (s.equals(TAG_CARGA_FOTO_EXITOSA)) {
+                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+                    imagenFoto1.setImageResource(android.R.color.transparent);
+                    imagenFoto2.setImageResource(android.R.color.transparent);
+                    almacenaImagen.BorraFotoEnviada(iFoto1, iFoto2);
+                    almacenaImagen.borrar_competencia_promocion(idCompetenciaPromo);
+                }
+                else if (s.equals(TAG_CARGA_FOTO_DISTANCIA)) {
                     Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
                     imagenFoto1.setImageResource(android.R.color.transparent);
                     imagenFoto2.setImageResource(android.R.color.transparent);
@@ -592,6 +598,7 @@ public class Competencia_Promocion extends AppCompatActivity {
                     imagenFoto1.setImageResource(android.R.color.transparent);
                     imagenFoto2.setImageResource(android.R.color.transparent);
                 }
+
                 finish();
                 // **************************************
             }
