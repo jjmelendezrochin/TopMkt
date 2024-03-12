@@ -4,6 +4,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationProvider;
 import android.os.Bundle;
+import android.util.Log;
+
+import java.util.List;
 
 
 // ***************************************************
@@ -12,6 +15,7 @@ public class Localizacion implements LocationListener {
     private static final String TAG_GEOPOSICION = "GEOPOSICION";
     private String sLatitud = "";
     private String sLongitud = "";
+
 
     MainActivity mainActivity;
     public MainActivity getMainActivity() {
@@ -29,12 +33,14 @@ public class Localizacion implements LocationListener {
         loc.getLongitude();
         sLatitud = String.valueOf(loc.getLatitude());
         sLongitud = String.valueOf(loc.getLongitude());
-        // Log.e(TAG_GEOPOSICION, "Latitud " + String.valueOf(sLatitud));
-        // Log.e(TAG_GEOPOSICION, "Longitud " + String.valueOf(sLongitud));
+        Log.e(TAG_GEOPOSICION, "Latitud " + String.valueOf(sLatitud));
+        Log.e(TAG_GEOPOSICION, "Longitud " + String.valueOf(sLongitud));
+        Log.e(TAG_GEOPOSICION, "isFromMockProvider " + String.valueOf(loc.isFromMockProvider()));
+        // Log.e(TAG_GEOPOSICION, "Proveedor " + String.valueOf(loc.getProvider()));   // Aqui indica el nombre del proveedor de localización
+
         usuario.setLatitud(Double.parseDouble(sLatitud));
         usuario.setLongitud(Double.parseDouble(sLongitud));
-
-
+        usuario.setisFromMockProvider(loc.isFromMockProvider());
     }
     @Override
     public void onProviderDisabled(String provider) {

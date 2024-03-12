@@ -5,6 +5,7 @@ import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_DISTANCIA;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_ERROR;
+import static com.topmas.top.Constants.TAG_FAKEGPS_MSG;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
 import static com.topmas.top.Constants.TAG_OPERACION;
@@ -236,7 +237,23 @@ public class Foto extends AppCompatActivity {
         // Boton foto puede tomar una foto
         btnFoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                // Context context = getApplicationContext();
+                // ****************************************
+                // TODO AQUI HAY UNA VALIDACION DE UBICACION
+                // *****************************
+                // Verifica si tiene un servicio GPS fake
+                Funciones funciones = new Funciones();
+                Usuario usuario = new Usuario();
+
+                boolean bResp1 = funciones.isMockSettingsON(view.getContext());                 // Validaciòn para Android 9
+                boolean bResp2 = funciones.areThereMockPermissionApps(view.getContext());       // Validaciòn para Android 9
+                boolean bResp3 = usuario.getisFromMockProvider();                               // Validaciòn para Android 13
+
+                String sResultado =  TAG_FAKEGPS_MSG;
+                if(bResp1||bResp2||bResp3){
+                    Toast.makeText(getApplicationContext(), sResultado , Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 Context contexto = getApplicationContext().getApplicationContext();
                 int iFotosTienda = almacenaImagen.ObtenFotosTienda(idRuta);
                 if (iFotosTienda>=20){
@@ -273,6 +290,23 @@ public class Foto extends AppCompatActivity {
         // Boton para subir una foto
         btnSubir.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+
+                // ****************************************
+                // TODO AQUI HAY UNA VALIDACION DE UBICACION
+                // *****************************
+                // Verifica si tiene un servicio GPS fake
+                Funciones funciones = new Funciones();
+                Usuario usuario = new Usuario();
+
+                boolean bResp1 = funciones.isMockSettingsON(view.getContext());                 // Validaciòn para Android 9
+                boolean bResp2 = funciones.areThereMockPermissionApps(view.getContext());       // Validaciòn para Android 9
+                boolean bResp3 = usuario.getisFromMockProvider();                               // Validaciòn para Android 13
+
+                String sResultado =  TAG_FAKEGPS_MSG;
+                if(bResp1||bResp2||bResp3){
+                    Toast.makeText(getApplicationContext(), sResultado , Toast.LENGTH_LONG).show();
+                    return;
+                }
 
                 // TODO Proceso para subir imágenes
                 idpromotor = usr.getid();

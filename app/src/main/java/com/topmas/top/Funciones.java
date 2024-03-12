@@ -2,10 +2,12 @@ package com.topmas.top;
 
 import static com.topmas.top.Constants.TAG_IDEMPRESA;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
+import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_USUARIO;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AppOpsManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -36,6 +38,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 // ***************************************
@@ -99,6 +102,9 @@ public class Funciones {
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
             return;
         }
+
+        // ******************************************************
+
         mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, Local);
         mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, Local);
     }
@@ -201,52 +207,6 @@ public class Funciones {
     }
 
     // ***************************************
-    // Verifica cuantas Aplicaciones esta unsando GPS Fake
-    public  boolean areThereMockPermissionApps(Context context) {
-        String PAQUETE_RADIO = "com.android.fmradio";
-        int count = 0;
-        try {
-            PackageManager pm = context.getPackageManager();
-            List<ApplicationInfo> packages =
-                    pm.getInstalledApplications(PackageManager.GET_META_DATA);
-
-            for (ApplicationInfo applicationInfo : packages) {
-                try {
-                    PackageInfo packageInfo = pm.getPackageInfo(applicationInfo.packageName,
-                            PackageManager.GET_PERMISSIONS);
-
-                    // Get Permissions
-                    String[] requestedPermissions = packageInfo.requestedPermissions;
-
-                    if (requestedPermissions != null) {
-                        // Enlista el nombre de los paquetes
-                        // Log.e("** paquete: ", packageInfo.packageName.toString());
-                        for (int i = 0; i < requestedPermissions.length; i++) {
-                            // Enlista todos los permisos
-                            // Log.e(" - Permiso ", String.valueOf(i)  +  " " +  requestedPermissions[i].toString());
-                            if (requestedPermissions[i]
-                                    .equals("android.permission.ACCESS_MOCK_LOCATION")
-                                    && !applicationInfo.packageName.equals(context.getPackageName())
-                                    && (!packageInfo.packageName.toString().equals(PAQUETE_RADIO))
-                            ) {
-                                Log.e(" *** paquete ", String.valueOf(i)  +  " " +  applicationInfo.packageName.toString());
-                                count++;
-                            }
-                        }
-                    }
-                } catch (PackageManager.NameNotFoundException e) {
-                   // Log.e("MockDeductionAgilanbu", "Got exception --- " + e.getMessage());
-                }
-            }
-        } catch (Exception w) {
-            w.printStackTrace();
-        }
-        if (count > 0)
-            return true;
-        return false;
-    }
-
-    // ***************************************
     // Limpia variables al salir
     public void limpiaVariablessesion(Context contexto) {
         // **************************************
@@ -255,12 +215,86 @@ public class Funciones {
         SharedPreferences preferencias =
                 PreferenceManager.getDefaultSharedPreferences(contexto);
         SharedPreferences.Editor editor = preferencias.edit();
-                        editor.putString(TAG_IDEMPRESA
-                                , String.valueOf("0"));
-                        editor.putString(TAG_IDPROMOTOR, String.valueOf("0"));
-                        editor.putString(TAG_USUARIO, String.valueOf("0"));
-                        editor.commit();
+        editor.putString(TAG_IDEMPRESA
+                , String.valueOf("0"));
+        editor.putString(TAG_IDPROMOTOR, String.valueOf("0"));
+        editor.putString(TAG_USUARIO, String.valueOf("0"));
+        editor.commit();
         // **************************************
+    }
+
+    // ***************************************************
+    // Verifica cuantas Aplicaciones esta unsando GPS Fake
+    public static boolean isMockSettingsON(Context context) {
+        // Fuente https://stackoverflow.com/questions/6880232/disable-check-for-mock-location-prevent-gps-spoofing
+        // returns true if mock location enabled, false if not enabled.
+        if (Settings.Secure.getString(context.getContentResolver(),
+                Settings.Secure.ALLOW_MOCK_LOCATION).equals("0"))
+            return false;
+        else
+            return true;
+    }
+
+    // ***************************************************
+    // Verifica cuantas Aplicaciones esta unsando GPS Fake
+    public static boolean areThereMockPermissionApps(Context context) {
+        // Fuente https://stackoverflow.com/questions/6880232/disable-check-for-mock-location-prevent-gps-spoofing
+        String PAQUETE_RADIO = "com.android.fmradio";
+        String sPaquete = "Hay programas no permitidos";
+        int count = 0;
+
+        PackageManager pm = context.getPackageManager();
+        List<ApplicationInfo> packages =
+                pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+        for (ApplicationInfo applicationInfo : packages) {
+            try {
+                PackageInfo packageInfo = pm.getPackageInfo(applicationInfo.packageName,
+                        PackageManager.GET_PERMISSIONS);
+
+                // Get Permissions
+                String[] requestedPermissions = packageInfo.requestedPermissions;
+
+                Log.e(" ** paquete ",  " ** paquete " + applicationInfo.packageName.toString());
+                if (requestedPermissions != null) {
+                    for (int i = 0; i < requestedPermissions.length; i++) {
+                        Log.e(" -- permiso "," -- permiso " + String.valueOf(i)  +  " " + requestedPermissions[i].toString());
+                        if (requestedPermissions[i]
+                                .equals("android.permission.ACCESS_MOCK_LOCATION")
+                                && !applicationInfo.packageName.equals(context.getPackageName())
+                                && (!packageInfo.packageName.toString().equals(PAQUETE_RADIO))
+                        ) {
+                            Log.e(" *** paquete ", String.valueOf(i)  +  " " +  applicationInfo.packageName.toString());
+                            sPaquete = sPaquete + "\n" +  applicationInfo.packageName.toString();
+                            count++;
+                        }
+                    }
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.e("Got exception " , e.getMessage());
+            }
+        }
+
+        if (count > 0) {
+            Toast.makeText(context.getApplicationContext(), sPaquete, Toast.LENGTH_LONG).show();
+            return true;
+        }
+        return false;
+    }
+
+    public static List<String> getListOfFakeLocationAppsFromAll(Context context) {
+        List<String> fakeApps = new ArrayList<>();
+        List<ApplicationInfo> packages = context.getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
+        for (ApplicationInfo aPackage : packages) {
+            boolean isSystemPackage = ((aPackage.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
+            fakeApps.add(context.getApplicationContext().getApplicationInfo().loadLabel(context.getPackageManager()).toString());
+            Log.e(TAG_INFO, context.getApplicationContext().getApplicationInfo().loadLabel(context.getPackageManager()).toString());
+            /*
+            if(!isSystemPackage && hasAppPermission(context, aPackage.packageName, "android.permission.ACCESS_MOCK_LOCATION")){
+                fakeApps.add(context.getApplicationContext().getApplicationInfo().loadLabel(context.getPackageManager()).toString());
+            }*/
+        }
+        return fakeApps;
     }
 
 }

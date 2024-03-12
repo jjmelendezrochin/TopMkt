@@ -6,6 +6,7 @@ import static com.topmas.top.Constants.TAG_EMAIL;
 import static com.topmas.top.Constants.TAG_EMPRESA;
 import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_EXPIRESIN;
+import static com.topmas.top.Constants.TAG_FAKEGPS_MSG;
 import static com.topmas.top.Constants.TAG_IDEMPRESA;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_INFO;
@@ -168,21 +169,22 @@ public class MainActivity extends AppCompatActivity {
                 String pNombre = txtUsuario.getText().toString();
                 String pClave = txtPwd.getText().toString();
 
-
+                // ****************************************
+                // TODO AQUI HAY UNA VALIDACION DE UBICACION
                 // *****************************
                 // Verifica si tiene un servicio GPS fake
                 Funciones funciones = new Funciones();
-                boolean bResp = funciones.areThereMockPermissionApps(view.getContext());
-                String sResultado =  "Se esta utilizando una aplicación no permitida en su teléfono, favor de contactar al área de sistemas para mayor información, esta información se va a grabar en la bitácora para seguimiento";
-                if(bResp){
-                    AlmacenaImagen almacenaImagen = new AlmacenaImagen(view.getContext());
-                    String sMotivo = "Fake GPS";
-                    Exception exp = new Exception(sMotivo,null);
-                    almacenaImagen.inserta_error1(pNombre, exp, sMotivo);
+                Usuario usuario = new Usuario();
+
+                boolean bResp1 = funciones.isMockSettingsON(view.getContext());                 // Validaciòn para Android 9
+                boolean bResp2 = funciones.areThereMockPermissionApps(view.getContext());       // Validaciòn para Android 9
+                boolean bResp3 = usuario.getisFromMockProvider();                               // Validaciòn para Android 13
+
+                String sResultado =  TAG_FAKEGPS_MSG;
+                if(bResp1||bResp2||bResp3){
                     Toast.makeText(getApplicationContext(), sResultado , Toast.LENGTH_LONG).show();
                     return;
                 }
-                /**/
 
                 // **************************************
                 /* Alamcena en la variable idempresa el valor seleccionado en el spinner */
@@ -216,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                         listatiendas.putExtra(TAG_EXPIRESIN, "null");
                         listatiendas.putExtra(TAG_CONSULTAENWEB, 1);    // Indica que debe buscar en la lista de tiendas en web
 
-                        Usuario usr = new Usuario(idpromotor, pName, pEmail, pToken, pExpira, idEmpresa);
+                        Usuario usr = new Usuario(idpromotor, pName, pEmail, pToken, pExpira, idEmpresa, false);
                         startActivity(listatiendas);
                         // ***************************
                     } else {
@@ -480,7 +482,7 @@ public class MainActivity extends AppCompatActivity {
             // Solo inicia el servicio de localización la primera ocasión
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = preferences.edit();
-
+/*
 
             int iServicioIniciado = preferences.getInt("ServicioIniciado", 0);
             if (iServicioIniciado == 0) {
@@ -488,15 +490,16 @@ public class MainActivity extends AppCompatActivity {
                 editor.apply();
                 editor.commit();
 
+
                 Intent iServicio = new Intent(MainActivity.this, LocationService.class);
                 iServicio.putExtra(TAG_IDPROMOTOR, pidpromotor);
                 preferences.getInt("ServicioIniciado", 0);
                 startService(iServicio);
-            }
 
+            }
+*/
             String nombre = txtUsuario.getText().toString();
             String pwd = txtPwd.getText().toString();
-
 
             // ***************************
             // Inserta o actualiza promotor en la tabla cat_promotores
@@ -523,7 +526,7 @@ public class MainActivity extends AppCompatActivity {
             listatiendas.putExtra(TAG_EXPIRESIN, pExpira);
             listatiendas.putExtra(TAG_CONSULTAENWEB, 1);    // Indica que debe buscar en la lista de tiendas en web
 
-            Usuario usr = new Usuario(pidpromotor, pName, pEmail, pToken, pExpira, idEmpresa);
+            Usuario usr = new Usuario(pidpromotor, pName, pEmail, pToken, pExpira, idEmpresa, false);
             startActivity(listatiendas);
             // ***************************
         } else {

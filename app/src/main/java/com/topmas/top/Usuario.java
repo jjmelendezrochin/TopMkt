@@ -10,6 +10,7 @@ public class Usuario
     public static double _latitud;
     public static double _longitud;
     public static String _idempresa;
+    public static boolean _isFromMockProvider;
 
     //************
     // Constructor
@@ -23,9 +24,11 @@ public class Usuario
                    String pemail,
                    String paccessToken,
                    String pexpiresIn,
-                   String pidempresa
+                   String pidempresa,
+                   boolean pisFromMockProvider
+
     ){
-        this.Establece(pid, pname, pemail, paccessToken, pexpiresIn, pidempresa);
+        this.Establece(pid, pname, pemail, paccessToken, pexpiresIn, pidempresa, pisFromMockProvider);
     }
 
     //************
@@ -34,12 +37,13 @@ public class Usuario
                   String pemail,
                   String paccessToken,
                   String pexpiresIn,
-                  String pidempresa)
+                  String pidempresa,
+                  boolean pisFromMockProvider)
     {
-        this.Establece(pid, pname, pemail, paccessToken, pexpiresIn, pidempresa);
+        this.Establece(pid, pname, pemail, paccessToken, pexpiresIn, pidempresa, pisFromMockProvider);
     }
 
-    public static void Establece(int pid, String pidusuario, String pemail, String paccessToken, String pexpiresIn, String pidempresa)
+    public static void Establece(int pid, String pidusuario, String pemail, String paccessToken, String pexpiresIn, String pidempresa, boolean pisFromMockProvider)
     {
         _id = pid;
         _idusuario = pidusuario;
@@ -49,6 +53,7 @@ public class Usuario
         _latitud = 0;
         _longitud = 0;
         _idempresa = pidempresa;
+        _isFromMockProvider = pisFromMockProvider;
     }
 
     //***********************
@@ -63,9 +68,12 @@ public class Usuario
     public String getidempresa(){return this._idempresa;}
     public double getLatitud(){return this._latitud;}
     public double getLongitud(){return this._longitud;}
+    public boolean getisFromMockProvider(){return this._isFromMockProvider;}
 
     public void setLatitud(double pLatitud) { this._latitud = pLatitud;}
     public void setLongitud(double pLongitud) { this._longitud = pLongitud;}
     public void setidusuario(String pidusuario){this._idusuario = pidusuario;}
+    public void setisFromMockProvider(boolean pisFromMockProvider){this._isFromMockProvider  = pisFromMockProvider;}
+
     //***********************
 }

@@ -41,6 +41,7 @@ import java.net.URLConnection;
 
 import static com.topmas.top.Constants.CONST_ACCESOLOCAL;
 import static com.topmas.top.Constants.CONST_ACCESORED;
+import static com.topmas.top.Constants.QTY_IMAGES_TO_LOAD;
 import static com.topmas.top.Constants.TAG_ACCESSTOKEN;
 import static com.topmas.top.Constants.TAG_ACTIV;
 import static com.topmas.top.Constants.TAG_ACTIVIDAD;
@@ -554,9 +555,10 @@ public class listatiendas extends AppCompatActivity {
 
             // while (progressStatus < iSumaCuentas) {
             // *********************************************
-            // TODO AQUI SE CONDICIONA A SUBIR UNICAMENTE 5 REGISTROS EN CADA CONEXION PARA QUE NO SE SATURE EL PROCESO
+            // TODO AQUI SE CONDICIONA A SUBIR UNICAMENTE N QTY_IMAGES_TO_LOAD
+            //  REGISTROS EN CADA CONEXION PARA QUE NO SE SATURE EL PROCESO
             // *********************************************
-            while (progressStatus < 5) {
+            while (progressStatus <= QTY_IMAGES_TO_LOAD) {
                 progressStatus += 1;
                 handler.post(new Runnable() {
                     @SuppressLint("SetTextI18n")
@@ -630,7 +632,6 @@ public class listatiendas extends AppCompatActivity {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
                             funciones.RegistraError(pName, "listatiendas, CargaFotos 1", e, listatiendas.this, getApplicationContext());
-                            // e.printStackTrace();
                         }
                     }
                 });
@@ -642,7 +643,7 @@ public class listatiendas extends AppCompatActivity {
         protected void onPostExecute(String file_url)
         {
             try {
-                // Sleep for 5000 milliseconds.
+                // Sleep for 1 milliseconds.
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 funciones.RegistraError(pName, "listatiendas, CargaFotos 2", e, listatiendas.this, getApplicationContext());

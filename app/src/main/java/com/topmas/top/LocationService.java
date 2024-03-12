@@ -12,11 +12,15 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
 import static android.widget.Toast.LENGTH_SHORT;
+import static com.topmas.top.Constants.TAG_IDPROMOTOR;
+import static com.topmas.top.Constants.TAG_LATITUD;
+import static com.topmas.top.Constants.TAG_LONGITUD;
 
 public class LocationService extends Service implements LocationListener {
 
@@ -61,7 +65,8 @@ public class LocationService extends Service implements LocationListener {
         //  Here I offer two options: either you are using satellites or the Wi-Fi services to get user's location
         //this.m_locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 0, this); //  User's location is retrieve every 3 seconds
         this.m_locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
             return START_STICKY;
         }
@@ -103,9 +108,9 @@ public class LocationService extends Service implements LocationListener {
             return ;
         Double lat = loc.getLatitude();
         Double lon = loc.getLongitude();
-        //////////// Log.e(TAG_LATITUD,String.valueOf(lat));
-        //////////// Log.e(TAG_LONGITUD, String.valueOf(lon));
-        //////////// Log.e(TAG_IDPROMOTOR, String.valueOf(pidPromotor));
+        Log.e(TAG_LATITUD,String.valueOf(lat));
+        Log.e(TAG_LONGITUD, String.valueOf(lon));
+        // Log.e(TAG_IDPROMOTOR, String.valueOf(pidPromotor));
 
         // **********************
         // Si el idpromotor es igual a cero entonces obtiene el valor de las preferencias

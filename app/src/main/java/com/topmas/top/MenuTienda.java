@@ -7,6 +7,7 @@ import static com.topmas.top.Constants.TAG_CONSULTAENWEB;
 import static com.topmas.top.Constants.TAG_DIRECCION;
 import static com.topmas.top.Constants.TAG_EMAIL;
 import static com.topmas.top.Constants.TAG_EXPIRESIN;
+import static com.topmas.top.Constants.TAG_FAKEGPS_MSG;
 import static com.topmas.top.Constants.TAG_IDFORMATO;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
@@ -56,7 +57,6 @@ public class MenuTienda extends AppCompatActivity
         almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
         idformato = almacenaImagen.ObtenFormato(idruta);
         TextView txtTipoconexion = findViewById(R.id.formaConexion);
-
         //****************************
         // Agregando el nombre al titulo
         tienda = tienda + " "  + usr.getnombre();
@@ -89,7 +89,6 @@ public class MenuTienda extends AppCompatActivity
         //****************************
         // Lista de tiendas
         FloatingActionButton fab = findViewById(R.id.fab);
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,8 +106,60 @@ public class MenuTienda extends AppCompatActivity
         });
 
         //****************************
-        // Imagen Mapa
+        // Muestra datos almacenados
+        FloatingActionButton fab1 = findViewById(R.id.fab1);
+        fab1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                almacenaImagen = new AlmacenaImagen(getApplicationContext());
+                almacenaImagen.muestradatosAlmacenados();
+            }
+        });
+
+        //****************************
+        // Botones
         ImageView imgUbicacion = findViewById(R.id.imgUbicacion);
+        ImageView imgcheckin = findViewById(R.id.imgcheckin);
+        ImageView imgcheckout = findViewById(R.id.checkout);
+        ImageView imganaquelin = findViewById(R.id.imganaquelin);
+        ImageView imagnaquelout = findViewById(R.id.imagnaquelout);
+        ImageView imgCanjes = findViewById(R.id.imgCanjes);
+        ImageView imgevidenciaexhibicion = findViewById(R.id.imgevidenciaexhibicion);
+        ImageView imgCaducidad = findViewById(R.id.imgCaducidad);
+        ImageView imgCompetencia1 = findViewById(R.id.imgCompetencia1);
+        ImageView imgproductomenu = findViewById(R.id.imgproductomenu);
+        ImageView imgreporteresurtido = findViewById(R.id.imgreporteresurtido);
+
+        // ****************************************
+        // TODO AQUI HAY UNA VALIDACION DE UBICACION
+        // *****************************
+        // Verifica si tiene un servicio GPS fake
+        Funciones funciones = new Funciones();
+        Usuario usuario = new Usuario();
+
+        boolean bResp1 = funciones.isMockSettingsON(getApplicationContext());                   // Validaciòn para Android 9
+        boolean bResp2 = funciones.areThereMockPermissionApps(getApplicationContext());         // Validaciòn para Android 9
+        boolean bResp3 = usuario.getisFromMockProvider();                                       // Validaciòn para Android 13
+
+        String sResultado =  TAG_FAKEGPS_MSG;
+        if(bResp1||bResp2||bResp3){
+            imgUbicacion.setVisibility(View.GONE);
+            imgcheckin.setVisibility(View.GONE);
+            imgcheckout.setVisibility(View.GONE);
+            imganaquelin.setVisibility(View.GONE);
+            imagnaquelout.setVisibility(View.GONE);
+            imgCanjes.setVisibility(View.GONE);
+            imgevidenciaexhibicion.setVisibility(View.GONE);
+            imgCaducidad.setVisibility(View.GONE);
+            imgCompetencia1.setVisibility(View.GONE);
+            imgproductomenu.setVisibility(View.GONE);
+            imgreporteresurtido.setVisibility(View.GONE);
+            Toast.makeText(getApplicationContext(), sResultado , Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        //****************************
+        // Imagen Mapa
         imgUbicacion.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 makeText(getApplicationContext(), String.valueOf(direccion), LENGTH_LONG).show();
@@ -121,43 +172,17 @@ public class MenuTienda extends AppCompatActivity
             }
         });
 
-        //****************************
-        // Botones
-        ImageView imgcheckin = findViewById(R.id.imgcheckin);
-        ImageView imgcheckout = findViewById(R.id.checkout);
-        ImageView imganaquelin = findViewById(R.id.imganaquelin);
-        ImageView imagnaquelout = findViewById(R.id.imagnaquelout);
-        ImageView imgCanjes = findViewById(R.id.imgCanjes);
-
-        // *****************************
-        // Verifica si tiene un servicio GPS fake
-        boolean bResp = funciones.areThereMockPermissionApps(this.getApplicationContext());
-        String sResultado =  "Se esta utilizando una aplicación no permitida en su teléfono, favor de contactar al área de sistemas para mayor información, esta información se va a grabar en la bitácora para seguimiento";
-
-        if(bResp){
-            AlmacenaImagen almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
-            String sMotivo = "Fake GPS";
-            Exception exp = new Exception(sMotivo,null);
-            almacenaImagen.inserta_error1(usr.getnombre() , exp, sMotivo);
-            Toast.makeText(getApplicationContext(), sResultado , Toast.LENGTH_LONG).show();
-            imgcheckin.setVisibility(View.GONE);
-            imgcheckout.setVisibility(View.GONE);
-            imganaquelin.setVisibility(View.GONE);
-            imagnaquelout.setVisibility(View.GONE);
-            return;
-        }
-        else{
-            imgcheckin.setVisibility(View.VISIBLE);
-            imgcheckout.setVisibility(View.VISIBLE);
-            imganaquelin.setVisibility(View.VISIBLE);
-            imagnaquelout.setVisibility(View.VISIBLE);
-        }
-        /**/
-
+        imgUbicacion.setVisibility(View.VISIBLE);
         imgcheckin.setVisibility(View.VISIBLE);
         imgcheckout.setVisibility(View.VISIBLE);
         imganaquelin.setVisibility(View.VISIBLE);
         imagnaquelout.setVisibility(View.VISIBLE);
+        imgCanjes.setVisibility(View.VISIBLE);
+        imgevidenciaexhibicion.setVisibility(View.VISIBLE);
+        imgCaducidad.setVisibility(View.VISIBLE);
+        imgCompetencia1.setVisibility(View.VISIBLE);
+        imgproductomenu.setVisibility(View.VISIBLE);
+        imgreporteresurtido.setVisibility(View.VISIBLE);
 
         // Log.e(TAG_INFO, "La empresa es " + pidEmpresa);
         // Canjes solo visibles para Santa Clara
@@ -220,7 +245,7 @@ public class MenuTienda extends AppCompatActivity
 
         // ****************************
         // Promociones usando el botón de imgevidenciaexhibicion
-        ImageView imgevidenciaexhibicion = findViewById(R.id.imgevidenciaexhibicion);
+
         imgevidenciaexhibicion.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent ListaPromociones = new Intent(getApplicationContext(), listapromociones.class);
@@ -238,7 +263,6 @@ public class MenuTienda extends AppCompatActivity
 
         //****************************
         // Imagen Lista de productos
-        ImageView imgproductomenu = findViewById(R.id.imgproductomenu);
         imgproductomenu.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent ListaProductos = new Intent(getApplicationContext(), listaproductos.class);
@@ -254,7 +278,6 @@ public class MenuTienda extends AppCompatActivity
 
         //****************************
         // Imagen Competencia
-        ImageView imgreporteresurtido = findViewById(R.id.imgreporteresurtido);
         imgreporteresurtido.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent competencia = new Intent(getApplicationContext(), Competencia.class);
@@ -265,7 +288,6 @@ public class MenuTienda extends AppCompatActivity
 
         //****************************
         // Imagen Caducidad
-        ImageView imgCaducidad = findViewById(R.id.imgCaducidad);
         imgCaducidad.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent caducidad = new Intent(getApplicationContext(), Caducidad.class);
@@ -276,7 +298,6 @@ public class MenuTienda extends AppCompatActivity
 
         //****************************
         // Imagen Competencia1
-        ImageView imgCompetencia1 = findViewById(R.id.imgCompetencia1);
         imgCompetencia1.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent competencia1 = new Intent(getApplicationContext(), Competencia_Promocion.class);
@@ -301,17 +322,6 @@ public class MenuTienda extends AppCompatActivity
             }
         });
 
-        //****************************
-        // Muestra datos almacenados
-        FloatingActionButton fab1 = findViewById(R.id.fab1);
-
-        fab1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                almacenaImagen = new AlmacenaImagen(getApplicationContext());
-                almacenaImagen.muestradatosAlmacenados();
-            }
-        });
 
     }
 }

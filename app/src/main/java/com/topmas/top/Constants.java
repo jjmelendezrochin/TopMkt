@@ -48,10 +48,12 @@ public final class Constants {
     public static final int CONST_ACCESORED = 1;
     public static final int CONST_ACCESOLOCAL = 2;
 
+    // ***********************************************
     // TODO Aqui se cambia para crear nueva bd y tablas
     public static final String DATABASE_NAME = "topmk_24";       // Version 34
-    // public static final String DATABASE_NAME = "topmas_100a";  // Version 33
-    public static final int DATABASE_VERSION = 1;
+    public static final int QTY_IMAGES_TO_LOAD = 10;            // Número de imagenes a cargar
+    public static final int DATABASE_VERSION = 1;               // Versión de BD
+    // ***********************************************
 
     public static final String TAG_PROD = "PROD";
     public static final String TAG_PROD_FTO = "PROD_FTO";
@@ -111,6 +113,7 @@ public final class Constants {
 
     public static final String TAG_nombreempresa = "nombreempresa";
     public static final String TAG_alias = "alias";
+    public static final String TAG_FAKEGPS_MSG = "Se esta utilizando una aplicación no permitida en su teléfono, favor de contactar al área de sistemas para mayor información, esta información se va a grabar en la bitácora para seguimiento";
 
     // Generales
     // public static final String TAG_SERVIDOR = "http://162.215.218.165/TopMas";        // SERVIDOR AMBIENTE PRODUCCION (GENERA UN  ERROR Y NO FUNCIONA,SE HIZO LA PRUEBA Y SE REGRESO AL NOMBRE EL DIA 10/02/2023)
