@@ -255,16 +255,16 @@ public class Funciones {
                 // Get Permissions
                 String[] requestedPermissions = packageInfo.requestedPermissions;
 
-                Log.e(" ** paquete ",  " ** paquete " + applicationInfo.packageName.toString());
+                // Log.e(" ** paquete ",  " ** paquete " + applicationInfo.packageName.toString());
                 if (requestedPermissions != null) {
                     for (int i = 0; i < requestedPermissions.length; i++) {
-                        Log.e(" -- permiso "," -- permiso " + String.valueOf(i)  +  " " + requestedPermissions[i].toString());
+                        // Log.e(" -- permiso "," -- permiso " + String.valueOf(i)  +  " " + requestedPermissions[i].toString());
                         if (requestedPermissions[i]
                                 .equals("android.permission.ACCESS_MOCK_LOCATION")
                                 && !applicationInfo.packageName.equals(context.getPackageName())
                                 && (!packageInfo.packageName.toString().equals(PAQUETE_RADIO))
                         ) {
-                            Log.e(" *** paquete ", String.valueOf(i)  +  " " +  applicationInfo.packageName.toString());
+                            // Log.e(" *** paquete ", String.valueOf(i)  +  " " +  applicationInfo.packageName.toString());
                             sPaquete = sPaquete + "\n" +  applicationInfo.packageName.toString();
                             count++;
                         }

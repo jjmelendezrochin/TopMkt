@@ -48,10 +48,11 @@ public final class Constants {
     public static final int CONST_ACCESORED = 1;
     public static final int CONST_ACCESOLOCAL = 2;
 
-    // ***********************************************
+    // TODO ****************************
     // TODO Aqui se cambia para crear nueva bd y tablas
+    // TODO ****************************
     public static final String DATABASE_NAME = "topmk_24";       // Version 34
-    public static final int QTY_IMAGES_TO_LOAD = 10;            // Número de imagenes a cargar
+    public static final int QTY_IMAGES_TO_LOAD = 20;            // Número de imagenes a cargar
     public static final int DATABASE_VERSION = 1;               // Versión de BD
     // ***********************************************
 

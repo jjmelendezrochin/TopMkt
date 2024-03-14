@@ -302,8 +302,7 @@ public class listatiendas extends AppCompatActivity {
         }
 
         // TODO ****************************
-        // TODO EN ESTA SECCION SE CARGAN TODOS LOS
-        // TODO DATOS ALMACENADOS EN EL TELEFONO HACIA LA PLATAFORMA
+        // TODO EN ESTA SECCION SE CARGAN TODOS LOS DATOS ALMACENADOS EN EL TELEFONO HACIA LA PLATAFORMA
         // TODO ****************************
 
         // En este proceso se verifica si existen registros en la tabla de almacenfotos
@@ -432,10 +431,9 @@ public class listatiendas extends AppCompatActivity {
         lista.setOnItemClickListener(new OnItemClickListenerAdaptadorTiendasPromotor());
 
 
-        // *****************************
-        // TODO AQUI SE VERIFICA SI HAY CONEXION Y NO HAY TIENDAS CARGADAS
-        // TODO ENTONCES LOS DATOS SE ACTUALIZAN DE LA PLATAFORMA
-        // TODO DE OTRA FORMA SE CARGARAN SIEMPRE DE LA LISTA DE TIENDAS YA CARGADAS
+        // TODO ****************************
+        // TODO AQUI SE VERIFICA SI HAY CONEXION Y NO HAY TIENDAS CARGADAS ENTONCES LOS DATOS SE ACTUALIZAN DE LA PLATAFORMA DE OTRA FORMA SE CARGARAN SIEMPRE DE LA LISTA DE TIENDAS YA CARGADAS
+        // TODO ****************************
         // Si hay conexion a internet obtiene los datos
         // Modificación para que si tiene tiendas siempre las cargue desde
         // el telefono y no consulte información en la web
@@ -562,10 +560,9 @@ public class listatiendas extends AppCompatActivity {
             progressBar.setProgress(0);
 
             // while (progressStatus < iSumaCuentas) {
-            // *********************************************
-            // TODO AQUI SE CONDICIONA A SUBIR UNICAMENTE N QTY_IMAGES_TO_LOAD
-            //  REGISTROS EN CADA CONEXION PARA QUE NO SE SATURE EL PROCESO
-            // *********************************************
+            // TODO ****************************
+            // TODO AQUI SE CONDICIONA A SUBIR UNICAMENTE N QTY_IMAGES_TO_LOAD REGISTROS EN CADA CONEXION PARA QUE NO SE SATURE EL PROCESO
+            // TODO ****************************
             while (progressStatus <= QTY_IMAGES_TO_LOAD) {
                 progressStatus += 1;
                 handler.post(new Runnable() {
@@ -674,9 +671,7 @@ public class listatiendas extends AppCompatActivity {
         protected void onPreExecute()
         {
             // TODO ****************************
-            // TODO EN ESTA SECCIÓN SE DESCARGAN TODOS LOS DATOS DESDE LA PLATAFORMA
-            // TODO USANDO EL API /Promotor/obtenertiendaspromotor6.php Obtiene la de  informacion
-            // TODO de todos los catalogos para luego compararla con los de sqlite  e insertar lo nuevo
+            // TODO EN ESTA SECCIÓN SE DESCARGAN TODOS LOS DATOS DESDE LA PLATAFORMA USANDO EL API /Promotor/obtenertiendaspromotor6.php Obtiene la de  informacion de todos los catalogos para luego compararla con los de sqlite  e insertar lo nuevo
             // TODO ****************************
 
             String sTienda= txtBuscar.getText().toString().trim();

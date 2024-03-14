@@ -8,6 +8,7 @@ import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_FAKEGPS_MSG;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
+import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_OPERACION;
 import static com.topmas.top.Constants.TAG_RESPUESTA;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
@@ -291,9 +292,9 @@ public class Foto extends AppCompatActivity {
         btnSubir.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
-                // ****************************************
+                // TODO ****************************************
                 // TODO AQUI HAY UNA VALIDACION DE UBICACION
-                // *****************************
+                // TODO *****************************
                 // Verifica si tiene un servicio GPS fake
                 Funciones funciones = new Funciones();
                 Usuario usuario = new Usuario();
@@ -308,7 +309,9 @@ public class Foto extends AppCompatActivity {
                     return;
                 }
 
+                // TODO ****************************************
                 // TODO Proceso para subir imágenes
+                // TODO ****************************************
                 idpromotor = usr.getid();
                 pLatitud = usr.getLatitud();
                 pLongitud = usr.getLongitud();
@@ -572,7 +575,11 @@ public class Foto extends AppCompatActivity {
         imagenFoto = findViewById(R.id.imagenFoto);
         try {
             if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+                // Coloca la imagen en imageview
                 funciones.grabImage(this, photoURI, imagenFoto);
+                // Este es el ejemplo del contenido de la variable photouri
+                // photoURI content://com.topmas.android.fileprovider/my_images/Android/data/com.topmas.top/files/Pictures/JPEG_20240314_064624_543681154074022526.jpg
+                Log.e(TAG_INFO, "photoURI "  +photoURI.toString());
 
                 Button btnNoSubir = findViewById(R.id.btnNoSubir);
                 Button btnSubir = findViewById(R.id.btnSubir);
@@ -606,6 +613,10 @@ public class Foto extends AppCompatActivity {
                 // ***********************
                 // Guardar la imagen despues de tomarla
                 iResp = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), idoperacion, idUsuario, idRuta, bitmap);
+                // TODO **************************
+                // TODO En este lugar se deben borrar todas las imagenes porque ya se encuentran en la base de datos
+                // TODO **************************
+                borraFotos();
 
                 almacenaImagen = new AlmacenaImagen(getApplicationContext());
                 int iCuenta = almacenaImagen.ObtenFotosTienda(idRuta);
@@ -619,6 +630,18 @@ public class Foto extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Error al tomar la foto, favor de intentar nuevamente", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Error al tomar la foto, favor de intentar nuevamente", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    //***********************
+    // Borra todos las fotos
+    private void borraFotos() {
+        File myDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (myDir.isDirectory()) {
+            String[] children = myDir.list();
+            for (int i = 0; i < children.length; i++) {
+                new File(myDir, children[i]).delete();
+            }
         }
     }
 
