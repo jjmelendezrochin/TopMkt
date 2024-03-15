@@ -343,6 +343,7 @@ public class listatiendas extends AppCompatActivity {
             OcultaProgress();
         }
 
+
         // *****************************
         // Numero de tiendas en la tabla
         iNumTiendas = almacenaImagen.ObtenRegistrosTiendas(pidPromotor, sTienda);
@@ -537,6 +538,11 @@ public class listatiendas extends AppCompatActivity {
         protected void onPreExecute()
         {
             super.onPreExecute();
+            pDialog = new ProgressDialog(listatiendas.this);
+            pDialog.setMessage("Subiendo datos guardados ...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+            pDialog.show();
         }
 
         @Override
@@ -552,12 +558,15 @@ public class listatiendas extends AppCompatActivity {
 
             int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
 
+            /*
             LayoutProgreso.setVisibility(View.VISIBLE);
             LayoutProgreso1.setVisibility(View.VISIBLE);
 
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setMax(iSumaCuentas);
             progressBar.setProgress(0);
+             */
+
 
             // while (progressStatus < iSumaCuentas) {
             // TODO ****************************
@@ -644,6 +653,7 @@ public class listatiendas extends AppCompatActivity {
             return null;
         }
 
+
         @Override
         protected void onPostExecute(String file_url)
         {
@@ -654,7 +664,13 @@ public class listatiendas extends AppCompatActivity {
                 funciones.RegistraError(pName, "listatiendas, CargaFotos 2", e, listatiendas.this, getApplicationContext());
                 // e.printStackTrace();
             }
-            OcultaProgress();
+            // OcultaProgress();
+            pDialog.dismiss();
+            LayoutProgreso.setVisibility(View.GONE);
+            LayoutProgreso1.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            MuestraLista();
+
         }
     }
 
