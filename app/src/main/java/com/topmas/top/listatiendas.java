@@ -468,6 +468,11 @@ public class listatiendas extends AppCompatActivity {
         ImageButton imgboton = findViewById(R.id.imgBuscar);
         imgboton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+
+                sTienda= txtBuscar.getText().toString().trim();
+                MuestraTiendasTelefono(sTienda);
+
+                /*
                 if (funciones.RevisarConexion(getApplicationContext())) {
                     // Llamado a la consulta del servicio web
                     ConsultaTiendas consulta = new ConsultaTiendas();
@@ -479,6 +484,7 @@ public class listatiendas extends AppCompatActivity {
                     // Log.e(TAG_ERROR, "Tiendas " + sTienda);
                     MuestraTiendasTelefono(sTienda);
                 }
+                 */
             }
         });
 
