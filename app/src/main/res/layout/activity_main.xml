@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".listatiendas">
+
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
@@ -73,13 +82,14 @@
         android:layout_marginBottom="12dp"
         android:textColor="@color/colorPrimary"/>
 
-    <Button
-        android:id="@+id/cmdActualizar"
-        android:background="@drawable/img_entrar"
-        android:layout_width="140dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="@dimen/margen_productos"
-        android:layout_marginBottom="30dp"
-        android:textColor="@color/colorPrimary"/>
-
 </LinearLayout>
+
+<com.google.android.material.floatingactionbutton.FloatingActionButton
+android:id="@+id/fab"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_gravity="bottom|end"
+android:layout_margin="@dimen/fab_margin"
+app:srcCompat="@drawable/update" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>

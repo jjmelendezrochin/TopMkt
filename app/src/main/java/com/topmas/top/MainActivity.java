@@ -100,6 +100,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -115,7 +117,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MainActivity extends AppCompatActivity {
 
     private Button cmdIngresar;
-    private Button cmdActualizar;
     private EditText txtUsuario;
     private EditText txtPwd;
     private int pidPromotor = 0;
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
     int[] solicita = new int[1];
 
     boolean bActualiza = false;
-
+    AtomicBoolean isReady = new AtomicBoolean(false);
 
     // products JSONArray
     JSONArray Datos = null;
@@ -250,7 +251,6 @@ public class MainActivity extends AppCompatActivity {
             // *******************************
 
             cmdIngresar = findViewById(R.id.cmdIngresar);
-            cmdActualizar = findViewById(R.id.cmdActualizar);
 
             txtUsuario = findViewById(R.id.txtNombre);
             txtPwd = findViewById(R.id.txtPwd);
@@ -306,19 +306,30 @@ public class MainActivity extends AppCompatActivity {
         // Botón de ingresar
         cmdIngresar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                // Procesos consulta y actualizacion
-                bActualiza = false;
-                Procesos();
+                if (isReady.get()) {
+                    // Procesos consulta y actualizacion
+                    bActualiza = false;
+                    Procesos();
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "Capturar datos de ingreso", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
         // *******************************
         // Botón de actualizar
-        cmdActualizar.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                // Procesos consulta y actualizacion
-                bActualiza = true;
-                Procesos();
+                if (isReady.get()) {
+                    // Procesos consulta y actualizacion
+                    bActualiza = true;
+                    Procesos();
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "Capturar datos de ingreso", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -717,7 +728,7 @@ public class MainActivity extends AppCompatActivity {
         EditText txtUsuario = findViewById(R.id.txtNombre);
         EditText txtPwd = findViewById(R.id.txtPwd);
 
-        AtomicBoolean isReady = new AtomicBoolean(false);
+
         if (txtUsuario.getText().toString().length() >= 5)
             isReady.set(true);
         else
@@ -730,7 +741,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         cmdIngresar.setEnabled(isReady.get());
-        cmdActualizar.setEnabled(isReady.get());
     }
 
     // ************************************
@@ -1244,6 +1254,4 @@ public class MainActivity extends AppCompatActivity {
             pDialog.dismiss();
         }
     }
-
-
 }
