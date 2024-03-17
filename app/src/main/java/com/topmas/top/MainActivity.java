@@ -396,6 +396,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if (iSumaCuentas==0){
+            fab0.setVisibility(View.GONE);
+        }
+        else{
+            fab0.setVisibility(View.VISIBLE);
+        }
+
 
         // ******************************
         spinClientes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -1412,7 +1419,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    funciones.RegistraError(pName, "MainActivity, CargaFotos 1", e, MainActivity.this, getApplicationContext() );
+                    funciones.RegistraError(pName, "MainActivity, MainActivity", e, MainActivity.this, getApplicationContext() );
                 }
 
                 publishProgress(progressStatus);
@@ -1447,7 +1454,9 @@ public class MainActivity extends AppCompatActivity {
 
         protected void onPostExecute(Boolean result) {
             pDialog.dismiss();
-            Toast.makeText(MainActivity.this, "Tarea finalizada!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Carga finalizada!", Toast.LENGTH_SHORT).show();
+            FloatingActionButton fab0 = findViewById(R.id.fab0);
+            fab0.setVisibility(View.GONE);
         }
 
         @Override

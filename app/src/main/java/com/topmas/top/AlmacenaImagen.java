@@ -2892,6 +2892,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _invfinal = cursor.getInt(5);
                 _idobs = cursor.getInt(6);
 
+
+                /*
                 // Espera un segundo
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -2899,6 +2901,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         // yourMethod();
                     }
                 }, 1000);   //1 second
+                 */
 
                 // *******************
                 // Subir imagen
@@ -3147,6 +3150,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _idcompetencia = cursor.getInt(18);
                 _idfoto = cursor.getInt(19);
 
+                /*
                 // Espera un segundo
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -3154,6 +3158,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         // yourMethod();
                     }
                 }, 1000);   //1 second
+                 */
 
                 // *******************
                 // Subir imagen
@@ -3387,6 +3392,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _error= cursor.getString(21);
                 _fechahora= cursor.getString(22);
 
+                /*
                 // Espera un segundo
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -3394,6 +3400,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         // yourMethod();
                     }
                 }, 1000);   //1 second
+
+                 */
 
                 cargaErrores(
                         _fabricante,
@@ -3623,6 +3631,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _idcaducidad = cursor.getInt(13);
                 _idfoto = cursor.getInt(14);
 
+                /*
                 // Espera un segundo
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -3630,6 +3639,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         // yourMethod();
                     }
                 }, 1000);   //1 second
+                 */
 
                 // *******************
                 // Subir imagen
@@ -3907,6 +3917,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _fecha = cursor.getString(3);
                 _aplica = cursor.getInt(4);
 
+                /*
                 // Espera un segundo
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -3914,6 +3925,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         // yourMethod();
                     }
                 }, 1000);   //1 second
+                 */
 
                 // *******************
                 // Subir imagen
@@ -4066,6 +4078,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 String versionName = BuildConfig.VERSION_NAME;
                 _sVerApp =  versionName + ":" + versionCode;
 
+                /*
                 // Espera un segundo
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -4073,6 +4086,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         // yourMethod();
                     }
                 }, 1000);   //1 second
+
+                 */
 
                 // *******************
                 // Subir imagen
@@ -4273,6 +4288,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 String versionName = BuildConfig.VERSION_NAME;
                 _sVerApp =  versionName + ":" + versionCode;
 
+                /*
                 // Espera un segundo
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -4280,6 +4296,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         // yourMethod();
                     }
                 }, 1000);   //1 second
+
+                 */
 
                 // *******************
                 // Subir imagen
@@ -4984,6 +5002,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 String versionName = BuildConfig.VERSION_NAME;
                 _sVerApp =  versionName + ":" + versionCode;
 
+                /*
                 // Espera un segundo
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -4991,6 +5010,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         // yourMethod();
                     }
                 }, 1000);   //1 second
+
+                 */
 
                 String sArregloProductos = this.consulta_cadena_canjes_tienda_promotor_llave(_idpromotor, _idruta, _llave);
                 String SinDatos= "1";
@@ -5201,6 +5222,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 String versionName = BuildConfig.VERSION_NAME;
                 _sVerApp =  versionName + ":" + versionCode;
 
+                /*
                 // Espera un segundo
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -5208,6 +5230,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         // yourMethod();
                     }
                 }, 1000);   //1 second
+
+                 */
 
                 String sArregloProductos = this.consulta_cadena_canjes_tienda_promotor_llave(_idpromotor, _idruta, _llave);
                 String _sinDatos= "1";
