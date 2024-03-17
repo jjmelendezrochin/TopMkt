@@ -1,5 +1,6 @@
 package com.topmas.top;
 
+import static com.topmas.top.Constants.QTY_IMAGES_TO_LOAD;
 import static com.topmas.top.Constants.TAG_ACCESSTOKEN;
 import static com.topmas.top.Constants.TAG_ACTIV;
 import static com.topmas.top.Constants.TAG_ACTIVIDAD;
@@ -75,6 +76,7 @@ import static com.topmas.top.Constants.TAG_solicita;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -83,6 +85,7 @@ import android.database.CursorWindow;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -112,6 +115,7 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity {
@@ -212,9 +216,21 @@ public class MainActivity extends AppCompatActivity {
 
     boolean bActualiza = false;
     AtomicBoolean isReady = new AtomicBoolean(false);
+    Handler handler = new Handler();
 
+    int progressStatus = 0;
     // products JSONArray
     JSONArray Datos = null;
+
+    int iMagenesGuardadas = 0;      // Imagenes guardadas
+    int iPreciosCambiados = 0;      // Precios cambiados
+    int iRegistrosCompetencia = 0;  // Registros competencia
+    int iPromociones = 0;           // Promociones
+    int iCaducidad = 0;             // Caducidades
+    int iErrores = 0;               // Errores
+    int iCompetenciaPromocion = 0;  // Datos de competencia promoción
+    int iCanjes = 0;                // Datos de canjes
+    int iSumaCuentas = 0;           // Total de imagenes por cargar
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -256,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
             txtPwd = findViewById(R.id.txtPwd);
             spCliente = findViewById(R.id.spinClientes);
 
+
             // *****************************
             // llenando los datos de la lista de catalogo empresas
             SharedPreferences preferencias =
@@ -289,11 +306,24 @@ public class MainActivity extends AppCompatActivity {
                 // Log.e(TAG_ERROR, "4b");
                 // Consulta las empresas del catálogo y las pone en el spinner
                 if (pidEmpresaSel == "") {
-                    pidEmpresaSel = "1";
+                    pidEmpresaSel = "2";
                 }
 
                 LlenaSpinnerEmpresas(Integer.valueOf(pidEmpresaSel));
             }
+
+
+            almacenaImagen = new AlmacenaImagen(getApplicationContext());
+            iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
+            iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
+            iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
+            iPromociones = almacenaImagen.ObtenRegistros(12);
+            iCaducidad = almacenaImagen.ObtenRegistros(14);
+            iErrores = almacenaImagen.ObtenRegistros(16);
+            iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
+            iCanjes = almacenaImagen.ObtenRegistros(20);
+
+            iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
 
 
         } catch (Exception e) {
@@ -302,14 +332,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         final Spinner spinClientes = (Spinner) findViewById(R.id.spinClientes);
+        // Ubicacion de la seleccion en spin
+        spinClientes.setSelection(1);
         // *******************************
         // Botón de ingresar
         cmdIngresar.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                enableSubmitIfReady();
                 if (isReady.get()) {
                     // Procesos consulta y actualizacion
                     bActualiza = false;
-                    Procesos();
+                    try {
+                        Procesos();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 else{
                     Toast.makeText(MainActivity.this, "Capturar datos de ingreso", Toast.LENGTH_LONG).show();
@@ -322,16 +359,43 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                enableSubmitIfReady();
                 if (isReady.get()) {
                     // Procesos consulta y actualizacion
                     bActualiza = true;
-                    Procesos();
+                    try {
+                        Procesos();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 else{
                     Toast.makeText(MainActivity.this, "Capturar datos de ingreso", Toast.LENGTH_LONG).show();
                 }
             }
         });
+
+        // *******************************
+        // Botón de actualizar
+        FloatingActionButton fab0 = findViewById(R.id.fab0);
+        fab0.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+
+            // **************************************
+            // Carga de datos
+
+
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            pDialog.setMessage("Procesando...");
+            pDialog.setCancelable(true);
+            pDialog.setMax(iSumaCuentas);
+
+            CargaLasFotos cargaFotos = new CargaLasFotos();
+            cargaFotos.execute();
+            }
+        });
+
 
         // ******************************
         spinClientes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -406,7 +470,7 @@ public class MainActivity extends AppCompatActivity {
 
     // ************************************
     // Ejecuta proceos de consulta o actualizacion
-    protected void Procesos(){
+    protected void Procesos() throws InterruptedException {
         String pNombre = txtUsuario.getText().toString();
         String pClave = txtPwd.getText().toString();
 
@@ -439,19 +503,19 @@ public class MainActivity extends AppCompatActivity {
         // **************************************
         // Verifica si no hay conexión para consultar en la base de datos de Sqlite
         if (!funciones.RevisarConexion(getApplicationContext())) {
-            int pIdpromotor = almacenaImagen.ObtenRegistrosPromotor(pNombre, pClave, pIdempresa);
+            int pidPromotor = almacenaImagen.ObtenRegistrosPromotor(pNombre, pClave, pIdempresa);
 
             // TODO almacena los valores del promotor al inicio sin conexión
-            editor.putString(TAG_IDPROMOTOR, String.valueOf(pIdpromotor));
+            editor.putString(TAG_IDPROMOTOR, String.valueOf(pidPromotor));
             editor.commit();
 
-            // Log.e(TAG_INFO,"Promotor " + pIdpromotor );
-            if (pIdpromotor > 0) {
+            // Log.e(TAG_INFO,"Promotor " + pidPromotor );
+            if (pidPromotor > 0) {
                 // ***************************
                 // Inicio de lista de tiendas
                 Intent listatiendas = new Intent(getApplicationContext(), listatiendas.class);
 
-                listatiendas.putExtra(TAG_IDPROMOTOR, pIdpromotor);
+                listatiendas.putExtra(TAG_IDPROMOTOR, pidPromotor);
                 listatiendas.putExtra(TAG_NAME, pNombre);
                 listatiendas.putExtra(TAG_IDEMPRESA, pIdempresa);
                 listatiendas.putExtra(TAG_EMAIL, "null");
@@ -459,7 +523,7 @@ public class MainActivity extends AppCompatActivity {
                 listatiendas.putExtra(TAG_EXPIRESIN, "null");
                 listatiendas.putExtra(TAG_CONSULTAENWEB, 1);    // Indica que debe buscar en la lista de tiendas en web
 
-                Usuario usr = new Usuario(pIdpromotor, pName, pEmail, pToken, pExpira, pIdempresa, false);
+                Usuario usr = new Usuario(pidPromotor, pName, pEmail, pToken, pExpira, pIdempresa, false);
                 startActivity(listatiendas);
                 // ***************************
             } else {
@@ -475,6 +539,9 @@ public class MainActivity extends AppCompatActivity {
                 ConsultaWebService consulta = new ConsultaWebService();
                 consulta.execute();
             }
+
+
+
         }
     }
 
@@ -519,7 +586,7 @@ public class MainActivity extends AppCompatActivity {
         String data = "";
         String Error = null;
 
-        int pIdpromotor = 0;
+
         String name = "";
         String email = "";
         String token = "";
@@ -606,26 +673,26 @@ public class MainActivity extends AppCompatActivity {
                     if (iResp > 0) {
                         // ******************************
                         // Obtención de variables y acceso al sistema
-                        pIdpromotor = jsonResponse.getInt(TAG_IDPROMOTOR);
+                        pidPromotor = jsonResponse.getInt(TAG_IDPROMOTOR);
                         name = jsonResponse.getString(TAG_NAME);
                         email = jsonResponse.getString(TAG_EMAIL);
                         token = jsonResponse.getString(TAG_ACCESSTOKEN);
                         expira = jsonResponse.getString(TAG_EXPIRESIN);
 
-                        pidPromotor = pIdpromotor;
+                        // Log.e(TAG_ERROR, "pidPromotor =" + pidPromotor);
                         pName = name;
                         pEmail = email;
                         pToken = token;
                         pExpira = expira;
                         // ******************************
                     } else {
-                        pIdpromotor = 0;
                         pidPromotor = 0;
+
                     }
 
                 } catch (JSONException e) {
-                    pIdpromotor = 0;
                     pidPromotor = 0;
+
                     // String Resultado = "Se generó el siguiente error : " + e.toString();
                     // funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService Proceso de lectura de datos", e, MainActivity.this, getApplicationContext());
                     // Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al obtener las variables de tiendas " +  Resultado,Toast.LENGTH_LONG).show();
@@ -637,13 +704,17 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String file_url) {
-            pDialog.dismiss();
-            boolean bRes = Verifica();
+           pDialog.dismiss();
 
-            if (bRes && !bActualiza) {
+            // Log.e(TAG_ERROR, "Antes de actualiza 1");
+            boolean bRes = Verifica();
+            // Log.e(TAG_ERROR, "Antes de actualiza 2");
+            if (bRes && !bActualiza){
                 // ***************************
                 // Inicio de lista de tiendas
                 Intent listatiendas = new Intent(getApplicationContext(), listatiendas.class);
+
+                //Log.e(TAG_ERROR, "** pidPromotor = "+ pidPromotor);
 
                 listatiendas.putExtra(TAG_IDPROMOTOR, pidPromotor);
                 listatiendas.putExtra(TAG_IDEMPRESA, pIdempresa);
@@ -657,13 +728,18 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(listatiendas);
                 // ***************************
             }
+
+            // Log.e(TAG_ERROR, "Antes de actualiza 3");
             if (bRes && bActualiza) {
                 // **************************
                 // Llamado a la consulta del servicio web si hay internet
                 ConsultaTiendas consulta = new ConsultaTiendas();
+                Log.e(TAG_ERROR, "Ejecutando ConsultaTiendas");
                 consulta.execute();
                 Toast.makeText(getApplicationContext(), "Proceso de actualización concluido" ,Toast.LENGTH_LONG).show();
             }
+
+            /**/
         }
     }
 
@@ -708,7 +784,7 @@ public class MainActivity extends AppCompatActivity {
             editor = preferencias.edit();
             editor.putString(TAG_USUARIO, nombre);
             editor.putString(TAG_IDPROMOTOR, String.valueOf(pidPromotor));
-            // Log.e(TAG_ERROR, "idUsuario enviado " + nombre +  " pIdpromotor " + String.valueOf(pidPromotor));
+            // Log.e(TAG_ERROR, "idUsuario enviado " + nombre +  " pidPromotor " + String.valueOf(pidPromotor));
             editor.commit();
             return true;
 
@@ -1254,4 +1330,139 @@ public class MainActivity extends AppCompatActivity {
             pDialog.dismiss();
         }
     }
+
+    //************************************
+    // Clase que carga las fotos guardadas, precios, competencia, promoción, caducidad, errores
+    // Que se encuentren en el teléfono cargados en modo desconectado para luego subirlos en modo conectado
+
+    public class CargaLasFotos extends AsyncTask<Void, Integer, Boolean> {
+        int iMagenesGuardadas = 0;      // Imagenes guardadas
+        int iPreciosCambiados = 0;      // Precios cambiados
+        int iRegistrosCompetencia = 0;  // Registros competencia
+        int iPromociones = 0;           // Promociones
+        int iCaducidad = 0;             // Caducidades
+        int iErrores = 0;               // Errores
+        int iCompetenciaPromocion = 0;  // Datos de competencia promoción
+        int iCanjes = 0;                // Datos de canjes
+
+        protected Boolean doInBackground(Void... params) {
+
+            almacenaImagen = new AlmacenaImagen(getApplicationContext());
+            iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
+            iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
+            iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
+            iPromociones = almacenaImagen.ObtenRegistros(12);
+            iCaducidad = almacenaImagen.ObtenRegistros(14);
+            iErrores = almacenaImagen.ObtenRegistros(16);
+            iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
+            iCanjes = almacenaImagen.ObtenRegistros(20);
+
+            int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
+
+            // TODO ****************************
+            // TODO AQUI SE CONDICIONA A SUBIR UNICAMENTE N QTY_IMAGES_TO_LOAD REGISTROS EN CADA CONEXION PARA QUE NO SE SATURE EL PROCESO
+            // TODO ****************************
+            while (progressStatus <= iSumaCuentas) {
+                progressStatus += 1;
+                // progressBar.setProgress(progressStatus);
+                int i = 0;
+                int j = 0;
+
+                iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
+                iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
+                iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
+                iPromociones = almacenaImagen.ObtenRegistros(12);
+                iCaducidad = almacenaImagen.ObtenRegistros(14);
+                iErrores = almacenaImagen.ObtenRegistros(16);
+                iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
+                iCanjes = almacenaImagen.ObtenRegistros(20);
+
+                if (iMagenesGuardadas>0){
+                    // Sube imagenes upload1.php
+                    i = almacenaImagen.Colocarfoto();
+                }
+                else if(iPreciosCambiados>0){
+                    i = almacenaImagen.ColocaPreciosCambiados();
+                }
+                else if(iRegistrosCompetencia>0){
+                    // Sube imagenes upload_competencia.php
+                    i = almacenaImagen.ColocaCompetencia();
+                }
+                else if(iPromociones>0){
+                    i = almacenaImagen.ColocaPromocion();
+                }
+                else if(iCaducidad>0){
+                    // Sube imagenes upload_caducidad.php
+                    i = almacenaImagen.ColocaCaducidad();
+                }
+                else if(iErrores>0){
+                    i = almacenaImagen.ColocaErrores();
+                }
+                else if(iCompetenciaPromocion>0){
+                    // Sube imagenes upload_competencia_promocion.php y upload_competencia_promocion_complemento.php
+                    i = almacenaImagen.ColocaCompetenciaPromocion();
+                    j = almacenaImagen.ColocaCompetenciaPromocionComplemento();
+                }
+                else if(iCanjes>0){
+                    // Sube imagenes upload_canjes.php y upload_canjes_complemento.php
+                    i = almacenaImagen.ColocaCanjes();
+                    j = almacenaImagen.ColocaCanjesComplemento();
+                }
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    funciones.RegistraError(pName, "MainActivity, CargaFotos 1", e, MainActivity.this, getApplicationContext() );
+                }
+
+                publishProgress(progressStatus);
+
+                if(isCancelled())
+                    break;
+            }
+
+            return null;
+        }
+
+
+        protected void onProgressUpdate(Integer... values) {
+            int progreso = values[0].intValue();
+
+            pDialog.setProgress(progreso);
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+            pDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    CargaLasFotos.this.cancel(true);
+                }
+            });
+
+            pDialog.setProgress(0);
+            pDialog.show();
+        }
+
+        protected void onPostExecute(Boolean result) {
+            pDialog.dismiss();
+            Toast.makeText(MainActivity.this, "Tarea finalizada!", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void onCancelled() {
+            Toast.makeText(MainActivity.this, "Tarea cancelada !", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
+    private void tareaLarga()
+    {
+        try {
+            Thread.sleep(1000);
+        } catch(InterruptedException e) {}
+    }
+
 }

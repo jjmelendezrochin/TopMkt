@@ -6,6 +6,7 @@ import static com.topmas.top.Constants.TAG_ACCESSTOKEN;
 import static com.topmas.top.Constants.TAG_CONSULTAENWEB;
 import static com.topmas.top.Constants.TAG_DIRECCION;
 import static com.topmas.top.Constants.TAG_EMAIL;
+import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_EXPIRESIN;
 import static com.topmas.top.Constants.TAG_FAKEGPS_MSG;
 import static com.topmas.top.Constants.TAG_IDFORMATO;
@@ -17,8 +18,10 @@ import static com.topmas.top.Constants.TAG_NAME;
 import static com.topmas.top.Constants.TAG_OPERACION;
 import static com.topmas.top.Constants.TAG_TIENDA;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +30,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.concurrent.TimeUnit;
 
 public class MenuTienda extends AppCompatActivity
 {
@@ -40,6 +45,7 @@ public class MenuTienda extends AppCompatActivity
     AlmacenaImagen almacenaImagen;
     private Funciones funciones = new Funciones();
     private final Usuario usr = new Usuario();
+    private ProgressDialog pDialog;
 
 
     @Override
@@ -308,7 +314,6 @@ public class MenuTienda extends AppCompatActivity
 
         //****************************
         // Imagen Canjes
-
         imgCanjes.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
                 Intent canjes = new Intent(getApplicationContext(), Canjes.class);
@@ -321,7 +326,6 @@ public class MenuTienda extends AppCompatActivity
                 startActivity(canjes);
             }
         });
-
 
     }
 }

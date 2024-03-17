@@ -2716,14 +2716,16 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 " from almacenfotos " +
                 " where idoperacion<5 " +
                 " order by id asc limit 1;";
+        Log.e(TAG_ERROR, "Colocarfoto");
+        Log.e(TAG_ERROR, sSql);
         try {
             Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
             field.setAccessible(true);
             field.set(null, 100 * 1024 * 1024); //the 100MB is the new size
-
+            Log.e(TAG_ERROR, "AQUI1");
             Cursor cursor;
             cursor = db.rawQuery(sSql, null);
-
+            Log.e(TAG_ERROR, "AQUI2");
             // ************************************
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -2737,6 +2739,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _idruta = cursor.getInt(7);
                 _imagen = cursor.getString(8);
 
+                /*
                 // Espera un segundo
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -2745,6 +2748,9 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                     }
                 }, 1000);   //1 second
 
+                 */
+
+                Log.e(TAG_ERROR, "AQUI3");
                 // *******************
                 // Subir imagen
                 uploadImage(
@@ -2769,10 +2775,11 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             return i;
         } catch (Exception e) {
             String Resultado = e.getMessage();
+            Log.e(TAG_ERROR,Resultado);
             this.inserta_error1(idUsuario, e, "Colocarfoto()" );
-            Toast.makeText(this.contexto, "E1 " + Resultado, Toast.LENGTH_LONG).show();
+            // Toast.makeText(this.contexto, "E1 " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
-            // Log.e(TAG_ERROR,Resultado);
+
             // Por si hay una excepcion
         } finally {
             // assert cursor != null;

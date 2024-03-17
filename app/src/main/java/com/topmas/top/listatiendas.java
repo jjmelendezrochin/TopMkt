@@ -38,6 +38,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.TimeUnit;
 
 import static com.topmas.top.Constants.CONST_ACCESOLOCAL;
 import static com.topmas.top.Constants.CONST_ACCESORED;
@@ -132,7 +133,7 @@ public class listatiendas extends AppCompatActivity {
     private int iLongitudArregloTiendas;
     private AlmacenaImagen almacenaImagen;
     private int iNumTiendas = 0;
-    private ProgressBar progressBar;
+    // private ProgressBar progressBar;
 
     // *******************************
     // Variables lista de tiendas
@@ -208,11 +209,11 @@ public class listatiendas extends AppCompatActivity {
     int[] solicita = new int[1];
 
     String sTienda = "";
-    int progressStatus = 0;
-    TextView textoAvance;
-    Handler handler = new Handler();
-    LinearLayout LayoutProgreso;
-    LinearLayout LayoutProgreso1;
+
+    // TextView textoAvance;
+
+    // LinearLayout LayoutProgreso;
+    // LinearLayout LayoutProgreso1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,10 +223,10 @@ public class listatiendas extends AppCompatActivity {
         //View view = this.findViewById(R.id.LinearLayout);
         lista =  findViewById(R.id.lista1);
         txtBuscar = findViewById(R.id.txtBuscar);
-        progressBar =  findViewById(R.id.progressBar);
-        textoAvance = findViewById(R.id.textoAvance);
-        LayoutProgreso = findViewById(R.id.LayoutProgreso);
-        LayoutProgreso1 = findViewById(R.id.LayoutProgreso1);
+        // progressBar =  findViewById(R.id.progressBar);
+        // textoAvance = findViewById(R.id.textoAvance);
+        // LayoutProgreso = findViewById(R.id.LayoutProgreso);
+        // LayoutProgreso1 = findViewById(R.id.LayoutProgreso1);
 
         Intent i = getIntent();
         pidPromotor = i.getIntExtra(TAG_IDPROMOTOR,pidPromotor );
@@ -301,51 +302,11 @@ public class listatiendas extends AppCompatActivity {
             //e.printStackTrace();
         }
 
-        // TODO ****************************
-        // TODO EN ESTA SECCION SE CARGAN TODOS LOS DATOS ALMACENADOS EN EL TELEFONO HACIA LA PLATAFORMA
-        // TODO ****************************
-
-        // En este proceso se verifica si existen registros en la tabla de almacenfotos
-        // Si es asi tiene que leer los datos y colocarlos en el proceso que cargan información
-        // para finalmente truncar la tabla y continuar el proceso
-
-        almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
-        int iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);       // Obtiene la lista de imagenes guardadas
-        int iPreciosCambiados = almacenaImagen.ObtenRegistros(9);       // Obtiene la lista de precios cambiados
-        int iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);  // Obtiene la lista de registros competencia
-        int iPromociones = almacenaImagen.ObtenRegistros(12);           // Obtiene la lista de promociones
-        int iCaducidad = almacenaImagen.ObtenRegistros(14);             // Obtiene la lista de caducidades
-        int iErrores = almacenaImagen.ObtenRegistros(16);               // Obtiene la lista de los errores
-        int iCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);  // Obtiene la lista de los registros competencia promoción
-        int iCanjes = almacenaImagen.ObtenRegistros(20);                // Obtiene la lista de canjes
-
-        int iPendientes = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
-
-        if ((iPendientes>0) && funciones.RevisarConexion(this.getApplicationContext())){
-            // **************************
-            // Llamado a la consulta del servicio web si hay internet
-            CargaFotos cargafotos = new CargaFotos();
-            cargafotos.execute();
-            // *****************************
-        }
-
-        // **************************
-        // Si la suma de imagenes almacenadas es cero debe ocultar la barra si hay conexión
-        if((iPendientes)==0 && funciones.RevisarConexion(this.getApplicationContext()))
-        {
-            OcultaProgress();
-        }
-
-        // **************************
-        // Ocultando barra de progreso si no hay conexión
-        if(!funciones.RevisarConexion(this.getApplicationContext()))
-        {
-            OcultaProgress();
-        }
-
-
+        // Log.e(TAG_ERROR, "PIDPROMOTOR "+ pidPromotor);
+        // Log.e(TAG_ERROR, "STIENDA "+ sTienda);
         // *****************************
         // Numero de tiendas en la tabla
+        almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
         iNumTiendas = almacenaImagen.ObtenRegistrosTiendas(pidPromotor, sTienda);
         iLongitudArregloTiendas= iNumTiendas;
         // Log.e(TAG_ERROR,"** Número de tiendas " + iLongitudArregloTiendas );
@@ -463,7 +424,6 @@ public class listatiendas extends AppCompatActivity {
             }
         }
 
-
         // **************************
         ImageButton imgboton = findViewById(R.id.imgBuscar);
         imgboton.setOnClickListener(new View.OnClickListener() {
@@ -487,6 +447,9 @@ public class listatiendas extends AppCompatActivity {
                  */
             }
         });
+
+
+
 
     }
 
@@ -526,161 +489,7 @@ public class listatiendas extends AppCompatActivity {
         }
     }
 
-    //************************************
-    // Clase que carga las fotos guardadas, precios, competencia, promoción, caducidad, errores
-    // Que se encuentren en el teléfono cargados en modo desconectado para luego subirlos en modo conectado
-    class CargaFotos extends AsyncTask<Void, Void, String> {
-        int iMagenesGuardadas = 0;      // Imagenes guardadas
-        int iPreciosCambiados = 0;      // Precios cambiados
-        int iRegistrosCompetencia = 0;  // Registros competencia
-        int iPromociones = 0;           // Promociones
-        int iCaducidad = 0;             // Caducidades
-        int iErrores = 0;               // Errores
-        int iCompetenciaPromocion = 0;  // Datos de competencia promoción
-        int iCanjes = 0;                // Datos de canjes
-
-        int i =0;
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-            pDialog = new ProgressDialog(listatiendas.this);
-            pDialog.setMessage("Subiendo datos guardados ...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
-            iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
-            iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
-            iPromociones = almacenaImagen.ObtenRegistros(12);
-            iCaducidad = almacenaImagen.ObtenRegistros(14);
-            iErrores = almacenaImagen.ObtenRegistros(16);
-            iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
-            iCanjes = almacenaImagen.ObtenRegistros(20);
-
-            int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
-
-            /*
-            LayoutProgreso.setVisibility(View.VISIBLE);
-            LayoutProgreso1.setVisibility(View.VISIBLE);
-
-            progressBar.setVisibility(View.VISIBLE);
-            progressBar.setMax(iSumaCuentas);
-            progressBar.setProgress(0);
-             */
-
-
-            // while (progressStatus < iSumaCuentas) {
-            // TODO ****************************
-            // TODO AQUI SE CONDICIONA A SUBIR UNICAMENTE N QTY_IMAGES_TO_LOAD REGISTROS EN CADA CONEXION PARA QUE NO SE SATURE EL PROCESO
-            // TODO ****************************
-            while (progressStatus <= QTY_IMAGES_TO_LOAD) {
-                progressStatus += 1;
-                handler.post(new Runnable() {
-                    @SuppressLint("SetTextI18n")
-                    public void run() {
-                        progressBar.setProgress(progressStatus);
-                        int i = 0;
-                        int j = 0;
-
-                        iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
-                        iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
-                        iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
-                        iPromociones = almacenaImagen.ObtenRegistros(12);
-                        iCaducidad = almacenaImagen.ObtenRegistros(14);
-                        iErrores = almacenaImagen.ObtenRegistros(16);
-                        iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
-                        iCanjes = almacenaImagen.ObtenRegistros(20);
-
-                        if (iMagenesGuardadas>0){
-                            // Sube imagenes upload1.php
-                            i = almacenaImagen.Colocarfoto();
-                            textoAvance.setText("Cargando fotos " + progressStatus + "/" + progressBar.getMax());
-                            textoAvance.setGravity(Gravity.CENTER);
-                        }
-                        else if(iPreciosCambiados>0){
-                            i = almacenaImagen.ColocaPreciosCambiados();
-                            textoAvance.setText("Cargando precios " + progressStatus + "/" + progressBar.getMax());
-                            textoAvance.setGravity(Gravity.CENTER);
-                        }
-                        else if(iRegistrosCompetencia>0){
-                            // Sube imagenes upload_competencia.php
-                            i = almacenaImagen.ColocaCompetencia();
-                            textoAvance.setText("Cargando competencia " + progressStatus + "/" + progressBar.getMax());
-                            textoAvance.setGravity(Gravity.CENTER);
-                        }
-                        else if(iPromociones>0){
-                            i = almacenaImagen.ColocaPromocion();
-                            textoAvance.setText("Cargando promocion " + progressStatus + "/" + progressBar.getMax());
-                            textoAvance.setGravity(Gravity.CENTER);
-                        }
-                        else if(iCaducidad>0){
-                            // Sube imagenes upload_caducidad.php
-                            i = almacenaImagen.ColocaCaducidad();
-                            textoAvance.setText("Cargando caducidad " + progressStatus + "/" + progressBar.getMax());
-                            textoAvance.setGravity(Gravity.CENTER);
-                        }
-                        else if(iErrores>0){
-                            i = almacenaImagen.ColocaErrores();
-                            textoAvance.setText("Cargando errores " + progressStatus + "/" + progressBar.getMax());
-                            textoAvance.setGravity(Gravity.CENTER);
-                        }
-                        else if(iCompetenciaPromocion>0){
-                            // Sube imagenes upload_competencia_promocion.php y upload_competencia_promocion_complemento.php
-                            // Log.e(TAG_ERROR, "Cargando competencia promoción " + String.valueOf(i));
-                            i = almacenaImagen.ColocaCompetenciaPromocion();
-                            // Log.e(TAG_ERROR, "Cargando competencia promoción complemento" + String.valueOf(i));
-                            j = almacenaImagen.ColocaCompetenciaPromocionComplemento();
-                            textoAvance.setText("Cargando competencia promoción " + progressStatus + "/" + progressBar.getMax());
-                            textoAvance.setGravity(Gravity.CENTER);
-                        }
-                        else if(iCanjes>0){
-                            // Sube imagenes upload_canjes.php y upload_canjes_complemento.php
-                            // Log.e(TAG_ERROR, "ColocaCanjes()");
-                             i = almacenaImagen.ColocaCanjes();
-                            // Log.e(TAG_ERROR, "ColocaCanjesComplemento()");
-                             j = almacenaImagen.ColocaCanjesComplemento();
-                            textoAvance.setText("Cargando canjes" + progressStatus + "/" + progressBar.getMax());
-                            textoAvance.setGravity(Gravity.CENTER);
-                        }
-
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            funciones.RegistraError(pName, "listatiendas, CargaFotos 1", e, listatiendas.this, getApplicationContext());
-                        }
-                    }
-                });
-            }
-            return null;
-        }
-
-
-        @Override
-        protected void onPostExecute(String file_url)
-        {
-            try {
-                // Sleep for 1 milliseconds.
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                funciones.RegistraError(pName, "listatiendas, CargaFotos 2", e, listatiendas.this, getApplicationContext());
-                // e.printStackTrace();
-            }
-            // OcultaProgress();
-            pDialog.dismiss();
-            LayoutProgreso.setVisibility(View.GONE);
-            LayoutProgreso1.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
-            MuestraLista();
-
-        }
-    }
-
-    //************************************
+      //************************************
     // Clase que consulta las tiendas
     //  Obtiene la de  informacion de todos los catalogos para luego compararla con los de sqlite  e insertar lo nuevo
     class ConsultaTiendas extends AsyncTask<Void, Void, String> {
@@ -1109,8 +918,8 @@ public class listatiendas extends AppCompatActivity {
             funciones.RegistraError(pName, "ListaTiendas, OcultaProgress", e, listatiendas.this, getApplicationContext());
             // e.printStackTrace();
         }
-        progressBar.setVisibility(View.GONE);
-        LayoutProgreso.setVisibility(View.GONE);
-        LayoutProgreso1.setVisibility(View.GONE);
+        // progressBar.setVisibility(View.GONE);
+        // LayoutProgreso.setVisibility(View.GONE);
+        // LayoutProgreso1.setVisibility(View.GONE);
     }
 }
