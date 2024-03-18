@@ -1424,7 +1424,7 @@ public class MainActivity extends AppCompatActivity {
             int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
 
             // TODO ****************************
-            // TODO AQUI SE CONDICIONA A SUBIR UNICAMENTE N QTY_IMAGES_TO_LOAD REGISTROS EN CADA CONEXION PARA QUE NO SE SATURE EL PROCESO
+            // TODO AQUI SE SUBIRAN TODAS LAS FOTOS Y REGISTROS EN CADA CONEXION PARA QUE NO SE SATURE EL PROCESO
             // TODO ****************************
             while (progressStatus <= iSumaCuentas) {
                 progressStatus += 1;

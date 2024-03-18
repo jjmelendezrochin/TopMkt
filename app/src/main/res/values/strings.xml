@@ -23,8 +23,8 @@
     <!-- jguerrero1 (SCL),  prueba1 (ALU),  schavez (ALU),   -->
     <!-- 12345,          56789,             56789,    -->
 
-    <string name="resUsuario">prueba1</string>
-    <string name="resClave">56789</string>
+    <string name="resUsuario"></string>
+    <string name="resClave"></string>
     <string name="resEmpresa">1</string>
 
     <string name="fotocompetencia">Foto competencia</string>
