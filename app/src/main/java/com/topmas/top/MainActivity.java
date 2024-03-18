@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
     private String pEmail = "";
     private String pToken = "";
     private String pExpira = "";
-    private ProgressDialog pDialog;
+    public ProgressDialog pDialog;
     private Spinner spCliente;
     private String pIdempresa = "";
     Funciones funciones = new Funciones();
@@ -313,17 +313,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-            almacenaImagen = new AlmacenaImagen(getApplicationContext());
-            iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
-            iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
-            iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
-            iPromociones = almacenaImagen.ObtenRegistros(12);
-            iCaducidad = almacenaImagen.ObtenRegistros(14);
-            iErrores = almacenaImagen.ObtenRegistros(16);
-            iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
-            iCanjes = almacenaImagen.ObtenRegistros(20);
 
-            iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
 
 
         } catch (Exception e) {
@@ -375,6 +365,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //****************************
+        // Muestra datos almacenados
+        FloatingActionButton fab1 = findViewById(R.id.fab1);
+        fab1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                almacenaImagen = new AlmacenaImagen(getApplicationContext());
+                almacenaImagen.muestradatosAlmacenados();
+            }
+        });
+
         // *******************************
         // Botón de actualizar
         FloatingActionButton fab0 = findViewById(R.id.fab0);
@@ -396,13 +397,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (iSumaCuentas==0){
-            fab0.setVisibility(View.GONE);
-        }
-        else{
-            fab0.setVisibility(View.VISIBLE);
-        }
-
+        // ******************************
+        // ValidaConexion
+        ValidaConexion(fab0, fab1, fab);
 
         // ******************************
         spinClientes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -473,6 +470,68 @@ public class MainActivity extends AppCompatActivity {
             version.setTextColor(Color.BLUE);
             version.setText("Versión " + versionName + " " + versionCode);
         }
+
+        // **************************************
+        // Gesto para identificar si se pulso hacia abajo el activity
+        findViewById(R.id.swap).setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            /*
+            public void onSwipeTop() {
+                Toast.makeText(MainActivity.this, "top", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeRight() {
+                Toast.makeText(MainActivity.this, "right", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeLeft() {
+                Toast.makeText(MainActivity.this, "left", Toast.LENGTH_SHORT).show();
+            }
+
+             */
+
+            public void onSwipeBottom() {
+                ValidaConexion(fab0, fab1, fab);
+                Toast.makeText(MainActivity.this, "Pantalla actualizada", Toast.LENGTH_SHORT).show();
+            }
+        });
+        // **************************************
+
+    }
+
+    // ************************************
+    // Ejecuta proceos de consulta o actualizacion
+    protected void ValidaConexion( FloatingActionButton fab0, FloatingActionButton fab1, FloatingActionButton fab  ){
+        // **************************
+        // Muestra u Oculta los fabs
+        almacenaImagen = new AlmacenaImagen(getApplicationContext());
+        iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
+        iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
+        iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
+        iPromociones = almacenaImagen.ObtenRegistros(12);
+        iCaducidad = almacenaImagen.ObtenRegistros(14);
+        iErrores = almacenaImagen.ObtenRegistros(16);
+        iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
+        iCanjes = almacenaImagen.ObtenRegistros(20);
+
+        iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
+
+        if (iSumaCuentas>0
+                && funciones.RevisarConexion(getApplicationContext()))
+        {
+            fab0.setVisibility(View.VISIBLE);
+            fab1.setVisibility(View.VISIBLE);
+        }
+        else{
+            fab0.setVisibility(View.GONE);
+            fab1.setVisibility(View.GONE);
+        }
+
+        if (!funciones.RevisarConexion(getApplicationContext())) {
+            fab.setVisibility(View.GONE);
+        }
+        else{
+            fab.setVisibility(View.VISIBLE);
+        }
+        // **************************
+
     }
 
     // ************************************
@@ -546,8 +605,6 @@ public class MainActivity extends AppCompatActivity {
                 ConsultaWebService consulta = new ConsultaWebService();
                 consulta.execute();
             }
-
-
 
         }
     }
@@ -1457,6 +1514,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Carga finalizada!", Toast.LENGTH_SHORT).show();
             FloatingActionButton fab0 = findViewById(R.id.fab0);
             fab0.setVisibility(View.GONE);
+            FloatingActionButton fab1 = findViewById(R.id.fab1);
+            fab1.setVisibility(View.GONE);
         }
 
         @Override
@@ -1464,14 +1523,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Tarea cancelada !", Toast.LENGTH_SHORT).show();
         }
 
-    }
-
-
-    private void tareaLarga()
-    {
-        try {
-            Thread.sleep(1000);
-        } catch(InterruptedException e) {}
     }
 
 }
