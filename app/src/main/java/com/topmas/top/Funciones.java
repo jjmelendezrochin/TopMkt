@@ -1,5 +1,7 @@
 package com.topmas.top;
 
+import static com.topmas.top.Constants.FAKE_VALIDATION;
+import static com.topmas.top.Constants.TAG_FAKEGPS_MSG;
 import static com.topmas.top.Constants.TAG_IDEMPRESA;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_INFO;
@@ -282,6 +284,27 @@ public class Funciones {
         return false;
     }
 
+    // ***************************************************
+    // Verifica si tiene un servicio GPS fake
+    public static boolean ValidaUbicacionFake(Usuario usuario, Context contexto){
+        boolean bResp1 = isMockSettingsON(contexto);                 // Validaciòn para Android 9
+        boolean bResp2 = areThereMockPermissionApps(contexto);       // Validaciòn para Android 9
+        boolean bResp3 = usuario.getisFromMockProvider();            // Validaciòn para Android 13
+
+        Log.e(TAG_INFO, "Valores " + bResp1 + ", " +bResp2 + ", " + bResp3);
+        String sResultado =  TAG_FAKEGPS_MSG;
+        if((bResp1||bResp2||bResp3)
+                && FAKE_VALIDATION){
+            Toast.makeText(contexto, sResultado , Toast.LENGTH_LONG).show();
+            return true;
+        }
+        else{
+            return  false;
+        }
+    }
+
+    // ***************************************************
+    // No usadas
     public static List<String> getListOfFakeLocationAppsFromAll(Context context) {
         List<String> fakeApps = new ArrayList<>();
         List<ApplicationInfo> packages = context.getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
@@ -289,10 +312,6 @@ public class Funciones {
             boolean isSystemPackage = ((aPackage.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
             fakeApps.add(context.getApplicationContext().getApplicationInfo().loadLabel(context.getPackageManager()).toString());
             Log.e(TAG_INFO, context.getApplicationContext().getApplicationInfo().loadLabel(context.getPackageManager()).toString());
-            /*
-            if(!isSystemPackage && hasAppPermission(context, aPackage.packageName, "android.permission.ACCESS_MOCK_LOCATION")){
-                fakeApps.add(context.getApplicationContext().getApplicationInfo().loadLabel(context.getPackageManager()).toString());
-            }*/
         }
         return fakeApps;
     }

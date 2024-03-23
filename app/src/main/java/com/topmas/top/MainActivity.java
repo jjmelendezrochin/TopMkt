@@ -1,6 +1,9 @@
 package com.topmas.top;
 
-import static com.topmas.top.Constants.QTY_IMAGES_TO_LOAD;
+import static com.topmas.top.Constants.DEV_ENVIROMENT;
+import static com.topmas.top.Constants.DEV_PWD;
+import static com.topmas.top.Constants.DEV_USER;
+import static com.topmas.top.Constants.FAKE_VALIDATION;
 import static com.topmas.top.Constants.TAG_ACCESSTOKEN;
 import static com.topmas.top.Constants.TAG_ACTIV;
 import static com.topmas.top.Constants.TAG_ACTIVIDAD;
@@ -464,36 +467,28 @@ public class MainActivity extends AppCompatActivity {
             versionapp = "nueva";
         }
 
-        if (sVersionApp.equals(versionapp)) {
-            version.setText(String.format("Versión %s:%d", versionName, versionCode));
-        } else {
-            version.setTextColor(Color.BLUE);
-            version.setText("Versión " + versionName + " " + versionCode);
-        }
+        version.setTextColor(Color.BLUE);
+        version.setText("Ver " + versionName + ":" + versionCode + " " + (FAKE_VALIDATION ? " a " : " b "));
 
         // **************************************
         // Gesto para identificar si se pulso hacia abajo el activity
         findViewById(R.id.swap).setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
-            /*
-            public void onSwipeTop() {
-                Toast.makeText(MainActivity.this, "top", Toast.LENGTH_SHORT).show();
-            }
-            public void onSwipeRight() {
-                Toast.makeText(MainActivity.this, "right", Toast.LENGTH_SHORT).show();
-            }
-            public void onSwipeLeft() {
-                Toast.makeText(MainActivity.this, "left", Toast.LENGTH_SHORT).show();
-            }
-
-             */
-
             public void onSwipeBottom() {
                 ValidaConexion(fab0, fab1, fab);
                 Toast.makeText(MainActivity.this, "Pantalla actualizada", Toast.LENGTH_SHORT).show();
             }
         });
-        // **************************************
 
+        // **************************************
+        // Ambiente desarrollo establecer DEV_ENVIROMENT a true
+        if (DEV_ENVIROMENT) {
+            txtUsuario.setText(DEV_USER);
+            txtPwd.setText(DEV_PWD);
+        }
+        else{
+            txtUsuario.setText("");
+            txtPwd.setText("");
+        }
     }
 
     // ************************************
@@ -541,19 +536,17 @@ public class MainActivity extends AppCompatActivity {
         String pClave = txtPwd.getText().toString();
 
         // ****************************************
-        // TODO AQUI HAY UNA VALIDACION DE UBICACION
+        // TODO AQUI HAY UNA VALIDACION DE UBICACION FAKE GPS
         // *****************************
         // Verifica si tiene un servicio GPS fake
         Funciones funciones = new Funciones();
         Usuario usuario = new Usuario();
 
-        boolean bResp1 = funciones.isMockSettingsON(this.getApplicationContext());                 // Validaciòn para Android 9
-        boolean bResp2 = funciones.areThereMockPermissionApps(this.getApplicationContext());       // Validaciòn para Android 9
-        boolean bResp3 = usuario.getisFromMockProvider();                               // Validaciòn para Android 13
-
-        String sResultado =  TAG_FAKEGPS_MSG;
-        if(bResp1||bResp2||bResp3){
-            Toast.makeText(getApplicationContext(), sResultado , Toast.LENGTH_LONG).show();
+        // TODO ****************************
+        // TODO VALIDACION DE UBICACION FAKE
+        // TODO ****************************
+        if (funciones.ValidaUbicacionFake(usuario, getApplicationContext()))
+        {
             return;
         }
 

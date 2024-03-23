@@ -38,11 +38,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.concurrent.TimeUnit;
-
-import static com.topmas.top.Constants.CONST_ACCESOLOCAL;
-import static com.topmas.top.Constants.CONST_ACCESORED;
-import static com.topmas.top.Constants.QTY_IMAGES_TO_LOAD;
 import static com.topmas.top.Constants.TAG_ACCESSTOKEN;
 import static com.topmas.top.Constants.TAG_ACTIV;
 import static com.topmas.top.Constants.TAG_ACTIVIDAD;
@@ -331,7 +326,6 @@ public class listatiendas extends AppCompatActivity {
                 int iCuentaErrores = almacenaImagen.ObtenRegistros(16);
                 int iCuentaCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);
                 int iCuentaCanjes = almacenaImagen.ObtenRegistros(20);
-                //int iCtaFake = almacenaImagen.ObtenRegistros(22);
                 int iPendientes = (iCuenta+iCuentaPreciosCambiados+iCuentaPromociones+iCuentaRegistrosCompetencia+
                         iCuentaCaducidad+iCuentaErrores+iCuentaCompetenciaPromocion+iCuentaCanjes);
 

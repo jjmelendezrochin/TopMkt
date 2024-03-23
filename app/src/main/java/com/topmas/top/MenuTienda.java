@@ -143,12 +143,11 @@ public class MenuTienda extends AppCompatActivity
         Funciones funciones = new Funciones();
         Usuario usuario = new Usuario();
 
-        boolean bResp1 = funciones.isMockSettingsON(getApplicationContext());                   // Validaciòn para Android 9
-        boolean bResp2 = funciones.areThereMockPermissionApps(getApplicationContext());         // Validaciòn para Android 9
-        boolean bResp3 = usuario.getisFromMockProvider();                                       // Validaciòn para Android 13
-
-        String sResultado =  TAG_FAKEGPS_MSG;
-        if(bResp1||bResp2||bResp3){
+        // TODO ****************************
+        // TODO VALIDACION DE UBICACION FAKE
+        // TODO ****************************
+        if (funciones.ValidaUbicacionFake(usuario, getApplicationContext()))
+        {
             imgUbicacion.setVisibility(View.GONE);
             imgcheckin.setVisibility(View.GONE);
             imgcheckout.setVisibility(View.GONE);
@@ -160,7 +159,6 @@ public class MenuTienda extends AppCompatActivity
             imgCompetencia1.setVisibility(View.GONE);
             imgproductomenu.setVisibility(View.GONE);
             imgreporteresurtido.setVisibility(View.GONE);
-            Toast.makeText(getApplicationContext(), sResultado , Toast.LENGTH_LONG).show();
             return;
         }
 

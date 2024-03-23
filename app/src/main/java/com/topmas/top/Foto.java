@@ -245,17 +245,14 @@ public class Foto extends AppCompatActivity {
                 Funciones funciones = new Funciones();
                 Usuario usuario = new Usuario();
 
-                boolean bResp1 = funciones.isMockSettingsON(view.getContext());                 // Validaciòn para Android 9
-                boolean bResp2 = funciones.areThereMockPermissionApps(view.getContext());       // Validaciòn para Android 9
-                boolean bResp3 = usuario.getisFromMockProvider();                               // Validaciòn para Android 13
-
-                String sResultado =  TAG_FAKEGPS_MSG;
-                if(bResp1||bResp2||bResp3){
-                    Toast.makeText(getApplicationContext(), sResultado , Toast.LENGTH_LONG).show();
+                // TODO ****************************
+                // TODO VALIDACION DE UBICACION FAKE
+                // TODO ****************************
+                if (funciones.ValidaUbicacionFake(usuario, getApplicationContext()))
+                {
                     return;
                 }
 
-                Context contexto = getApplicationContext().getApplicationContext();
                 int iFotosTienda = almacenaImagen.ObtenFotosTienda(idRuta);
                 if (iFotosTienda>=20){
                     Toast.makeText(getApplicationContext() , " Solo se permiten 20 fotos por tienda " ,Toast.LENGTH_LONG).show();
@@ -273,7 +270,7 @@ public class Foto extends AppCompatActivity {
                 // Tomar foto
                 try {
                     if (photoFile != null) {
-                        photoURI = FileProvider.getUriForFile(contexto,
+                        photoURI = FileProvider.getUriForFile(getApplicationContext(),
                                 "com.topmas.android.fileprovider",
                                 photoFile);
                         dispatchTakePictureIntent(photoURI);
@@ -299,13 +296,11 @@ public class Foto extends AppCompatActivity {
                 Funciones funciones = new Funciones();
                 Usuario usuario = new Usuario();
 
-                boolean bResp1 = funciones.isMockSettingsON(view.getContext());                 // Validaciòn para Android 9
-                boolean bResp2 = funciones.areThereMockPermissionApps(view.getContext());       // Validaciòn para Android 9
-                boolean bResp3 = usuario.getisFromMockProvider();                               // Validaciòn para Android 13
-
-                String sResultado =  TAG_FAKEGPS_MSG;
-                if(bResp1||bResp2||bResp3){
-                    Toast.makeText(getApplicationContext(), sResultado , Toast.LENGTH_LONG).show();
+                // TODO ****************************
+                // TODO VALIDACION DE UBICACION FAKE
+                // TODO ****************************
+                if (funciones.ValidaUbicacionFake(usuario, getApplicationContext()))
+                {
                     return;
                 }
 
