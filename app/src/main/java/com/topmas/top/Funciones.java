@@ -273,7 +273,7 @@ public class Funciones {
                     }
                 }
             } catch (PackageManager.NameNotFoundException e) {
-                Log.e("Got exception " , e.getMessage());
+                // Log.e("Got exception " , e.getMessage());
             }
         }
 
@@ -291,7 +291,7 @@ public class Funciones {
         boolean bResp2 = areThereMockPermissionApps(contexto);       // Validaciòn para Android 9
         boolean bResp3 = usuario.getisFromMockProvider();            // Validaciòn para Android 13
 
-        Log.e(TAG_INFO, "Valores " + bResp1 + ", " +bResp2 + ", " + bResp3);
+        // Log.e(TAG_INFO, "Valores " + bResp1 + ", " +bResp2 + ", " + bResp3);
         String sResultado =  TAG_FAKEGPS_MSG;
         if((bResp1||bResp2||bResp3)
                 && FAKE_VALIDATION){
@@ -311,7 +311,7 @@ public class Funciones {
         for (ApplicationInfo aPackage : packages) {
             boolean isSystemPackage = ((aPackage.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
             fakeApps.add(context.getApplicationContext().getApplicationInfo().loadLabel(context.getPackageManager()).toString());
-            Log.e(TAG_INFO, context.getApplicationContext().getApplicationInfo().loadLabel(context.getPackageManager()).toString());
+            // Log.e(TAG_INFO, context.getApplicationContext().getApplicationInfo().loadLabel(context.getPackageManager()).toString());
         }
         return fakeApps;
     }

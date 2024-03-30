@@ -1890,11 +1890,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             case 20:
                 sSql = "Select count(*) from canjes;";
                 break;
-                /*
-            case 22:
-                sSql = "Select count(*) from fake;";
-                break;
-                 */
         }
 
         Cursor cursor = null;
@@ -1904,7 +1899,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 iResultado = cursor.getInt(0);
             }
             cursor.close();
-            // Log.e(TAG_INFO,"Resultado " + iResultado);
+            // Log.e(TAG_INFO,"Resultado " + iResultado + " tabla " + iTabla);
         }
          catch (AssertionError e) {
              String Resultado = e.getMessage();
@@ -2083,7 +2078,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql;
         SQLiteDatabase db = getWritableDatabase();
         sSql = "delete from almacenfotos where id in (" + idfoto + "," + idfoto1 + ");";
-        Log.e(TAG_INFO, sSql);
+        // Log.e(TAG_INFO, sSql);
         try {
             db.execSQL(sSql);
             return 0;
@@ -4034,221 +4029,22 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         float _precio= 0;
         int _idcompetenciapromo= 0;
         String _sVerApp;
-        int _idfoto = 0;
         int _idfoto1 = 0;
+        int _idfoto2 = 0;
 
         SQLiteDatabase db = getReadableDatabase();
         //********************************************
         // Primer cursor
         String sSql = "Select distinct  c.idcompetenciapromo, af.idpromotor, af.latitud, af.longitud, af.idusuario, 8 as idoperacion, af.idruta, " +
-                " af.fechahora, af.imagen as image,  '' as image1 " +
+                " af.fechahora, af.imagen as image,  af1.imagen as image1 " +
                 " ,c.por_participacion, c.no_frentes, c.con_sin_participacion, 0 as por_descuento, " +
                 " c.comentarios, c.idproducto, c.precio, c.idfoto, c.idfoto1" +
                 " from competencia_promocion c  " +
                 " inner join almacenfotos af on af.id = c.idfoto " +
+                " inner join almacenfotos af1 on af1.id = c.idfoto1 " +
                 " order by c.idcompetenciapromo asc limit 1;";
 
-        Log.e(TAG_ERROR, sSql);
-        Cursor cursor;
-        cursor = db.rawQuery(sSql, null);
-        try {
-            // ************************************
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                _idcompetenciapromo= cursor.getInt(0);
-                _idpromotor = cursor.getInt(1);
-                _latitud = cursor.getDouble(2);
-                _longitud = cursor.getDouble(3);
-                _idusuario = cursor.getString(4);
-                _idoperacion = cursor.getInt(5);
-                _idruta = cursor.getInt(6);
-                _fechahora = cursor.getString(7);
-                _image = cursor.getString(8);
-                //_image1 = cursor.getString(9);
-                _por_participa = cursor.getInt(10);
-                _no_frentes = cursor.getInt(11);
-                _con_sin_participacion = cursor.getInt(12);
-                _por_descuento = 0;
-                _comentario = cursor.getString(14);
-                _idproducto = cursor.getInt(15);
-                _precio= cursor.getFloat(16);
-                _idfoto = cursor.getInt(17);
-                _idfoto1= cursor.getInt(18);
-                int versionCode = BuildConfig.VERSION_CODE;
-                String versionName = BuildConfig.VERSION_NAME;
-                _sVerApp =  versionName + ":" + versionCode;
-
-                // *******************
-                // Subir imagen
-                cargaCompetenciaPromocion(
-                        String.valueOf(_idpromotor),
-                        String.valueOf(_latitud),
-                        String.valueOf(_longitud),
-                        String.valueOf(_idusuario),
-                        String.valueOf(_idoperacion),
-                        String.valueOf(_idruta),
-                        String.valueOf(_fechahora),
-                        String.valueOf(_image),
-                        String.valueOf(_image1),
-                        String.valueOf(_con_sin_participacion),
-                        String.valueOf(_por_participa),
-                        String.valueOf(_no_frentes),
-                        String.valueOf(_por_descuento),
-                        _comentario,
-                        String.valueOf(_idproducto),
-                        String.valueOf(_precio),
-                        _sVerApp
-                );
-                i++;
-
-                // *****************************
-                cursor.moveToNext();
-            }
-            cursor.close();
-
-            return _idcompetenciapromo;
-        } catch (Exception e) {
-            String Resultado = e.getMessage();
-            Log.e(TAG_ERROR, " Error en tabla al consultar competencia_promocion c2" + Resultado);
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar competencia_promocion c2" + Resultado, Toast.LENGTH_LONG).show();
-            return 0;
-        } finally {
-            // assert cursor != null;
-            // db.close();
-        }
-    }
-
-    //***********************
-    // Función utilizada para guardar competencia promoción
-    private void cargaCompetenciaPromocion(
-            String _idpromotor,
-            String _pLatitud,
-            String _pLongitud,
-            String _pName,
-            String _idoperacion,
-            String _idRuta,
-            String _fechahora,
-            String _uploadImage1,
-            String _uploadImage2,
-            String _iconPromo,
-            String _por_participa,
-            String _no_frentes,
-            String _por_descuento,
-            String _comentario,
-            String _idproducto,
-            String _precio,
-            String _sVerApp
-    )
-    {
-        class EstableceCompetenciaPromocion extends AsyncTask<String, Void, String> {
-
-            private RequestHandler rh = new RequestHandler();
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-                HashMap<String, String> data = new HashMap<>();
-                String idpromotor   = params[0];
-                String pLatitud     = params[1];
-                String pLongitud    = params[2];
-                String idUsuario        = params[3];
-                String idoperacion  = params[4];
-                String idRuta      = params[5];
-                String fechahora   = params[6];
-                String uploadImage1= params[7];
-                String uploadImage2= params[8];
-                String iconPromo   = params[9];
-                String por_participa= params[10];
-                String no_frentes  = params[11];
-                String por_descuento  = params[12];
-                String comentario  = params[13];
-                String idproducto  = params[14];
-                String precio      = params[15];
-                String sVerApp      = params[16];
-
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(contexto.getApplicationContext());
-                idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
-
-                data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
-                data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
-                data.put(UPLOAD_LONGITUD, String.valueOf(pLongitud));
-                data.put(UPLOAD_IDUSUARIO, idUsuario);
-                data.put(UPLOAD_IDOPERACION, String.valueOf(idoperacion));
-                data.put(UPLOAD_IDRUTA, String.valueOf(idRuta));
-                data.put(UPLOAD_FECHAHORA, fechahora);
-                data.put(UPLOAD_IMAGEN, uploadImage1);
-                data.put(UPLOAD_IMAGEN1, uploadImage2);
-
-                data.put(UPLOAD_CON_SIN_PARTICIPACION, String.valueOf(iconPromo));
-                data.put(UPLOAD_POR_PARTICIPACION, String.valueOf(por_participa));
-                data.put(UPLOAD_NO_FRENTES, String.valueOf(no_frentes));
-                data.put(UPLOAD_POR_DESCUENTO, String.valueOf(por_descuento));
-                data.put(UPLOAD_COMENTARIOS, String.valueOf(comentario));
-                data.put(UPLOAD_IDPRODUCTO, String.valueOf(idproducto));
-                data.put(UPLOAD_PRECIO, String.valueOf(precio));
-
-                data.put(UPLOAD_VERSION, sVerApp);
-                data.put(UPLOAD_SINDATOS, "1");
-
-                Log.e(TAG_ERROR, "proceso");
-                return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION,data);
-            }
-        }
-
-        EstableceCompetenciaPromocion ui = new EstableceCompetenciaPromocion();
-        ui.execute(_idpromotor, _pLatitud, _pLongitud, _pName, _idoperacion, _idRuta,_fechahora,
-                _uploadImage1, _uploadImage2, _iconPromo, _por_participa, _no_frentes, _por_descuento, _comentario, _idproducto, _precio, _sVerApp);
-    }
-
-    // **********************************
-    // TODO Coloca competencia promoción en modo desconectado etapa 2
-    // Obtiene datos para subir foto de la tabla competencia promocion complemento
-    public int ColocaCompetenciaPromocionComplemento()
-    {
-        int i = 0;
-        int _idpromotor;
-        double _latitud;
-        double _longitud;
-        String _fechahora="";
-        String _idusuario = "";
-        int _idruta = 0;
-        String _image = "";
-        String _image1 = "";
-        int _por_participa = 0;
-        int _idoperacion= 8;
-        int _no_frentes= 0;
-        int _con_sin_participacion= 0;
-        int _por_descuento= 0;
-        String _comentario = "";
-        int _idproducto= 0;
-        float _precio= 0;
-        int _idcompetenciapromo= 0;
-        String _sVerApp;
-        int _idfoto = 0;
-        int _idfoto1 = 0;
-
-        SQLiteDatabase db = getReadableDatabase();
-        SQLiteDatabase db1 = getWritableDatabase();
-        //********************************************
-        // Primer cursor
-        String sSql = "Select distinct  c.idcompetenciapromo, af.idpromotor, af.latitud, af.longitud, af.idusuario, 8 as idoperacion, af.idruta, " +
-                " af.fechahora, '' as image, af.imagen as image1 " +
-                " ,c.por_participacion, c.no_frentes, c.con_sin_participacion, 0 as por_descuento, " +
-                " c.comentarios, c.idproducto, c.precio, c.idfoto, c.idfoto1" +
-                " from competencia_promocion c  " +
-                " inner join almacenfotos af on af.id = c.idfoto1 " +
-                " order by c.idcompetenciapromo asc limit 1;";
-
-        Log.e(TAG_ERROR, sSql);
+        // Log.e(TAG_ERROR, sSql);
         Cursor cursor;
         cursor = db.rawQuery(sSql, null);
         try {
@@ -4272,26 +4068,16 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _comentario = cursor.getString(14);
                 _idproducto = cursor.getInt(15);
                 _precio= cursor.getFloat(16);
-                _idfoto = cursor.getInt(17);
-                _idfoto1= cursor.getInt(18);
+                _idfoto1 = cursor.getInt(17);
+                _idfoto2 = cursor.getInt(18);
                 int versionCode = BuildConfig.VERSION_CODE;
                 String versionName = BuildConfig.VERSION_NAME;
                 _sVerApp =  versionName + ":" + versionCode;
 
-                /*
-                // Espera un segundo
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        // yourMethod();
-                    }
-                }, 1000);   //1 second
-
-                 */
-
+                // Log.e(TAG_INFO, "ColocaCompetenciaPromocion " + String.valueOf(i));
                 // *******************
                 // Subir imagen
-                cargaCompetenciaPromocionComplemento(
+                cargaCompetenciaPromocion(
                         String.valueOf(_idpromotor),
                         String.valueOf(_latitud),
                         String.valueOf(_longitud),
@@ -4308,52 +4094,31 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         _comentario,
                         String.valueOf(_idproducto),
                         String.valueOf(_precio),
-                        _sVerApp
+                        _sVerApp,
+                        String.valueOf(_idfoto1),
+                        String.valueOf(_idfoto2),
+                        String.valueOf(_idcompetenciapromo)
                 );
                 i++;
-                // *****************************
-                // Borrando el registro recien colocado de competencia_promocion asi como las fotos
-                //this.BorraFotoEnviada(_idfoto, _idfoto1);
-                //this.borrar_competencia_promocion(_idfoto);
+
                 // *****************************
                 cursor.moveToNext();
             }
             cursor.close();
+
             return _idcompetenciapromo;
         } catch (Exception e) {
             String Resultado = e.getMessage();
-            Log.e(TAG_ERROR, " Error en tabla al consultar competencia_promocion c2" + Resultado);
+            Log.e(TAG_ERROR, " Error en tabla al consultar competencia_promocion" + Resultado);
             Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar competencia_promocion c2" + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
-            // assert cursor != null;
-            // // db.close();
-            // // db1.close();
         }
     }
 
-    // **************************
-    // Borra competencia promoción
-    public void borrar_competencia_promocion(int _idfoto){
-        SQLiteDatabase db1 = getWritableDatabase();
-        try{
-        String sBorrado = "Delete from competencia_promocion " +
-                " where idfoto = " + _idfoto + ";";
-        Log.e(TAG_INFO, sBorrado);
-        db1.execSQL(sBorrado);
-        } catch (Exception e) {
-            String Resultado = e.getMessage();
-            // Log.e(TAG_ERROR, " Error al borrar competenciapromocion" + Resultado);
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al borrar competenciapromocion" +
-                    Resultado, Toast.LENGTH_LONG).show();
-            return;
-        } finally {
-            // db1.close();
-        }
-    }
-
-
-    private void cargaCompetenciaPromocionComplemento(
+    //***********************
+    // Función utilizada para guardar competencia promoción
+    private void cargaCompetenciaPromocion(
             String _idpromotor,
             String _pLatitud,
             String _pLongitud,
@@ -4370,10 +4135,13 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String _comentario,
             String _idproducto,
             String _precio,
-            String _sVerApp
+            String _sVerApp,
+            String _idfoto1,
+            String _idfoto2,
+            String _idCompetenciaPromo
     )
     {
-        class EstableceCompetenciaPromocionComplemento extends AsyncTask<String, Void, String> {
+        class EstableceCompetenciaPromocion extends AsyncTask<String, Void, String> {
 
             private RequestHandler rh = new RequestHandler();
 
@@ -4385,18 +4153,25 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
+                AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
+                // Log.e(TAG_INFO, "Mensaje de borrado " + s);
+
                 // **************************************
                 // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
                 if (s.equals(TAG_CARGA_FOTO_EXITOSA)) {
-                    // Se pudo subir la imagen
+                    // Log.e(TAG_INFO, "Fotos a borrar " + _idfoto1 + ", " + _idfoto2 + ", " + _idCompetenciaPromo);
+
+                    int iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
+                    // Log.e(TAG_INFO, "Número de elementos restantes competencia promocion " + iCompetenciaPromocion);
+
                 }
                 else if (s.equals(TAG_CARGA_FOTO_DISTANCIA)) {
-                    // No se pudo subir la imagen por distancia
+
                 }
                 else{
-                    // No se pudo subir la imagen por otro motivo
+
                 }
-                // **************************************
+
             }
 
             @Override
@@ -4405,20 +4180,23 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 String idpromotor   = params[0];
                 String pLatitud     = params[1];
                 String pLongitud    = params[2];
-                String idUsuario        = params[3];
+                String idUsuario    = params[3];
                 String idoperacion  = params[4];
-                String idRuta      = params[5];
-                String fechahora   = params[6];
-                String uploadImage1= params[7];
-                String uploadImage2= params[8];
-                String iconPromo   = params[9];
+                String idRuta       = params[5];
+                String fechahora    = params[6];
+                String uploadImage1 = params[7];
+                String uploadImage2 = params[8];
+                String iconPromo    = params[9];
                 String por_participa= params[10];
-                String no_frentes  = params[11];
+                String no_frentes   = params[11];
                 String por_descuento  = params[12];
-                String comentario  = params[13];
-                String idproducto  = params[14];
-                String precio      = params[15];
+                String comentario   = params[13];
+                String idproducto   = params[14];
+                String precio       = params[15];
                 String sVerApp      = params[16];
+                String iFoto1       = params[17];
+                String iFoto2       = params[18];
+                String idCompetenciaPromo      = params[19];
 
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(contexto.getApplicationContext());
                 idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
@@ -4443,15 +4221,70 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
                 data.put(UPLOAD_VERSION, sVerApp);
                 data.put(UPLOAD_SINDATOS, "1");
-                Log.e(TAG_ERROR, "proceso2");
 
-                return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION_COMPLEMENTO,data);
+                // *******************************************
+                /*
+                Log.e(TAG_ERROR, "idpromotor "  + String.valueOf(idpromotor));
+                Log.e(TAG_ERROR, "platitud "  + String.valueOf(pLatitud));
+                Log.e(TAG_ERROR, "plongitud "  + String.valueOf(pLongitud));
+                Log.e(TAG_ERROR, "idUsuario "  + idUsuario);
+                Log.e(TAG_ERROR, "idoperacion "  + String.valueOf(idoperacion));
+                Log.e(TAG_ERROR, "idRuta "  + String.valueOf(idRuta));
+                Log.e(TAG_ERROR, "fechahora "  + fechahora);
+                Log.e(TAG_ERROR, "uploadImage1 "  + uploadImage1);
+                Log.e(TAG_ERROR, "uploadImage2 "  + uploadImage2);
+
+                Log.e(TAG_ERROR, "iconPromo "  + String.valueOf(iconPromo));
+                Log.e(TAG_ERROR, "por_participa "  + String.valueOf(por_participa));
+                Log.e(TAG_ERROR, "no_frentes "  + String.valueOf(no_frentes));
+
+                Log.e(TAG_ERROR, "comentario "  + String.valueOf(comentario));
+                Log.e(TAG_ERROR, "idproducto "  + String.valueOf(idproducto));
+                Log.e(TAG_ERROR, "precio "  + String.valueOf(precio));
+
+                Log.e(TAG_ERROR, "sVerApp "  + sVerApp);
+                Log.e(TAG_ERROR, "UPLOAD_SINDATOS "  + "1");
+                Log.e(TAG_ERROR, "UPLOAD_COMPETENCIA_PROMOCION "  + UPLOAD_COMPETENCIA_PROMOCION);
+                 */
+                // *******************************************
+
+                // Log.e(TAG_ERROR, "Enviando datos");
+                return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION,data);
             }
         }
 
-        EstableceCompetenciaPromocionComplemento ui = new EstableceCompetenciaPromocionComplemento();
+        // *******************************************
+        // Borra los datos antes de mandar para que realice el siguiente proceso
+        BorraFotoEnviada(Integer.valueOf(_idfoto1), Integer.valueOf(_idfoto2));
+        borrar_competencia_promocion(Integer.valueOf(_idfoto1));
+
+        // *******************************************
+        // Log.e(TAG_INFO, "Proceso de envio fuera de linea");
+        EstableceCompetenciaPromocion ui = new EstableceCompetenciaPromocion();
         ui.execute(_idpromotor, _pLatitud, _pLongitud, _pName, _idoperacion, _idRuta,_fechahora,
-                _uploadImage1, _uploadImage2, _iconPromo, _por_participa, _no_frentes, _por_descuento, _comentario, _idproducto, _precio, _sVerApp);
+                _uploadImage1, _uploadImage2, _iconPromo, _por_participa, _no_frentes, _por_descuento,
+                _comentario, _idproducto, _precio, _sVerApp,
+                _idfoto1, _idfoto2, _idCompetenciaPromo);
+    }
+
+    // **************************
+    // Borra competencia promoción
+    public void borrar_competencia_promocion(int _idfoto){
+        SQLiteDatabase db1 = getWritableDatabase();
+        try{
+        String sBorrado = "Delete from competencia_promocion " +
+                " where idfoto = " + _idfoto + ";";
+        // Log.e(TAG_INFO, sBorrado);
+        db1.execSQL(sBorrado);
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            // Log.e(TAG_ERROR, " Error al borrar competenciapromocion" + Resultado);
+            Toast.makeText(this.contexto, ERROR_FOTO + " Error al borrar competenciapromocion" +
+                    Resultado, Toast.LENGTH_LONG).show();
+            return;
+        } finally {
+            // db1.close();
+        }
     }
 
     // **********************************

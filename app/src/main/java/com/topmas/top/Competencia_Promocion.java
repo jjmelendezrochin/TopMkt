@@ -1,6 +1,9 @@
 package com.topmas.top;
 
 import static com.topmas.top.Competencia.REQUEST_IMAGE_CAPTURE;
+import static com.topmas.top.Constants.DEV_ENVIROMENT;
+import static com.topmas.top.Constants.DEV_PWD;
+import static com.topmas.top.Constants.DEV_USER;
 import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_DISTANCIA;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
@@ -387,7 +390,7 @@ public class Competencia_Promocion extends AppCompatActivity {
                                 por_participa, no_frentes,
                                 iconPromo,0, comentario,
                                 idproducto, precio);
-                        Log.e(TAG_INFO, "* Valor de resultado de inserción  de competencia " + idCompetenciaPromo);
+                        // Log.e(TAG_INFO, "* Valor de resultado de inserción  de competencia " + idCompetenciaPromo);
                         if (idCompetenciaPromo>0)
                         {
                             Toast.makeText(getApplicationContext(), "Dato almacenado en el teléfono",Toast.LENGTH_LONG).show();
@@ -403,6 +406,22 @@ public class Competencia_Promocion extends AppCompatActivity {
                 }
             }
         });
+
+        // **************************************
+        // Ambiente desarrollo establecer DEV_ENVIROMENT a true
+        if (DEV_ENVIROMENT) {
+            EditText cajapor_participa = findViewById(R.id.txtpor_participa);
+            EditText cajano_frentes = findViewById(R.id.txtno_frentes);
+            EditText cajapor_descuento = findViewById(R.id.txtpor_descuento);
+            EditText cajacomentario = findViewById(R.id.txtcomentario);
+            CheckBox chkconPromo = findViewById(R.id.chkconPromo);
+            cajapor_participa.setText("1");
+            cajano_frentes.setText("2");
+            cajapor_descuento.setText("3");
+            cajacomentario.setText("Algun comentario");
+            chkconPromo.setChecked(true);
+            spinProducto.setSelection(1);
+        }
     }
 
     // ****************************
@@ -591,16 +610,39 @@ public class Competencia_Promocion extends AppCompatActivity {
                 data.put(UPLOAD_VERSION, sVerApp);
                 data.put(UPLOAD_SINDATOS, "0");
 
+                // *******************************************
+                Log.e(TAG_ERROR, "idpromotor "  + String.valueOf(idpromotor));
+                Log.e(TAG_ERROR, "platitud "  + String.valueOf(pLatitud));
+                Log.e(TAG_ERROR, "plongitud "  + String.valueOf(pLongitud));
+                Log.e(TAG_ERROR, "idUsuario "  + idUsuario);
+                Log.e(TAG_ERROR, "idoperacion "  + String.valueOf(idoperacion));
+                Log.e(TAG_ERROR, "idRuta "  + String.valueOf(idRuta));
+                Log.e(TAG_ERROR, "fechahora "  + fechahora);
+                Log.e(TAG_ERROR, "uploadImage1 "  + uploadImage1);
+                Log.e(TAG_ERROR, "uploadImage2 "  + uploadImage2);
+
+                Log.e(TAG_ERROR, "iconPromo "  + String.valueOf(iconPromo));
+                Log.e(TAG_ERROR, "por_participa "  + String.valueOf(por_participa));
+                Log.e(TAG_ERROR, "no_frentes "  + String.valueOf(no_frentes));
+
+                Log.e(TAG_ERROR, "comentario "  + String.valueOf(comentario));
+                Log.e(TAG_ERROR, "idproducto "  + String.valueOf(idproducto));
+                Log.e(TAG_ERROR, "precio "  + String.valueOf(precio));
+
+                Log.e(TAG_ERROR, "sVerApp "  + sVerApp);
+                Log.e(TAG_ERROR, "UPLOAD_SINDATOS "  + "0");
+                Log.e(TAG_ERROR, "UPLOAD_COMPETENCIA_PROMOCION "  + UPLOAD_COMPETENCIA_PROMOCION);
+                // *******************************************
+
                 return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION,data);
             }
 
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                pDialog.dismiss();
 
                 AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
-                Log.e(TAG_INFO, "Mensaje de borrado " + s);
+                // Log.e(TAG_INFO, "Mensaje de borrado " + s);
 
                 // **************************************
                 // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
@@ -627,7 +669,16 @@ public class Competencia_Promocion extends AppCompatActivity {
                     imagenFoto2.setImageResource(android.R.color.transparent);
                 }
 
-                finish();
+                try {
+                    // Sleep for 500 milliseconds.
+                    Thread.sleep(500);
+                    pDialog.dismiss();
+                    finish();
+                } catch (InterruptedException e) {
+                    funciones.RegistraError(usr.getnombre(), "ListaTiendas, OcultaProgress", e, Competencia_Promocion.this, getApplicationContext());
+                    // e.printStackTrace();
+                }
+
                 // **************************************
             }
         }

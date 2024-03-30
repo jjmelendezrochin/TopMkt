@@ -554,7 +554,7 @@ public class listatiendas extends AppCompatActivity {
                 Error = ex.getMessage();
                 // Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al obtener los datos del promotor " +  ex.getMessage(),Toast.LENGTH_LONG).show();
                 funciones.RegistraError(pName, "listatiendas,ConsultaTiendas", ex, listatiendas.this, getApplicationContext());
-                 Log.e("Error al procesar api: ", Error);
+                 // Log.e("Error al procesar api: ", Error);
             } finally {
                 try {
                     assert reader != null;
@@ -563,7 +563,7 @@ public class listatiendas extends AppCompatActivity {
                     Error = ex.getMessage();
                     funciones.RegistraError(pName, "listatiendas,ConsultaTiendas 1", ex, listatiendas.this, getApplicationContext());
                     //Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error en el proceso de lectura de datos " +  Error,Toast.LENGTH_LONG).show();
-                    Log.e("Error al procesar api: ", Error);
+                    // Log.e("Error al procesar api: ", Error);
                 }
             }
 
@@ -573,7 +573,7 @@ public class listatiendas extends AppCompatActivity {
                 String Resultado = "Se generó el siguiente error : " + Error;
                 //funciones.RegistraError(pName, "listatiendas,ConsultaTiendas 1", Error, listatiendas.this, getApplicationContext());
                 //Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error en el proceso de lectura de datos " +  Resultado,Toast.LENGTH_LONG).show();
-                 Log.e(TAG_ERROR, Resultado);
+                 // Log.e(TAG_ERROR, Resultado);
             } else {
                 try {
                     JSONObject jsonResponse, jsonChidNode, jsonObjRuta, jsonObjProd, jsonObjProdFto;

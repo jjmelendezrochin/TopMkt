@@ -315,10 +315,6 @@ public class MainActivity extends AppCompatActivity {
                 LlenaSpinnerEmpresas(Integer.valueOf(pidEmpresaSel));
             }
 
-
-
-
-
         } catch (Exception e) {
             //e.printStackTrace();
             funciones.RegistraError("", "MainActivity_OnCreate", e, MainActivity.this, getApplicationContext());
@@ -385,18 +381,30 @@ public class MainActivity extends AppCompatActivity {
         fab0.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
-            // **************************************
-            // Carga de datos
+                almacenaImagen = new AlmacenaImagen(getApplicationContext());
+                iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
+                iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
+                iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
+                iPromociones = almacenaImagen.ObtenRegistros(12);
+                iCaducidad = almacenaImagen.ObtenRegistros(14);
+                iErrores = almacenaImagen.ObtenRegistros(16);
+                iCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);
+                iCanjes = almacenaImagen.ObtenRegistros(20);
 
+                int iSumaCuentas = (iMagenesGuardadas + iPreciosCambiados + iRegistrosCompetencia + iPromociones + iCaducidad + iErrores + iCompetenciaPromocion + iCanjes);
 
-            pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            pDialog.setMessage("Procesando...");
-            pDialog.setCancelable(true);
-            pDialog.setMax(iSumaCuentas);
+                if (iSumaCuentas > 0) {
+                    // **************************************
+                    // Carga de datos
+                    pDialog = new ProgressDialog(MainActivity.this);
+                    pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                    pDialog.setMessage("Procesando...");
+                    pDialog.setCancelable(true);
+                    pDialog.setMax(iSumaCuentas);
 
-            CargaLasFotos cargaFotos = new CargaLasFotos();
-            cargaFotos.execute();
+                    CargaLasFotos cargaFotos = new CargaLasFotos();
+                    cargaFotos.execute();
+                }
             }
         });
 
@@ -475,7 +483,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.swap).setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
             public void onSwipeBottom() {
                 ValidaConexion(fab0, fab1, fab);
-                Toast.makeText(MainActivity.this, "Pantalla actualizada", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(MainActivity.this, "Pantalla actualizada", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -552,7 +560,6 @@ public class MainActivity extends AppCompatActivity {
 
         // **************************************
         /* Alamcena en la variable idempresa el valor seleccionado en el spinner */
-        // TODO almacena los valores de la empresa al inicio
         SharedPreferences preferencias =
                 PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         SharedPreferences.Editor editor = preferencias.edit();
@@ -1387,7 +1394,7 @@ public class MainActivity extends AppCompatActivity {
         int iCanjes = 0;                // Datos de canjes
 
         protected Boolean doInBackground(Void... params) {
-
+            progressStatus = 0;
             almacenaImagen = new AlmacenaImagen(getApplicationContext());
             iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
             iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
@@ -1400,11 +1407,13 @@ public class MainActivity extends AppCompatActivity {
 
             int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
 
+            // Log.e(TAG_ERROR, "VALOR DE progressStatus e iSumaCuentas son " + progressStatus + " y " + iSumaCuentas);
+            Log.e(TAG_ERROR, "Hay " + iSumaCuentas + " elementos de iSumaCuentas");
+
             // TODO ****************************
-            // TODO AQUI SE SUBIRAN TODAS LAS FOTOS Y REGISTROS EN CADA CONEXION PARA QUE NO SE SATURE EL PROCESO
+            // TODO AQUI SE SUBIRAN TODAS LAS FOTOS Y REGISTROS EN A PETICION DEL PROMOTOR PARA QUE NO SE SATURE EL PROCESO
             // TODO ****************************
-            while (progressStatus <= iSumaCuentas) {
-                progressStatus += 1;
+            do {
                 // progressBar.setProgress(progressStatus);
                 int i = 0;
                 int j = 0;
@@ -1441,16 +1450,17 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if(iCompetenciaPromocion>0){
                     // Sube imagenes upload_competencia_promocion.php y upload_competencia_promocion_complemento.php
-                    Log.e(TAG_ERROR, "idCompetenciaPromocion = " + iCompetenciaPromocion);
+                    // Log.e(TAG_ERROR, "VALOR DE progressStatus e iSumaCuentas son " + progressStatus + " y " + iSumaCuentas);
+                    // Log.e(TAG_ERROR, "Hay " + iCompetenciaPromocion + " elementos de competencia promocion");
                     i = almacenaImagen.ColocaCompetenciaPromocion();
-                    Log.e(TAG_ERROR, "idCompetenciaPromocion = " + i);
-                    j = almacenaImagen.ColocaCompetenciaPromocionComplemento();
-                    Log.e(TAG_ERROR, "idCompetenciaPromocion = " + j);
+
                 }
                 else if(iCanjes>0){
                     // Sube imagenes upload_canjes.php y upload_canjes_complemento.php
-                    i = almacenaImagen.ColocaCanjes();
-                    j = almacenaImagen.ColocaCanjesComplemento();
+                    if (progressStatus <= iSumaCuentas) {
+                        i = almacenaImagen.ColocaCanjes();
+                        j = almacenaImagen.ColocaCanjesComplemento();
+                    }
                 }
 
                 try {
@@ -1459,15 +1469,16 @@ public class MainActivity extends AppCompatActivity {
                     funciones.RegistraError(pName, "MainActivity, MainActivity", e, MainActivity.this, getApplicationContext() );
                 }
 
-                publishProgress(progressStatus);
+                publishProgress(progressStatus+1);
+                progressStatus += 1;
 
                 if(isCancelled())
                     break;
             }
+            while (progressStatus < iSumaCuentas);
 
             return null;
         }
-
 
         protected void onProgressUpdate(Integer... values) {
             int progreso = values[0].intValue();
@@ -1491,7 +1502,7 @@ public class MainActivity extends AppCompatActivity {
 
         protected void onPostExecute(Boolean result) {
             pDialog.dismiss();
-            Toast.makeText(MainActivity.this, "Carga finalizada!", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(MainActivity.this, "Carga finalizada!", Toast.LENGTH_SHORT).show();
             FloatingActionButton fab0 = findViewById(R.id.fab0);
             fab0.setVisibility(View.GONE);
             FloatingActionButton fab1 = findViewById(R.id.fab1);
