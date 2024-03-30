@@ -630,7 +630,7 @@ public class Foto extends AppCompatActivity {
 
     //***********************
     // Borra todos las fotos
-    private void borraFotos() {
+    public void borraFotos() {
         File myDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         if (myDir.isDirectory()) {
             String[] children = myDir.list();

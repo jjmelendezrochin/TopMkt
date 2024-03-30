@@ -53,11 +53,6 @@
             android:name=".Promocion"
             android:screenOrientation="portrait" />
 
-        <service
-            android:name=".LocationService"
-            android:enabled="true"
-            android:exported="true" />
-
         <activity
             android:name=".Foto"
             android:screenOrientation="portrait" />

@@ -812,22 +812,6 @@ public class MainActivity extends AppCompatActivity {
             // Solo inicia el servicio de localización la primera ocasión
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = preferences.edit();
-/*
-
-            int iServicioIniciado = preferences.getInt("ServicioIniciado", 0);
-            if (iServicioIniciado == 0) {
-                editor.putInt("ServicioIniciado", 1);
-                editor.apply();
-                editor.commit();
-
-
-                Intent iServicio = new Intent(MainActivity.this, LocationService.class);
-                iServicio.putExtra(TAG_IDPROMOTOR, pidPromotor);
-                preferences.getInt("ServicioIniciado", 0);
-                startService(iServicio);
-
-            }
-*/
             String nombre = txtUsuario.getText().toString();
             String pwd = txtPwd.getText().toString();
 
@@ -1457,8 +1441,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if(iCompetenciaPromocion>0){
                     // Sube imagenes upload_competencia_promocion.php y upload_competencia_promocion_complemento.php
+                    Log.e(TAG_ERROR, "idCompetenciaPromocion = " + iCompetenciaPromocion);
                     i = almacenaImagen.ColocaCompetenciaPromocion();
+                    Log.e(TAG_ERROR, "idCompetenciaPromocion = " + i);
                     j = almacenaImagen.ColocaCompetenciaPromocionComplemento();
+                    Log.e(TAG_ERROR, "idCompetenciaPromocion = " + j);
                 }
                 else if(iCanjes>0){
                     // Sube imagenes upload_canjes.php y upload_canjes_complemento.php

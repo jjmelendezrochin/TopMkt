@@ -29,12 +29,12 @@ public class Localizacion implements LocationListener {
         // Este metodo se ejecuta cada vez que el GPS recibe nuevas coordenadas
         // debido a la deteccion de un cambio de ubicacion
         Usuario usuario = new Usuario();
-        loc.getLatitude();
-        loc.getLongitude();
+        // loc.getLatitude();
+        // loc.getLongitude();
         sLatitud = String.valueOf(loc.getLatitude());
         sLongitud = String.valueOf(loc.getLongitude());
-        // Log.e(TAG_GEOPOSICION, "Latitud " + String.valueOf(sLatitud));
-        // Log.e(TAG_GEOPOSICION, "Longitud " + String.valueOf(sLongitud));
+        //Log.e(TAG_GEOPOSICION, "Latitud " + String.valueOf(sLatitud));
+        //Log.e(TAG_GEOPOSICION, "Longitud " + String.valueOf(sLongitud));
         // Log.e(TAG_GEOPOSICION, "isFromMockProvider " + String.valueOf(loc.isFromMockProvider()));
         // Log.e(TAG_GEOPOSICION, "Proveedor " + String.valueOf(loc.getProvider()));   // Aqui indica el nombre del proveedor de localización
 

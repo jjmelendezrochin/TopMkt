@@ -53,8 +53,8 @@ public final class Constants {
     // TODO ****************************
     public static final String DATABASE_NAME = "topmk_24";       // Version 34
     public static final int DATABASE_VERSION = 1;               // Versión de BD
-    public static final boolean FAKE_VALIDATION = true;        // Debe validar si la ubicación es Fake en la App
-    public static final boolean DEV_ENVIROMENT  = false;         // Si estamos en desarrollo establece usuario y contraseña automaticamente
+    public static final boolean FAKE_VALIDATION = false;        // Debe validar si la ubicación es Fake en la App
+    public static final boolean DEV_ENVIROMENT  = true;         // Si estamos en desarrollo establece usuario y contraseña automaticamente
     public static final String DEV_USER  = "prueba1";          // Usuario de prueba
     public static final String DEV_PWD  = "56789";             // Clave de prueba
 

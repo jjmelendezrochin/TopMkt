@@ -1435,7 +1435,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 "values (" + pidpromotor + "," + platitud + "," + plongitud +
                 ",'" + pfechahora.trim() + "'," + pidoperacion + ",'" + pidusuario + "'," + pidruta + ",'" +
                 getStringImage(imagen) + "');";
-        // db.beginTransaction();
+        //db.beginTransaction();
         try {
             db.execSQL(sSql);
             // db.setTransactionSuccessful();
@@ -2083,7 +2083,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql;
         SQLiteDatabase db = getWritableDatabase();
         sSql = "delete from almacenfotos where id in (" + idfoto + "," + idfoto1 + ");";
-        //  Log.e(TAG_INFO, sSql);
+        Log.e(TAG_INFO, sSql);
         try {
             db.execSQL(sSql);
             return 0;
@@ -4048,7 +4048,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 " inner join almacenfotos af on af.id = c.idfoto " +
                 " order by c.idcompetenciapromo asc limit 1;";
 
-        // Log.e(TAG_ERROR, sSql);
+        Log.e(TAG_ERROR, sSql);
         Cursor cursor;
         cursor = db.rawQuery(sSql, null);
         try {
@@ -4078,17 +4078,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 String versionName = BuildConfig.VERSION_NAME;
                 _sVerApp =  versionName + ":" + versionCode;
 
-                /*
-                // Espera un segundo
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        // yourMethod();
-                    }
-                }, 1000);   //1 second
-
-                 */
-
                 // *******************
                 // Subir imagen
                 cargaCompetenciaPromocion(
@@ -4117,7 +4106,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             }
             cursor.close();
 
-            return i;
+            return _idcompetenciapromo;
         } catch (Exception e) {
             String Resultado = e.getMessage();
             Log.e(TAG_ERROR, " Error en tabla al consultar competencia_promocion c2" + Resultado);
@@ -4208,8 +4197,9 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 data.put(UPLOAD_PRECIO, String.valueOf(precio));
 
                 data.put(UPLOAD_VERSION, sVerApp);
-                data.put(UPLOAD_SINDATOS, "0");
+                data.put(UPLOAD_SINDATOS, "1");
 
+                Log.e(TAG_ERROR, "proceso");
                 return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION,data);
             }
         }
@@ -4258,7 +4248,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 " inner join almacenfotos af on af.id = c.idfoto1 " +
                 " order by c.idcompetenciapromo asc limit 1;";
 
-        // Log.e(TAG_ERROR, sSql);
+        Log.e(TAG_ERROR, sSql);
         Cursor cursor;
         cursor = db.rawQuery(sSql, null);
         try {
@@ -4323,13 +4313,13 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 i++;
                 // *****************************
                 // Borrando el registro recien colocado de competencia_promocion asi como las fotos
-                this.BorraFotoEnviada(_idfoto, _idfoto1);
-                this.borrar_competencia_promocion(_idcompetenciapromo);
+                //this.BorraFotoEnviada(_idfoto, _idfoto1);
+                //this.borrar_competencia_promocion(_idfoto);
                 // *****************************
                 cursor.moveToNext();
             }
             cursor.close();
-            return i;
+            return _idcompetenciapromo;
         } catch (Exception e) {
             String Resultado = e.getMessage();
             Log.e(TAG_ERROR, " Error en tabla al consultar competencia_promocion c2" + Resultado);
@@ -4344,12 +4334,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
     // **************************
     // Borra competencia promoción
-    public void borrar_competencia_promocion(int _idcompetenciapromo){
+    public void borrar_competencia_promocion(int _idfoto){
         SQLiteDatabase db1 = getWritableDatabase();
         try{
         String sBorrado = "Delete from competencia_promocion " +
-                " where idcompetenciapromo = " + _idcompetenciapromo + ";";
-        // Log.e(TAG_INFO, sBorrado);
+                " where idfoto = " + _idfoto + ";";
+        Log.e(TAG_INFO, sBorrado);
         db1.execSQL(sBorrado);
         } catch (Exception e) {
             String Resultado = e.getMessage();
@@ -4452,7 +4442,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 data.put(UPLOAD_PRECIO, String.valueOf(precio));
 
                 data.put(UPLOAD_VERSION, sVerApp);
-                data.put(UPLOAD_SINDATOS, "0");
+                data.put(UPLOAD_SINDATOS, "1");
+                Log.e(TAG_ERROR, "proceso2");
 
                 return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION_COMPLEMENTO,data);
             }

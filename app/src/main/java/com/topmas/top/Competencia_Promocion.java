@@ -477,7 +477,12 @@ public class Competencia_Promocion extends AppCompatActivity {
                     // Guardar la imagen despues de tomarla
                     idoperacion =  7;       // PRODUCTO EXHIBIDO
                     iFoto1 = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), 7, idUsuario, idRuta, bitmap);
-                    Toast.makeText(getApplicationContext(), "Foto Guardada " + iFoto1, Toast.LENGTH_LONG).show();
+                    // TODO **************************
+                    // TODO En este lugar se deben borrar todas las imagenes porque ya se encuentran en la base de datos
+                    // TODO **************************
+                    borraFotos();
+                    int iCtaFoto1 = almacenaImagen.ObtenRegistros(18);
+                    Toast.makeText(getApplicationContext(), "Foto Guardada ", Toast.LENGTH_LONG).show();
 
                     imgizq1.setVisibility(View.VISIBLE);
                     imgder1.setVisibility(View.VISIBLE);
@@ -495,7 +500,12 @@ public class Competencia_Promocion extends AppCompatActivity {
                     // Guardar la imagen despues de tomarla
                     idoperacion =  8;       // COMPETENCIA 8
                     iFoto2 = almacenaImagen.guardaFotos(idpromotor, pLatitud, pLongitud, strDate.trim(), idoperacion, idUsuario, idRuta, bitmap);
-                    Toast.makeText(getApplicationContext(), "Foto Guardada " + iFoto2, Toast.LENGTH_LONG).show();
+                    // TODO **************************
+                    // TODO En este lugar se deben borrar todas las imagenes porque ya se encuentran en la base de datos
+                    // TODO **************************
+                    borraFotos();
+                    int iCtaFoto2 = almacenaImagen.ObtenRegistros(18);
+                    Toast.makeText(getApplicationContext(), "Foto Guardada ", Toast.LENGTH_LONG).show();
                     return;
                 }
             }
@@ -503,6 +513,18 @@ public class Competencia_Promocion extends AppCompatActivity {
             // unciones.RegistraError(idUsuario, "Competencia, onActivityResult", e, Competencia.this, getApplicationContext());
             // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
             Toast.makeText(getApplicationContext(), "Error al colocar una foto de competencia", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    //***********************
+    // Borra todos las fotos
+    private void borraFotos() {
+        File myDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (myDir.isDirectory()) {
+            String[] children = myDir.list();
+            for (int i = 0; i < children.length; i++) {
+                new File(myDir, children[i]).delete();
+            }
         }
     }
 
@@ -578,6 +600,7 @@ public class Competencia_Promocion extends AppCompatActivity {
                 pDialog.dismiss();
 
                 AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
+                Log.e(TAG_INFO, "Mensaje de borrado " + s);
 
                 // **************************************
                 // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
@@ -585,8 +608,13 @@ public class Competencia_Promocion extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
                     imagenFoto1.setImageResource(android.R.color.transparent);
                     imagenFoto2.setImageResource(android.R.color.transparent);
+                    Log.e(TAG_INFO, "Fotos a borrar " + iFoto1 + ", " + iFoto2 + ", " + idCompetenciaPromo);
                     almacenaImagen.BorraFotoEnviada(iFoto1, iFoto2);
-                    almacenaImagen.borrar_competencia_promocion(idCompetenciaPromo);
+                    almacenaImagen.borrar_competencia_promocion(iFoto1);
+
+                    int iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
+                    Log.e(TAG_INFO, "iCompetenciaPromocion " + iCompetenciaPromocion);
+
                 }
                 else if (s.equals(TAG_CARGA_FOTO_DISTANCIA)) {
                     Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
