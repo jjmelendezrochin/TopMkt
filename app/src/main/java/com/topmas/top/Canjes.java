@@ -52,6 +52,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.topmas.top.Adaptadores.AdaptadorProductosTienda;
+import com.topmas.top.Adaptadores.OnItemClickListenerAdaptadorProductosCanjes;
 
 import java.io.File;
 import java.io.IOException;

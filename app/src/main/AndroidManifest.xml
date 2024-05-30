@@ -8,8 +8,7 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:requestLegacyExternalStorage="true" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- <uses-permission android:name="android.permission.CAMERA"/> -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- <uses-permission android:name="android.permission.CAMERA"/> -->
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" /> <!-- Habilitar camara en motorola 5g5 -->
@@ -28,12 +27,15 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".Canjes"
+            android:name=".Incidencia"
             android:exported="false" />
         <activity
-            android:name=".OnItemClickListenerAdaptadorProductosCanjes"
-            android:theme="@style/Theme.AppCompat.Light"
+            android:name=".Canjes"
             android:exported="false" />
+        <!--<activity
+            android:name=".OnItemClickListenerAdaptadorProductosCanjes"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light" />-->
         <activity
             android:name=".Competencia_Promocion"
             android:exported="false" />
@@ -52,7 +54,6 @@
         <activity
             android:name=".Promocion"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Foto"
             android:screenOrientation="portrait" />

@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.topmas.top.Objetos.oPromocion;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

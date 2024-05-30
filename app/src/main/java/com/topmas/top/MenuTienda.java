@@ -65,7 +65,7 @@ public class MenuTienda extends AppCompatActivity
         TextView txtTipoconexion = findViewById(R.id.formaConexion);
         //****************************
         // Agregando el nombre al titulo
-        tienda = tienda + " "  + usr.getnombre();
+        //tienda = tienda + " "  + usr.getnombre();
 
         if (pidpromotor == 0){
             pidpromotor = usr.getid();
@@ -135,6 +135,7 @@ public class MenuTienda extends AppCompatActivity
         ImageView imgCompetencia1 = findViewById(R.id.imgCompetencia1);
         ImageView imgproductomenu = findViewById(R.id.imgproductomenu);
         ImageView imgreporteresurtido = findViewById(R.id.imgreporteresurtido);
+        ImageView imgIncidencia = findViewById(R.id.imgIncidencia);
 
         // ****************************************
         // TODO AQUI HAY UNA VALIDACION DE UBICACION
@@ -187,6 +188,7 @@ public class MenuTienda extends AppCompatActivity
         imgCompetencia1.setVisibility(View.VISIBLE);
         imgproductomenu.setVisibility(View.VISIBLE);
         imgreporteresurtido.setVisibility(View.VISIBLE);
+        imgIncidencia.setVisibility(View.VISIBLE);
 
         // Log.e(TAG_INFO, "La empresa es " + pidEmpresa);
         // Canjes solo visibles para Santa Clara
@@ -325,5 +327,21 @@ public class MenuTienda extends AppCompatActivity
             }
         });
 
+
+        // ****************************
+        // Incidencias
+        imgIncidencia.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view) {
+                Intent incidencia = new Intent(getApplicationContext(), Incidencia.class);
+                incidencia.putExtra(TAG_IDRUTA, Integer.valueOf(idruta));
+                incidencia.putExtra(TAG_IDPROMOTOR, Integer.valueOf(pidpromotor));
+                incidencia.putExtra(TAG_TIENDA, tienda);
+                incidencia.putExtra(TAG_LATITUD, latitud);
+                incidencia.putExtra(TAG_LONGITUD, longitud);
+                incidencia.putExtra(TAG_DIRECCION, direccion);
+                startActivity(incidencia);
+            }
+        });
+/**/
     }
 }

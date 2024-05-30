@@ -7,6 +7,7 @@
     <dimen name="margen_productos">12dp</dimen>
     <dimen name="margen_productos1">10dp</dimen>
     <dimen name="margen_competencia">12dp</dimen>
+    <dimen name="margen_incidencia">10dp</dimen>
     <dimen name="margen_arriba">6dp</dimen>
     <dimen name="tamanioletraspincaducidad">8dp</dimen>
     <dimen name="tamanioletraproductos">16dp</dimen>

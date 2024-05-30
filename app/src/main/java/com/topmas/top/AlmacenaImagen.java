@@ -6,12 +6,11 @@ import static com.topmas.top.Caducidad.UPLOAD_caducidad;
 import static com.topmas.top.Caducidad.UPLOAD_idproducto;
 import static com.topmas.top.Caducidad.UPLOAD_lote;
 import static com.topmas.top.Caducidad.UPLOAD_piezas;
+import static com.topmas.top.Canjes.UPLOAD_CANJES;
 import static com.topmas.top.Canjes.UPLOAD_CANJES_COMPLEMENTO;
 import static com.topmas.top.Competencia.UPLOAD_COMPETENCIA;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_COMENTARIOS;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_COMPETENCIA_PROMOCION;
-import static com.topmas.top.Competencia_Promocion.UPLOAD_COMPETENCIA_PROMOCION_COMPLEMENTO;
-import static com.topmas.top.Canjes.UPLOAD_CANJES;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_CON_SIN_PARTICIPACION;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_IDPRODUCTO;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_NO_FRENTES;
@@ -83,11 +82,9 @@ import static com.topmas.top.Foto.UPLOAD_USUARIO;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
 import static com.topmas.top.Promocion.PROMOCION_URL;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.CursorWindow;
@@ -101,7 +98,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -109,9 +105,15 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import com.topmas.top.Objetos.oCanje;
+import com.topmas.top.Objetos.oInfoDispositivo;
+import com.topmas.top.Objetos.oObs;
+import com.topmas.top.Objetos.oProducto;
+import com.topmas.top.Objetos.oPromocion;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -147,6 +149,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 DATABASE_VERSION);
         this.contexto = context;
         databasePath = context.getDatabasePath(DATABASE_NAME).getPath();
+        // Log.e(TAG_INFO, "Version "+DATABASE_VERSION);
 
         // ***************************************
         // Obtiene el nombre del usuario en y promotor las preferencias
@@ -175,7 +178,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 "tienda TEXT," +
                 "direccioncompleta TEXT," +
                 "latitud REAL," +
-                "longitud REAL" +
+                "longitud REAL," +
+                "fechavisita TEXT" +
                 ")";
         db.execSQL(sSql1);
         // Log.e(TAG_INFO, "se creo la tabla lista tiendas");
@@ -511,6 +515,28 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 "llave TEXT" +
                 ")";
         db.execSQL(sSql23);
+
+        // ************************************
+        // TODO Vista vw_visitas es la lista de visitas completadas con ckeckin y ckeckout en modo desconectado
+        String sSql24 = "Create view vw_visitas " +
+                " as " +
+                " Select idpromotor, idruta, sum(idoperacion) as suma " +
+                " from almacenfotos a " +
+                " where idoperacion in (1,2) " +
+                " group by idpromotor, idruta; ";
+        db.execSQL(sSql24);
+
+        // ************************************
+        // TODO Vista vw_visitaspendientes vista usada para obtener los datos de las visitas pendiente en modo desconectado
+        String sSql25 = "Create view vw_visitaspendientes " +
+                " as " +
+                " Select l.*, ifnull(v.suma,0) as suma " +
+                " from listatiendas l " +
+                " left join Vw_visitas v on l.idpromotor = v.idpromotor and v.idruta = l.idruta " +
+                " where DATE(l.fechavisita) = DATE(DATETIME('now', 'localtime')) " +
+                " and ifnull(v.suma,0)<3; ";
+        db.execSQL(sSql25);
+
         // ***************************************************************************************************************
     }
 
@@ -937,13 +963,15 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String _tienda,
             String _direccioncompleta,
             double _latitud,
-            double _longitud
+            double _longitud,
+            String _fechavisita
     ) {
         // ***********************************
         SQLiteDatabase db = getWritableDatabase();
-        String sSql = "Insert into listatiendas(idpromotor, idruta, determinante, tienda, direccioncompleta, latitud, longitud)" +
-                "values (" + _idpromotor + "," + _idruta + "," + _determinante + ",'" + _tienda + "','" + _direccioncompleta + "'," + _latitud + "," + _longitud + ");";
-        // Log.e(TAG_INFO, "sSql " + sSql);
+        String sSql = "Insert into listatiendas(idpromotor, idruta, determinante, tienda, direccioncompleta, latitud, longitud, fechavisita) " +
+                " values (" + _idpromotor + "," + _idruta + "," + _determinante + ",'" + _tienda + "','"
+                + _direccioncompleta + "'," + _latitud + "," + _longitud + ",'" + _fechavisita + "');";
+        //Log.e(TAG_INFO, "sSql " + sSql);
         try {
             if (db.isOpen())
             {
@@ -1290,6 +1318,26 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     }
 
     // **********************************
+    // Metodo para insertar en cat_incidencia
+    public int inserta_incidencia(
+            int _idincidencia,
+            String _descripcion
+    ) {
+        // ***********************************
+        SQLiteDatabase db = getWritableDatabase();
+        String sSql = "Insert into cat_incidencias(_id, descripcion) " +
+                " values ('" + _idincidencia + "','" + _descripcion + "');";
+        // Log.e(TAG_ERROR, sSql);
+        try {
+            db.execSQL(sSql);
+            return 1;
+        } catch (Exception e) {
+            this.inserta_error1(idUsuario, e, "AlmacenaImagen.inserta_incidencia" );
+            return 0;
+        }
+    }
+
+    // **********************************
     // Metodo para insertar en cat_empaque
     public int inserta_configuracion(
             int _solicita
@@ -1519,10 +1567,11 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String sSql;
         if (_tienda.length() == 0) {
-            sSql = "Select idruta from listatiendas where idpromotor = " + _idpromotor + ";";
+            sSql = "Select idruta from vw_visitaspendientes where idpromotor = " + _idpromotor;
         } else {
-            sSql = "Select idruta from listatiendas where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
+            sSql = "Select idruta from vw_visitaspendientes where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
         }
+        // sSql += " and DATE(fechavisita) = DATE(DATETIME('now', 'localtime'))";
 
         Cursor cursor = null;
         int i = 0;
@@ -1547,6 +1596,52 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     }
 
     // **********************************
+    // Función que obtiene las tiendas del promotor
+//    public oTiendasPromotor[] ObtenTiendasPromotor(int _idpromotor, String _tienda) {
+//        int iNumTiendas = ObtenRegistrosTiendas(_idpromotor, _tienda);
+//        oTiendasPromotor[] tiendasPromotor = new oTiendasPromotor[iNumTiendas];
+//        int idruta;
+//        String determinante;
+//        String tienda;
+//        String direccioncompleta;
+//        double latitud;
+//        double longitud;
+//
+//        SQLiteDatabase db = getReadableDatabase();
+//        String sSql;
+//        if (_tienda.length() == 0) {
+//            sSql = "Select idruta, determinante, tienda, direccioncompleta, latitud, longitud from listatiendas where idpromotor = " + _idpromotor;
+//        } else {
+//            sSql = "Select idruta, determinante, tienda, direccioncompleta, latitud, longitud  from listatiendas where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
+//        }
+//        sSql += " and DATE(fechavisita) = DATE(DATETIME('now', 'localtime'))";
+//
+//        Cursor cursor = null;
+//        int i = 0;
+//        try {
+//            cursor = db.rawQuery(sSql, null);
+//            while (cursor.moveToNext()) {
+//                idruta = cursor.getInt(0);
+//                determinante = cursor.getString(1);
+//                tienda = cursor.getString(2);
+//                direccioncompleta = cursor.getString(3);
+//                latitud = cursor.getDouble(4);
+//                longitud = cursor.getDouble(5);
+//                oTiendasPromotor tiendaPromotor = new oTiendasPromotor(idruta, determinante,
+//                        tienda, direccioncompleta, latitud, longitud);
+//                tiendasPromotor[i]= tiendaPromotor;
+//                i++;
+//            }
+//            cursor.close();
+//        } catch (Exception e) {
+//            this.inserta_error1(idUsuario, e, "AlmacenaImagen.ObtenRutas" );
+//        } finally {
+//        }
+//        // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + tiendasPromotor.length);
+//        return tiendasPromotor;
+//    }
+
+    // **********************************
     // Función que obtiene un arreglo de determinantes
     public String[] ObtenDeterminantes(int _idpromotor, String _tienda) {
         int iNumTiendas = ObtenRegistrosTiendas(_idpromotor, _tienda);
@@ -1555,10 +1650,11 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String sSql;
         if (_tienda.length() == 0) {
-            sSql = "Select determinante from listatiendas where idpromotor = " + _idpromotor + ";";
+            sSql = "Select determinante from vw_visitaspendientes where idpromotor = " + _idpromotor;
         } else {
-            sSql = "Select determinante from listatiendas where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
+            sSql = "Select determinante from vw_visitaspendientes where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
         }
+        // sSql += " and DATE(fechavisita) = DATE(DATETIME('now', 'localtime'))";
 
         Cursor cursor = null;
         int i = 0;
@@ -1591,10 +1687,11 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String sSql;
         if (_tienda.length() == 0) {
-            sSql = "Select tienda from listatiendas where idpromotor = " + _idpromotor + ";";
+            sSql = "Select tienda from vw_visitaspendientes where idpromotor = " + _idpromotor;
         } else {
-            sSql = "Select tienda from listatiendas where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
+            sSql = "Select tienda from vw_visitaspendientes where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
         }
+        // sSql += " and DATE(fechavisita) = DATE(DATETIME('now', 'localtime'))";
 
         Cursor cursor = null;
         int i = 0;
@@ -1628,10 +1725,11 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         db = getReadableDatabase();
         String sSql;
         if (_tienda.length() == 0) {
-            sSql = "Select direccioncompleta from listatiendas where idpromotor = " + _idpromotor + ";";
+            sSql = "Select direccioncompleta from vw_visitaspendientes where idpromotor = " + _idpromotor;
         } else {
-            sSql = "Select direccioncompleta from listatiendas where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
+            sSql = "Select direccioncompleta from vw_visitaspendientes where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
         }
+        // sSql += " and DATE(fechavisita) = DATE(DATETIME('now', 'localtime'))";
 
         Cursor cursor = null;
         int i = 0;
@@ -1655,6 +1753,44 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         return retorno;
     }
 
+
+    // **********************************
+    // Función que obtiene un arreglo de fechas
+//    public String[] ObtenFechas(int _idpromotor, String _tienda) {
+//        int iNumTiendas = ObtenRegistrosTiendas(_idpromotor, _tienda);
+//        String[] retorno = new String[iNumTiendas];
+//        String direccion;
+//        SQLiteDatabase db;
+//        db = getReadableDatabase();
+//        String sSql;
+//        if (_tienda.length() == 0) {
+//            sSql = "Select direccioncompleta from vw_visitaspendientes where idpromotor = " + _idpromotor + ";";
+//        } else {
+//            sSql = "Select direccioncompleta from vw_visitaspendientes where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
+//        }
+//
+//        Cursor cursor = null;
+//        int i = 0;
+//        try {
+//            cursor = db.rawQuery(sSql, null);
+//            while (cursor.moveToNext()) {
+//                direccion = cursor.getString(0);
+//                retorno[i] = direccion;
+//                i++;
+//            }
+//            cursor.close();
+//        } catch (Exception e) {
+//            this.inserta_error1(idUsuario, e, "AlmacenaImagen.ObtenRegistrosTiendas" );
+//            //String Resultado = e.getMessage();
+//            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las direcciones de las tiendas " + Resultado, Toast.LENGTH_LONG).show();
+//        } finally {
+//            // assert cursor != null;
+//            // db.close();
+//        }
+//        // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
+//        return retorno;
+//    }
+
     // **********************************
     // Función que obtiene un arreglo de direcciones
     public double[] ObtenLatitudes(int _idpromotor, String _tienda) {
@@ -1664,10 +1800,11 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String sSql;
         if (_tienda.length() == 0) {
-            sSql = "Select latitud from listatiendas where idpromotor = " + _idpromotor + ";";
+            sSql = "Select latitud from vw_visitaspendientes where idpromotor = " + _idpromotor;
         } else {
-            sSql = "Select latitud from listatiendas where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
+            sSql = "Select latitud from vw_visitaspendientes where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
         }
+        // sSql += " and DATE(fechavisita) = DATE(DATETIME('now', 'localtime'))";
 
         Cursor cursor = null;
         int i = 0;
@@ -1700,10 +1837,11 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String sSql;
         if (_tienda.length() == 0) {
-            sSql = "Select longitud from listatiendas where idpromotor = " + _idpromotor + ";";
+            sSql = "Select longitud from vw_visitaspendientes where idpromotor = " + _idpromotor;
         } else {
-            sSql = "Select longitud from listatiendas where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
+            sSql = "Select longitud from vw_visitaspendientes where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
         }
+        // sSql += " and DATE(fechavisita) = DATE(DATETIME('now', 'localtime'))";
 
         Cursor cursor = null;
         int i = 0;
@@ -1832,65 +1970,69 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String sSql = "";
 
-        switch (iTabla) {
-            case 0:
-                sSql = "Select count(*) from almacenfotos where idOperacion<5;";
-                break;
-            case 1:
-                sSql = "Select count(*) from cat_productos;";
-                break;
-            case 2:
-                sSql = "Select count(*) from producto_formato_precio;";
-                break;
-            case 3:
-                sSql = "Select count(*) from cat_rutas;";
-                break;
-            case 4:
-                sSql = "Select count(*) from vw_producto_ruta_fecha;";
-                break;
-            case 5:
-                sSql = "Select count(*) from cat_cadena;";
-                break;
-            case 6:
-                sSql = "Select count(*) from cat_observa_precios;";
-                break;
-            case 7:
-                sSql = "Select count(*) from vw_promociones;";
-                break;
-            case 8:
-                sSql = "Select count(*) from cat_actividad;";
-                break;
-            case 9:
-                sSql = "Select count(*) from vw_producto_ruta_fecha where Mod = 1;";
-                break;
-            case 10:
-                sSql = "Select count(*) from competencia;";
-                break;
-            case 11:
-                sSql = "Select count(*) from almacenfotos where idOperacion>=5;";
-                break;
-            case 12:
-                sSql = "Select count(*) from promociones_tiendas where mod>0;";
-                break;
-            case 13:
-                sSql = "Select count(*) from cat_empaque;";
-                break;
-            case 14:
-                sSql = "Select count(*) from caducidad;";
-                break;
-            case 15:
-                sSql = "Select count(*) from cat_empresa;";
-                break;
-            case 16:
-                sSql = "Select count(*) from errores where procesado = 0;";
-                break;
-            case 18:
-                sSql = "Select count(*) from competencia_promocion;";
-                break;
-            case 20:
-                sSql = "Select count(*) from canjes;";
-                break;
-        }
+            switch (iTabla) {
+                case 0:
+                    sSql = "Select count(*) from almacenfotos where idOperacion<5;";
+                    break;
+                case 1:
+                    sSql = "Select count(*) from cat_productos;";
+                    break;
+                case 2:
+                    sSql = "Select count(*) from producto_formato_precio;";
+                    break;
+                case 3:
+                    sSql = "Select count(*) from cat_rutas;";
+                    break;
+                case 4:
+                    sSql = "Select count(*) from vw_producto_ruta_fecha;";
+                    break;
+                case 5:
+                    sSql = "Select count(*) from cat_cadena;";
+                    break;
+                case 6:
+                    sSql = "Select count(*) from cat_observa_precios;";
+                    break;
+                case 7:
+                    sSql = "Select count(*) from vw_promociones;";
+                    break;
+                case 8:
+                    sSql = "Select count(*) from cat_actividad;";
+                    break;
+                case 9:
+                    sSql = "Select count(*) from vw_producto_ruta_fecha where Mod = 1;";
+                    break;
+                case 10:
+                    sSql = "Select count(*) from competencia;";
+                    break;
+                case 11:
+                    sSql = "Select count(*) from almacenfotos where idOperacion>=5;";
+                    break;
+                case 12:
+                    sSql = "Select count(*) from promociones_tiendas where mod>0;";
+                    break;
+                case 13:
+                    sSql = "Select count(*) from cat_empaque;";
+                    break;
+                case 14:
+                    sSql = "Select count(*) from caducidad;";
+                    break;
+                case 15:
+                    sSql = "Select count(*) from cat_empresa;";
+                    break;
+                case 16:
+                    sSql = "Select count(*) from errores where procesado = 0;";
+                    break;
+                case 18:
+                    sSql = "Select count(*) from competencia_promocion;";
+                    break;
+                case 20:
+                    sSql = "Select count(*) from canjes;";
+                    break;
+                case 21:
+                    sSql = "Select count(*) from cat_incidencias;";
+                    break;
+            }
+
 
         Cursor cursor = null;
         try {
@@ -1901,11 +2043,40 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             cursor.close();
             // Log.e(TAG_INFO,"Resultado " + iResultado + " tabla " + iTabla);
         }
-         catch (AssertionError e) {
-             String Resultado = e.getMessage();
-             // Log.e(TAG_ERROR, sSql);
-         }
-         catch (Exception e) {
+        catch (SQLiteException e) {
+            Log.e(TAG_ERROR,e.getMessage());
+            // Captura el error específico de SQLite
+            if (e.getMessage().contains("no such table: cat_incidencias")) {
+                // ************************************
+                // TODO Tabla cat_incidencias
+                String sSql26 = "Create table cat_incidencias" +
+                        "(" +
+                        "_id INTEGER PRIMARY KEY," +
+                        "descripcion TEXT" +
+                        ")";
+                Log.e(TAG_INFO, sSql26);
+                db.execSQL(sSql26);
+
+                String sSql27 = "Create table incidencias " +
+                        "(" +
+                        "idinc INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "idincidencia int, " +
+                        "idfoto int, " +
+                        "idpromotor int, " +
+                        "idruta int, " +
+                        "fechahora text, " +
+                        "fechahora1 text " +
+                        ");";
+                Log.e(TAG_INFO, sSql27);
+                db.execSQL(sSql27);
+
+            } else {
+                Log.e(TAG_ERROR,"Error generado al consultar tablas");
+            }
+        } catch (AssertionError e) {
+            String Resultado = e.getMessage();
+            // Log.e(TAG_ERROR, sSql);
+        } catch (Exception e) {
             String Resultado = e.getMessage();
             Log.e(TAG_ERROR, sSql);
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener registros " + Resultado, Toast.LENGTH_LONG).show();
@@ -1954,11 +2125,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql;
 
         if (_tienda.length() == 0) {
-            sSql = "Select count(*)  from listatiendas where idpromotor = " + _idpromotor;
+            sSql = "Select count(*) from vw_visitaspendientes where idpromotor = " + _idpromotor;
         } else {
-            sSql = "Select count(*)  from listatiendas where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
+            sSql = "Select count(*) from vw_visitaspendientes where idpromotor = " + _idpromotor + " and tienda like '%" + _tienda + "%'";
         }
-        // Log.e(TAG_INFO, "Consulta lista tiendas "  +sSql);
+        // sSql += " and DATE(fechavisita) = DATE(DATETIME('now', 'localtime'))";
+
         Cursor cursor = null;
         try {
 
@@ -1969,13 +2141,9 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             cursor.close();
         } catch (Exception e) {
             String Resultado = e.getMessage();
-            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener registros de lista de tiendas " + Resultado, Toast.LENGTH_LONG).show();
-            // funciones.RegistraError(idUsuario, "AlmacenaImagen, downloadFile", e,  (Activity) AlmacenaImagen.this.contexto , AlmacenaImagen.this.contexto);
-            // Por si hay una excepcion
         } finally {
-            // assert cursor != null;
-            // db.close();
         }
+        //Log.e(TAG_INFO, "Consulta lista tiendas "  + sSql + ", son " + iResultado);
         return iResultado;
     }
 
@@ -2358,6 +2526,20 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         try {
             return db.query("vw_productos", null,null,null,null,null, null);
+        }
+        catch ( SQLException e)
+        {
+            // Log.e(TAG_ERROR, e.getMessage());
+            return null;
+        }
+    }
+
+    // **********************************
+    // Regresa un cursos para llenar el spinner de incidencias
+    public Cursor CursorIncidencias(){
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+            return db.query("cat_incidencias", null,null,null,null,null, null);
         }
         catch ( SQLException e)
         {
@@ -4319,7 +4501,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
     // **********************************
     // TODO Método para insertar canjes productos
-    public int insertaoactualizacanjes(oCanje  ocanje)
+    public int insertaoactualizacanjes(oCanje ocanje)
     {
         Date fechahora = Calendar.getInstance().getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

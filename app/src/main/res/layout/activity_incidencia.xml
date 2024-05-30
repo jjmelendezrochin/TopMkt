@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Incidencia"
+    android:background="@drawable/fondo_foto1a">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        tools:context=".Incidencia">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/Titulo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Datos de la Incidencia"
+                        android:textSize="20dp"
+                        android:textColor="@color/verdeCorporativo"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/Bloque00000"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/lblTienda"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="20dp"
+                        android:text="Tienda"
+                        android:textColor="@color/colorFuente"
+                        android:textSize="@dimen/tamanioletraproductos" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/Bloque0000"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margen_incidencia"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txtTienda"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:background="@drawable/caja_bordesredondeados"
+                        android:ems="10"
+                        android:inputType=""
+                        android:paddingStart="20dp"
+                        android:textColor="@color/verdeCorporativo" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/Bloque000"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margen_incidencia"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/lblUsuario"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="20dp"
+                        android:text="Usuario"
+                        android:textColor="@color/colorFuente"
+                        android:textSize="@dimen/tamanioletraproductos" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/Bloque00"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margen_incidencia"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/Bloque1a">
+
+                    <TextView
+                        android:id="@+id/txtUsuario"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:background="@drawable/caja_bordesredondeados"
+                        android:ems="10"
+                        android:inputType=""
+                        android:paddingStart="20dp"
+                        android:textColor="@color/verdeCorporativo" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/Bloque0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margen_incidencia"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/Titulo7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="20dp"
+                        android:text="Tipo Incidencia"
+                        android:textColor="@color/colorFuente"
+                        android:textSize="@dimen/tamanioletraproductos" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margen_incidencia"
+                    android:orientation="horizontal">
+
+                    <Spinner
+                        android:id="@+id/spinIncidencia"
+                        android:layout_marginLeft="20dp"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/Bloque"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal|center_vertical">
+
+                    <ImageView
+                        android:id="@+id/imageClipboard"
+                        android:layout_width="363dp"
+                        android:layout_height="392dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="@dimen/margen_arriba"
+                        android:layout_marginEnd="0dp"
+                        android:layout_marginRight="0dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/imagenconfoto"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:scaleType="centerInside"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@tools:sample/avatars[8]" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/Bloque1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:layout_below="@+id/Bloque"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@+id/Bloque"
+                    android:weightSum="3"
+                    android:layout_gravity="center">
+
+
+
+                    <Button
+                        android:id="@+id/btnPaste"
+                        android:layout_width="158.4dp"
+                        android:layout_height="50.4dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/img_seleccionar" />
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/Bloque1a"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margen_incidencia"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/Bloque1a">
+
+                    <TextView
+                        android:id="@+id/Observaciones"
+                        android:layout_width="134dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="Observaciones"
+                        android:textColor="@color/colorFuente"
+                        android:textSize="@dimen/tamanioletraproductos" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/Bloque2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margen_competencia"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/Bloque1a">
+
+                    <EditText
+                        android:id="@+id/txtObservaciones"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:background="@drawable/caja_bordesredondeados"
+                        android:ems="10"
+                        android:inputType=""
+                        android:paddingStart="20dp"
+                        android:textColor="@color/verdeCorporativo" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margen_productos1"
+                    android:layout_marginBottom="200dp"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/cmdGuardar"
+                        android:layout_width="140dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/img_guardar"
+                        android:layout_marginTop="5px"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@drawable/regresar" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

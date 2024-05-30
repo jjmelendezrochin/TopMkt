@@ -12,6 +12,7 @@ import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_OPERACION;
 import static com.topmas.top.Constants.TAG_RESPUESTA;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
+import static com.topmas.top.Constants.TAG_URL;
 import static com.topmas.top.Constants.TAG_USUARIO;
 
 import android.app.ProgressDialog;
@@ -507,7 +508,7 @@ public class Foto extends AppCompatActivity {
                 String versionName = BuildConfig.VERSION_NAME;
                 String sVerApp =  versionName + ":" + versionCode;
 
-                /*
+                /**/
                 Log.e(TAG_ERROR, String.valueOf(idpromotor));
                 Log.e(TAG_ERROR, String.valueOf(pLatitud));
                 Log.e(TAG_ERROR, String.valueOf(pLongitud));
@@ -515,7 +516,7 @@ public class Foto extends AppCompatActivity {
                 Log.e(TAG_ERROR, String.valueOf(idoperacion));
                 Log.e(TAG_ERROR, String.valueOf(idRuta));
                 Log.e(TAG_ERROR, fechahora);
-                 */
+                Log.e(TAG_ERROR, UPLOAD_URL);
 
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
@@ -731,6 +732,7 @@ public class Foto extends AppCompatActivity {
                     "&idoperacion=" + idoperacion +
                     "&idempresa="+ idempresa;
 
+            Log.e(TAG_URL, sRuta);
             super.onPreExecute();
             pDialog = new ProgressDialog(Foto.this);
             pDialog.setMessage("Consultando en el servicio Web ...");

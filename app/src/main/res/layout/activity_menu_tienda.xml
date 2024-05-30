@@ -159,11 +159,18 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/imgIncidencia"
+                android:layout_width="@dimen/tamaniobotonmenu1"
+                android:layout_height="@dimen/tamaniobotonmenu1"
+                android:layout_marginLeft="70dp"
+                app:srcCompat="@drawable/img_nuevoticket" />
+
+            <ImageView
                 android:id="@+id/imgCanjes"
                 android:contentDescription="Canjes"
                 android:layout_width="@dimen/tamaniobotonmenu1"
                 android:layout_height="@dimen/tamaniobotonmenu1"
-                android:layout_marginLeft="@dimen/marginstarmenu"
+                android:layout_marginLeft="30dp"
                 app:srcCompat="@drawable/canjes" />
         </LinearLayout>
 

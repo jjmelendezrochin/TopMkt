@@ -5,6 +5,7 @@ public final class Constants {
     public static final String ERROR_FOTO = "ERROR AL TOMAR UNA FOTO";
 
     public static final String TAG_ERROR = "ERROR";
+    public static final String TAG_URL = "URL";
     public static final String TAG_ID = "id";
     public static final String TAG_NAME = "name";
     public static final String TAG_EMAIL = "email";
@@ -26,6 +27,7 @@ public final class Constants {
     public static final String TAG_LATITUD = "latitud";
     public static final String TAG_LONGITUD = "longitud";
     public static final String TAG_VERSIONAPP = "versionapp";
+    public static final String TAG_FECHAVISITA = "fecha";
     public static final String TAG_CARGA_FOTO_EXITOSA = "Imagen cargada correctamente";
     public static final String TAG_CARGA_FOTO_DISTANCIA = "El sitio desde donde tomo la foto rebasa la distancia permitida";
     public static final String TAG_INFO = "INFORMACION";
@@ -34,6 +36,7 @@ public final class Constants {
     public static final String TAG_APLICA = "aplica";
     public static final String TAG_CATEGORIAPRODUCTO = "categoriaproducto";
     public static final String TAG_UPC = "upc";
+    public static final String TAG_DESCRIPCIONINCIDENCIA = "descripcion";
     public static final String TAG_POSICION = "posicion";
     public static final String TAG_CANTIDADCAJA = "cantidad_caja";
     public static final String TAG_CANTIDADKGS = "cantidad_kgs";
@@ -51,10 +54,10 @@ public final class Constants {
     // TODO ****************************
     // TODO Aqui se cambia para crear nueva bd y tablas
     // TODO ****************************
-    public static final String DATABASE_NAME = "topmk_24";       // Version 34
-    public static final int DATABASE_VERSION = 1;               // Versión de BD
     public static final boolean FAKE_VALIDATION = false;        // Debe validar si la ubicación es Fake en la App
-    public static final boolean DEV_ENVIROMENT  = false;         // Si estamos en desarrollo establece usuario y contraseña automaticamente
+    public static final boolean DEV_ENVIROMENT  = true;         // Si estamos en desarrollo establece usuario y contraseña automaticamente
+    public static final String DATABASE_NAME = "topmas_31";
+    public static final int DATABASE_VERSION = 1;               // Versión de BD
     public static final String DEV_USER  = "prueba1";          // Usuario de prueba
     public static final String DEV_PWD  = "56789";             // Clave de prueba
 
@@ -70,7 +73,7 @@ public final class Constants {
     public static final String TAG_ACTIV = "ACTIV";
     public static final String TAG_EMPAQUE = "EMPAQUE";
     public static final String TAG_SOLICITAINV = "SOLICITAINV";
-
+    public static final String TAG_INCIDENCIA = "INCIDENCIA";
     public static final String TAG_IDEMPRESA = "idempresa";
     public static final String TAG_UDC = "udc";
     public static final String TAG_FDC = "fdc";
@@ -107,6 +110,7 @@ public final class Constants {
     public static final String TAG_IDEMPAQUE = "idempaque";
     public static final String TAG_empaque = "empaque";
     public static final String TAG_solicita = "solicita";
+    public static final String TAG_IDINCIDENCIA = "idincidencia";
 
     public static final String TAG_IDEMOSTRADOR = "idemostrador";
     public static final String TAG_IEXHIBIDOR = "iexhibidor";
@@ -120,8 +124,10 @@ public final class Constants {
     public static final String TAG_alias = "alias";
     public static final String TAG_FAKEGPS_MSG = "Se esta utilizando una aplicación no permitida en su teléfono, favor de contactar al área de sistemas para mayor información, esta información se va a grabar en la bitácora para seguimiento";
 
+    // TODO *****************************************
+    // TODO Cambio de ambientes prueba y producción
+    // TODO *****************************************
     // Generales
-    // public static final String TAG_SERVIDOR = "http://162.215.218.165/TopMas";        // SERVIDOR AMBIENTE PRODUCCION (GENERA UN  ERROR Y NO FUNCIONA,SE HIZO LA PRUEBA Y SE REGRESO AL NOMBRE EL DIA 10/02/2023)
     public static final String TAG_SERVIDOR = "http://www.topmas.mx/TopMas";             // SERVIDOR AMBIENTE PRODUCCION
-    //public static final String TAG_SERVIDOR = "http://www.jjcorp.com.mx/TopMkt";       // SERVIDOR AMBIENTE PRUEBAS
+    // public static final String TAG_SERVIDOR = "http://www.jjcorp.com.mx/TopMas";            // SERVIDOR AMBIENTE PRUEBAS
 }

@@ -36,6 +36,8 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
+import com.topmas.top.Objetos.oInfoDispositivo;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -278,7 +280,7 @@ public class Funciones {
         }
 
         if (count > 0) {
-            Toast.makeText(context.getApplicationContext(), sPaquete, Toast.LENGTH_LONG).show();
+            // Toast.makeText(context.getApplicationContext(), sPaquete, Toast.LENGTH_LONG).show();
             return true;
         }
         return false;

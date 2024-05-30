@@ -1,5 +1,7 @@
 package com.topmas.top;
 
+import com.topmas.top.Objetos.oRuta;
+
 public class Ruta {
     private static oRuta ruta;
 

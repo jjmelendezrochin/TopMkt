@@ -28,6 +28,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.topmas.top.Adaptadores.AdaptadorTiendasPromotor;
+import com.topmas.top.Adaptadores.OnItemClickListenerAdaptadorTiendasPromotor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,6 +62,7 @@ import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_EXPIRESIN;
 import static com.topmas.top.Constants.TAG_FDA;
 import static com.topmas.top.Constants.TAG_FDC;
+import static com.topmas.top.Constants.TAG_FECHAVISITA;
 import static com.topmas.top.Constants.TAG_FINAL;
 import static com.topmas.top.Constants.TAG_IDACTIVIDAD;
 import static com.topmas.top.Constants.TAG_IDCADENA;
@@ -125,7 +128,7 @@ public class listatiendas extends AppCompatActivity {
     private Funciones funciones = new Funciones();
     private ListView lista;
     private int iLongitudArreglo;
-    private int iLongitudArregloTiendas;
+    //private int iLongitudArregloTiendas;
     private AlmacenaImagen almacenaImagen;
     private int iNumTiendas = 0;
     // private ProgressBar progressBar;
@@ -141,6 +144,7 @@ public class listatiendas extends AppCompatActivity {
     String[] direccion = new String[1000];
     Double[] latitud = new Double[1000];
     Double[] longitud = new Double[1000];
+    String[] fechavisita = new String[1000];
     // *******************************
     // Variables productos
     int[] idproducto = new int[1000];
@@ -303,8 +307,8 @@ public class listatiendas extends AppCompatActivity {
         // Numero de tiendas en la tabla
         almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
         iNumTiendas = almacenaImagen.ObtenRegistrosTiendas(pidPromotor, sTienda);
-        iLongitudArregloTiendas= iNumTiendas;
-        // Log.e(TAG_ERROR,"** Número de tiendas " + iLongitudArregloTiendas );
+        // iLongitudArregloTiendas= iNumTiendas;
+        //Log.e(TAG_ERROR,"** Número de tiendas " + iLongitudArregloTiendas );
 
         // *****************************
         // Inicia Geolocalizaciòn
@@ -452,12 +456,6 @@ public class listatiendas extends AppCompatActivity {
     public void MuestraTiendasTelefono(String sTienda){
 
         try {
-            iNumTiendas = almacenaImagen.ObtenRegistrosTiendas(pidPromotor, sTienda);
-            iLongitudArreglo = iNumTiendas;
-
-            // Log.e(TAG_ERROR, "** Dentro de MuestraTiendasTelefono ");
-            // Log.e(TAG_ERROR, "** iNumTiendas " + iNumTiendas);
-
             int[] Rutas = almacenaImagen.ObtenRutas(pidPromotor, sTienda);
             String[] Determinantes = almacenaImagen.ObtenDeterminantes(pidPromotor, sTienda);
             String[] Tiendas = almacenaImagen.ObtenTiendas(pidPromotor, sTienda);
@@ -473,7 +471,6 @@ public class listatiendas extends AppCompatActivity {
                 latitud[k] = Latitudes[k];
                 longitud[k] = Longitudes[k];
             }
-
             // ******************************
             // Establece la forma de acceso y muestra las tiendas
             MuestraLista();
@@ -496,15 +493,16 @@ public class listatiendas extends AppCompatActivity {
         protected void onPreExecute()
         {
             // TODO ****************************
-            // TODO EN ESTA SECCIÓN SE DESCARGAN TODOS LOS DATOS DESDE LA PLATAFORMA USANDO EL API /Promotor/obtenertiendaspromotor6.php Obtiene la de  informacion de todos los catalogos para luego compararla con los de sqlite  e insertar lo nuevo
+            // TODO EN ESTA SECCIÓN SE DESCARGAN TODOS LOS DATOS DESDE LA PLATAFORMA USANDO EL API /Promotor/obtenertiendaspromotor_calendario.php
+            // TODO Obtiene la de  informacion de todos los catalogos para luego compararla con los de sqlite  e insertar lo nuevo
             // TODO ****************************
 
             String sTienda= txtBuscar.getText().toString().trim();
             if (sTienda.equals("")) {
-                sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor6.php?idpromotor=" + pidPromotor + "&tienda=%&idempresa=" + pIdempresa;
+                sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor_calendario.php?idpromotor=" + pidPromotor + "&tienda=%&idempresa=" + pIdempresa;
             }
             else{
-                sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor6.php?idpromotor=" + pidPromotor + "&tienda=" + sTienda + "&idempresa=" + pIdempresa;
+                sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor_calendario.php?idpromotor=" + pidPromotor + "&tienda=" + sTienda + "&idempresa=" + pIdempresa;
             }
             // Log.e(TAG_ERROR, "Consulta Tiendas " + sRuta);
 
@@ -601,6 +599,7 @@ public class listatiendas extends AppCompatActivity {
                             latitud[jj] = jsonObjRuta.getDouble(TAG_LATITUD);
                             longitud[jj] = jsonObjRuta.getDouble(TAG_LONGITUD);
                             versionapp = jsonObjRuta.getString(TAG_VERSIONAPP);
+                            fechavisita[jj] = jsonObjRuta.getString(TAG_FECHAVISITA);
                             jj++;
                         }
                         else if(jsonChidNode.has(TAG_PROD)){
@@ -722,7 +721,6 @@ public class listatiendas extends AppCompatActivity {
                     }
 
                     int iCuenta = almacenaImagen.ObtenRegistrosTiendas(pidPromotor,sTienda);
-                    iLongitudArregloTiendas = iCuenta;
                     int iCuentaProductos  = almacenaImagen.ObtenRegistros(1);
                     int iCuentaProFtoPrecio  = almacenaImagen.ObtenRegistros(2);
                     int iCuentaRutas  = almacenaImagen.ObtenRegistros(3);
@@ -740,7 +738,7 @@ public class listatiendas extends AppCompatActivity {
                         almacenaImagen.TruncarTablaTiendas(pidPromotor);
                         for (int j = 0; j < jj; j++)
                             almacenaImagen.insertatienda(pidPromotor, ruta[j], Integer.valueOf(determinante[j]),
-                                    tienda[j], direccion[j], latitud[j], longitud[j]);
+                                    tienda[j], direccion[j], latitud[j], longitud[j], fechavisita[j]);
                     }
                     // Log.e(TAG_ERROR, " conteo de tiendas " + jj);
                     // ******************************************
