@@ -114,6 +114,7 @@ import com.topmas.top.Objetos.oInfoDispositivo;
 import com.topmas.top.Objetos.oObs;
 import com.topmas.top.Objetos.oProducto;
 import com.topmas.top.Objetos.oPromocion;
+import com.topmas.top.OffLine.Incidencias;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -717,6 +718,37 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
             // db.endTransaction();
             // db.close();
+        }
+    }
+
+    // **********************************
+    // Método para insertar incidencia
+    public int inserta_incidencia(
+            int _idincidencia,
+            int _idfoto,
+            int _idpromotor,
+            int _idruta,
+            String _fechahora,
+            String _observaciones
+    ) {
+        String sSql = null;
+        Cursor cursor = null;
+        int cta = 0;
+        SQLiteDatabase db = getWritableDatabase();
+        // db.beginTransaction();
+        try {
+            sSql = "   Insert into incidencias(idincidencia, idfoto, idpromotor, idruta, fechahora, fechahora1, observaciones)" +
+                    " values ('" + _idincidencia + "','" +  _idfoto + "','" + _idpromotor + "', '" + _idruta + "', '"
+                    + _fechahora +  "','" + _fechahora + "','" + _observaciones + "');";
+
+            db.execSQL(sSql);
+            Log.e(TAG_INFO, sSql);
+            return 1;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            this.inserta_error1(idUsuario, e, "inserta_incidencia" );
+            return 0;
+        } finally {
         }
     }
 
@@ -2031,6 +2063,9 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 case 21:
                     sSql = "Select count(*) from cat_incidencias;";
                     break;
+                case 22:
+                    sSql = "Select count(*) from incidencias;";
+                    break;
             }
 
 
@@ -2056,7 +2091,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         ")";
                 Log.e(TAG_INFO, sSql26);
                 db.execSQL(sSql26);
-
+            }
+            if (e.getMessage().contains("no such table: incidencias")) {
                 String sSql27 = "Create table incidencias " +
                         "(" +
                         "idinc INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -2065,11 +2101,11 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         "idpromotor int, " +
                         "idruta int, " +
                         "fechahora text, " +
-                        "fechahora1 text " +
+                        "fechahora1 text, " +
+                        "observaciones text " +
                         ");";
                 Log.e(TAG_INFO, sSql27);
                 db.execSQL(sSql27);
-
             } else {
                 Log.e(TAG_ERROR,"Error generado al consultar tablas");
             }
@@ -2228,7 +2264,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql;
         SQLiteDatabase db = getWritableDatabase();
         sSql = "Delete from almacenfotos where id = " + idfoto;
-
+        Log.e(TAG_INFO, sSql);
         try {
             db.execSQL(sSql);
             return 0;
@@ -2239,6 +2275,25 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // Log.e(TAG_ERROR, ex.getMessage());
         } finally {
             // db.close();
+        }
+    }
+
+    // **********************************
+    // Borra la foto de la tabla de fotos si se pudo enviar correctamente la imagen
+    public int BorraIncidencia(int idinc) {
+        String sSql;
+        SQLiteDatabase db = getWritableDatabase();
+        sSql = "Delete from incidencias where idinc = " + idinc;
+        Log.e(TAG_INFO, sSql);
+        try {
+            db.execSQL(sSql);
+            return 0;
+        } catch (Exception ex) {
+            String Resultado = ex.getMessage();
+            Toast.makeText(this.contexto, ERROR_FOTO + " Error al borrar la foto " + Resultado, Toast.LENGTH_LONG).show();
+            return idinc;
+        } finally {
+
         }
     }
 
@@ -3490,7 +3545,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int iCuentaErrores = this.ObtenRegistros(16);
         int iCuentaCompetenciaPromocion = this.ObtenRegistros(18);
         int iCuentaCanjes = this.ObtenRegistros(20);
-        //int iCtaFake = this.ObtenRegistros(22);
+        int iCuentaIncidencias = this.ObtenRegistros(22);
 
         String sMensaje = "Usted tiene " + "\n" + String.valueOf(iCuenta) + " imágenes almacenadas "  + "\n" +
                 iCuentaPreciosCambiados + " precios cambiados, "  + "\n" +
@@ -3499,7 +3554,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 iCuentaCaducidad  + " datos de caducidad, "  + "\n" +
                 iCuentaCompetenciaPromocion + " datos de competencia promoción, "  + "\n" +
                 iCuentaErrores  + " datos de error(es) "  + "\n" +
-                iCuentaCanjes + " datos de canjes";
+                iCuentaCanjes + " datos de canjes" + "\n" +
+                iCuentaIncidencias + " datos de incidencias";
 
         Toast.makeText(this.contexto, sMensaje, Toast.LENGTH_LONG).show();
     }
@@ -5008,17 +5064,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 String versionName = BuildConfig.VERSION_NAME;
                 _sVerApp =  versionName + ":" + versionCode;
 
-                /*
-                // Espera un segundo
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        // yourMethod();
-                    }
-                }, 1000);   //1 second
-
-                 */
-
                 String sArregloProductos = this.consulta_cadena_canjes_tienda_promotor_llave(_idpromotor, _idruta, _llave);
                 String SinDatos= "1";
                 // *******************
@@ -5169,6 +5214,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _SinDatos);
     }
 
+
+
     // **********************************
     // TODO Coloca canjes en modo desconectado etapa 2
     // Obtiene datos para subir foto de la tabla competencia promocion complemento
@@ -5227,17 +5274,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 int versionCode = BuildConfig.VERSION_CODE;
                 String versionName = BuildConfig.VERSION_NAME;
                 _sVerApp =  versionName + ":" + versionCode;
-
-                /*
-                // Espera un segundo
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        // yourMethod();
-                    }
-                }, 1000);   //1 second
-
-                 */
 
                 String sArregloProductos = this.consulta_cadena_canjes_tienda_promotor_llave(_idpromotor, _idruta, _llave);
                 String _sinDatos= "1";
@@ -5401,6 +5437,102 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _arregloproductos,
                 _sVerApp,
                 _sSinDatos);
+    }
+
+    // **********************************
+    // TODO Coloca incidencias
+    // Obtiene datos para subir foto de la tabla incidencias
+    // Los coloca en la web cuando la conexión este disponible
+    public int ColocaIncidencias()
+    {
+        int i = 0;
+        int _idinc;
+        int _idincidencia;
+        int _ifoto;
+        double _latitud;
+        double _longitud;
+        String _idusuario = "";
+        int _idoperacion= 11;
+        int _idpromotor;
+        int _idruta = 0;
+        String _fechahora="";
+        String _fechahora1="";
+        String _observaciones="";
+        String _image = "";
+        String _image1 = "";
+        String _sVerApp;
+
+        SQLiteDatabase db = getReadableDatabase();
+        //********************************************
+        // Primer cursor
+        String sSql = "Select distinct  i.idinc,  i.idincidencia, i.idpromotor,  af.latitud, af.longitud,  af.idusuario, " +
+                " 11 as idoperacion, af.idruta,   " +
+                " af.imagen as image,  '' as image1, i.fechahora, i.observaciones, i.idfoto" +
+                " from incidencias i  " +
+                " inner join almacenfotos af on af.id = i.idfoto " +
+                " where cast(af.fechahora as date) = cast(DATE() AS date) " +
+                " order by i.idinc asc limit 1;";
+
+        Log.e(TAG_ERROR, sSql);
+        Cursor cursor;
+        cursor = db.rawQuery(sSql, null);
+        try {
+            // ************************************
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                _idinc= cursor.getInt(0);
+                _idincidencia = cursor.getInt(1);
+                _idpromotor = cursor.getInt(2);
+                _latitud = cursor.getDouble(3);
+                _longitud = cursor.getDouble(4);
+                _idusuario = cursor.getString(5);
+                _idoperacion = cursor.getInt(6);
+                _idruta = cursor.getInt(7);
+                _image = cursor.getString(8);
+                _image1 = cursor.getString(9);
+                _fechahora = cursor.getString(10);
+                _observaciones = cursor.getString(11);
+                _ifoto = cursor.getInt(12);
+
+                int versionCode = BuildConfig.VERSION_CODE;
+                String versionName = BuildConfig.VERSION_NAME;
+                _sVerApp =  versionName + ":" + versionCode;
+                int _sinDatos= 1;
+                // *******************
+                // Subir imagen
+                Incidencias incidencia = new Incidencias();
+                incidencia.uploadIncidencia(
+                        contexto.getApplicationContext(),
+                        String.valueOf(_idinc),
+                        String.valueOf(_idincidencia),
+                        String.valueOf(_idruta),
+                        String.valueOf(_idpromotor),
+                        String.valueOf(_latitud),
+                        String.valueOf(_longitud),
+                        String.valueOf(_idusuario),
+                        String.valueOf(_idoperacion),
+                        String.valueOf(_observaciones),
+                        String.valueOf(_fechahora),
+                        String.valueOf(_image),
+                        _ifoto,
+                        _sinDatos);
+                i++;
+                AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
+                int k = almacenaImagen.BorraFotoEnviada(_ifoto);
+                int l = almacenaImagen.BorraIncidencia(_idinc);
+                if (k>0 & l>0) Log.e(TAG_INFO, "Foto borrada exitosamente");
+                // *****************************
+                cursor.moveToNext();
+            }
+            cursor.close();
+            return i;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            Log.e(TAG_ERROR, "Error en tabla al consultar canjes etapa1" + Resultado);
+            Toast.makeText(this.contexto, ERROR_FOTO + "Error en tabla al consultar canjes etapa1" + Resultado, Toast.LENGTH_LONG).show();
+            return 0;
+        } finally {
+        }
     }
 
     // *************************************

@@ -81,7 +81,7 @@ public class Incidencia extends AppCompatActivity {
     public static final String UPLOAD_INCIDENCIA = TAG_SERVIDOR + "/PhotoUpload/upload_incidencia.php";
     public static final String UPLOAD_IDINCIDENCIA = "idincidencia";
     public static final String UPLOAD_OBSERVACIONES = "observaciones";
-    int iFoto=0;            // Es el id de la tabla almacenfoto de la foto recien subida
+    int iFoto = 0;            // Es el id de la tabla almacenfoto de la foto recien subida
     int idoperacion = 11;
     int idincidencia = 0;
     String fechahora = "";
@@ -110,13 +110,6 @@ public class Incidencia extends AppCompatActivity {
         plongitud = i.getDoubleExtra(TAG_LONGITUD, 0.0);
         ptienda = i.getStringExtra(TAG_TIENDA);
         pdireccion = i.getStringExtra(TAG_DIRECCION);
-
-
-        /*Log.e(TAG_INFO, "*******************");
-        Log.e(TAG_INFO, "pLatitud0 " + platitud);
-        Log.e(TAG_INFO, "pLongitud0 " + plongitud);
-        Log.e(TAG_INFO, "pidRuta0 " + pidRuta);
-        Log.e(TAG_INFO, "pidPromotor0 " + pidPromotor);*/
 
         //****************************
         // Agregando losdatos
@@ -149,11 +142,13 @@ public class Incidencia extends AppCompatActivity {
 
         // ******************************
         spinIncidencia.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 idincidencia = Integer.parseInt(String.valueOf(id));
                 // Toast.makeText(getApplicationContext(),"Incidencia " + idincidencia, Toast.LENGTH_SHORT).show();
             }
-            public void onNothingSelected(AdapterView<?> parent) {}
+
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         //****************************
@@ -185,72 +180,72 @@ public class Incidencia extends AppCompatActivity {
                 //***********************************
                 // Validación de Lote y Caducidad
                 if (observaciones.isEmpty() ||
-                        idincidencia==1)
-                {
-                    Toast.makeText( getApplicationContext(),"Favor de seleccionar tipo incidencia y observaciones",
+                        idincidencia == 1) {
+                    Toast.makeText(getApplicationContext(), "Favor de seleccionar tipo incidencia y observaciones",
                             LENGTH_LONG).show();
                     return;
                 }
-                try
-                {
-                    /*Log.e(TAG_INFO, "*******************");
-                    Log.e(TAG_INFO, "pLatitud " + platitud);
-                    Log.e(TAG_INFO, "pLongitud " + plongitud);
-                    Log.e(TAG_INFO, "pidRuta " + pidRuta);
-                    Log.e(TAG_INFO, "pidPromotor " + pidPromotor);*/
+                try {
                     // *****************************
                     // Verifica la forma en que subirá los datos
                     if (funciones.RevisarConexion(getApplicationContext())) {
-                        if (    platitud != 0.00  &&
+                        if (platitud != 0.00 &&
                                 plongitud != 0.00 &&
-                                pidRuta > 0      &&
+                                pidRuta > 0 &&
                                 pidPromotor > 0
-                        )
-                        {
+                        ) {
                             uploadIncidencia();
                         }
-                        else{
+                        else
+                        {
                             Toast.makeText(getApplicationContext(), "No se registraron datos de latitud, longitud, ruta o promotor favor de  salir de esta vista e intentar nuevamente",
                                     LENGTH_LONG).show();
                         }
                     } else {
-/*
+
+                        // **********************
+                        Date d = new Date();
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        String sfechacaducidad = sdf.format(fechacaducidad);
+                        fechahora = sdf.format(d);
                         AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
-                        int iResultado = almacenaImagen.inserta_caducidad(idproducto, lote,  sfechacaducidad, piezas, idRuta,  idpromotor, iFoto);
-                        //Log.e(TAG_INFO, "Valor de resultado de inserción " + iResultado);
-                        if (iResultado>0)
-                        {
+
+                        imageView = findViewById(R.id.imageClipboard);
+                        Bitmap bm = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+                        bm = funciones.Compacta(bm);
+                        String uploadImage = almacenaImagen.getStringImage(bm);
+
+                        // Consulta tabla de incidencias por si no existe la crea
+                        int iRegs = almacenaImagen.ObtenRegistros(22);
+                        int iResultado = almacenaImagen.inserta_incidencia(idincidencia, iFoto, pidPromotor, pidRuta, fechahora, observaciones);
+                        // Log.e(TAG_INFO, "Valor de resultado de inserción " + iResultado);
+                        // Log.e(TAG_INFO, "Nùmero de incidencias locales " + iRegs);
+                        if (iResultado > 0) {
                             LimpiaCajas();
-                            Toast.makeText(getApplicationContext(), "Dato almacenado",Toast.LENGTH_LONG);
+                            Toast.makeText(getApplicationContext(), "Dato almacenado", Toast.LENGTH_LONG).show();
                             finish();
                         }
- */
                     }
                 } catch (NumberFormatException ex) {
                     // funciones.RegistraError(idUsuario, "Caducidad, cmdGuardar.setOnClickListener", ex, Caducidad.this, getApplicationContext());
-                    Toast.makeText( getApplicationContext(),"Todos los campos deben tener datos",
+                    Toast.makeText(getApplicationContext(), "Todos los campos deben tener datos",
                             LENGTH_LONG).show();
                 } catch (Exception ex) {
                     // funciones.RegistraError(idUsuario, "Caducidad, cmdGuardar.setOnClickListener", ex, Caducidad.this, getApplicationContext());
-                    Toast.makeText( getApplicationContext(),"Error " + ex.getMessage(),
+                    Toast.makeText(getApplicationContext(), "Error " + ex.getMessage(),
                             LENGTH_LONG).show();
                 }
             }
         });
-
     }
 
     // ****************************
     // Funcion para limpiar cajas
-    private void LimpiaCajas()
-    {
+    private void LimpiaCajas() {
         ImageView imageClipboard = findViewById(R.id.imageClipboard);
-        Spinner spinIncidencia = (Spinner) findViewById( R.id.spinIncidencia );
+        Spinner spinIncidencia = (Spinner) findViewById(R.id.spinIncidencia);
         imageClipboard.setImageDrawable(null);
-        spinIncidencia.setSelection(0,true);
-        TextView txtObservaciones=findViewById(R.id.txtObservaciones);
+        spinIncidencia.setSelection(0, true);
+        TextView txtObservaciones = findViewById(R.id.txtObservaciones);
         txtObservaciones.setText("");
     }
 
@@ -299,8 +294,8 @@ public class Incidencia extends AppCompatActivity {
 
     // ****************************
     // Funcion para subir los datos de caducidad
-    private void uploadIncidencia(){
-        class UploadIncidencia extends AsyncTask<Bitmap,Void,String> {
+    private void uploadIncidencia() {
+        class UploadIncidencia extends AsyncTask<Bitmap, Void, String> {
 
             private final RequestHandler rh = new RequestHandler();
 
@@ -322,10 +317,10 @@ public class Incidencia extends AppCompatActivity {
                 bitmap = funciones.Compacta(bitmap);
                 String uploadImage = almacenaImagen.getStringImage(bitmap);
 
-                HashMap<String,String> data = new HashMap<>();
+                HashMap<String, String> data = new HashMap<>();
                 int versionCode = BuildConfig.VERSION_CODE;
                 String versionName = BuildConfig.VERSION_NAME;
-                String sVerApp =  versionName + ":" + versionCode;
+                String sVerApp = versionName + ":" + versionCode;
 
                 data.put(UPLOAD_IDINCIDENCIA, String.valueOf(idincidencia));
                 data.put(UPLOAD_IDRUTA, String.valueOf(pidRuta));
@@ -340,7 +335,7 @@ public class Incidencia extends AppCompatActivity {
                 data.put(UPLOAD_VERSION, sVerApp);
                 data.put(UPLOAD_SINDATOS, "0");
 
-                return rh.sendPostRequest(UPLOAD_INCIDENCIA,data);
+                return rh.sendPostRequest(UPLOAD_INCIDENCIA, data);
             }
 
             @Override
@@ -350,17 +345,16 @@ public class Incidencia extends AppCompatActivity {
                 imageView = findViewById(R.id.imageClipboard);
                 // Log.e(TAG_INFO, "Valor de resultado de inserción " + s);
                 // **************************************
-                if(s.equals(TAG_CARGA_FOTO_EXITOSA)) {
+                if (s.equals(TAG_CARGA_FOTO_EXITOSA)) {
                     // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
                     AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
                     int i = almacenaImagen.BorraFotoEnviada(iFoto);
-                    if (i>0) Log.e(TAG_INFO, "Foto borrada exitosamente");
+                    if (i > 0) Log.e(TAG_INFO, "Foto borrada exitosamente");
                     Toast.makeText(getApplicationContext(), s, LENGTH_LONG).show();
                     imageView.setImageResource(android.R.color.transparent);
                     LimpiaCajas();
-                }
-                else{
-                    Toast.makeText(getApplicationContext(), s , LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), s, LENGTH_LONG).show();
                     imageView.setImageResource(android.R.color.transparent);
                 }
                 finish();
@@ -371,11 +365,9 @@ public class Incidencia extends AppCompatActivity {
         try {
             UploadIncidencia ui = new UploadIncidencia();
             imageView = findViewById(R.id.imageClipboard);
-            Bitmap bm=((BitmapDrawable)imageView.getDrawable()).getBitmap();
+            Bitmap bm = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
             ui.execute(bm);
-        }
-        catch( java.lang.NullPointerException e)
-        {
+        } catch (java.lang.NullPointerException e) {
             // funciones.RegistraError(idUsuario, "Caducidad, uploadCaducidad ", e, Caducidad.this, getApplicationContext());
             // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
             Toast.makeText(getApplicationContext(), "Error al colocar una foto de incidencia", LENGTH_LONG).show();

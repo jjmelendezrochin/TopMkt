@@ -242,6 +242,7 @@ public class MainActivity extends AppCompatActivity {
     int iErrores = 0;               // Errores
     int iCompetenciaPromocion = 0;  // Datos de competencia promoción
     int iCanjes = 0;                // Datos de canjes
+    int iIncidencias = 0;           // Datos de incidencias
     int iSumaCuentas = 0;           // Total de imagenes por cargar
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -399,8 +400,9 @@ public class MainActivity extends AppCompatActivity {
                 iErrores = almacenaImagen.ObtenRegistros(16);
                 iCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);
                 iCanjes = almacenaImagen.ObtenRegistros(20);
+                iIncidencias = almacenaImagen.ObtenRegistros(22);
 
-                int iSumaCuentas = (iMagenesGuardadas + iPreciosCambiados + iRegistrosCompetencia + iPromociones + iCaducidad + iErrores + iCompetenciaPromocion + iCanjes);
+                int iSumaCuentas = (iMagenesGuardadas + iPreciosCambiados + iRegistrosCompetencia + iPromociones + iCaducidad + iErrores + iCompetenciaPromocion + iCanjes + iIncidencias);
 
                 if (iSumaCuentas > 0) {
                     // **************************************
@@ -522,8 +524,9 @@ public class MainActivity extends AppCompatActivity {
         iErrores = almacenaImagen.ObtenRegistros(16);
         iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
         iCanjes = almacenaImagen.ObtenRegistros(20);
+        iIncidencias= almacenaImagen.ObtenRegistros(22);
 
-        iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
+        iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes+iIncidencias);
 
         if (iSumaCuentas>0
                 && funciones.RevisarConexion(getApplicationContext()))
@@ -1287,7 +1290,7 @@ public class MainActivity extends AppCompatActivity {
                     int iCuentaPromo = almacenaImagen.ObtenRegistros(7);
                     int iCuentaActiv = almacenaImagen.ObtenRegistros(8);
                     int iCuentaEmpaque = almacenaImagen.ObtenRegistros(13);
-                    int iCuentaIncidencias = almacenaImagen.ObtenRegistros(21);
+                    int iCuentaCatalIncidencias = almacenaImagen.ObtenRegistros(21);
 
                     // ******************************************
                     // Inserciòn de tiendas si el numero de registros es diferente
@@ -1389,7 +1392,7 @@ public class MainActivity extends AppCompatActivity {
                     // Inserción de cat_empaque
                     // Log.e(TAG_ERROR, " conteo de incidencias " + iCuentaIncidencias);
                     //  Log.e(TAG_ERROR, " valor de t " + t);
-                    if (iCuentaIncidencias != t){
+                    if (iCuentaCatalIncidencias != t){
                         almacenaImagen.TruncarTabla(21);
                         for (int a = 0; a < t; a++) {
                             almacenaImagen.inserta_incidencia(idincidencia[a],descripcion_incidencia[a]);
@@ -1451,8 +1454,9 @@ public class MainActivity extends AppCompatActivity {
             iErrores = almacenaImagen.ObtenRegistros(16);
             iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
             iCanjes = almacenaImagen.ObtenRegistros(20);
+            iIncidencias = almacenaImagen.ObtenRegistros(22);
 
-            int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes);
+            int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes+iIncidencias);
 
             // Log.e(TAG_ERROR, "VALOR DE progressStatus e iSumaCuentas son " + progressStatus + " y " + iSumaCuentas);
             Log.e(TAG_ERROR, "Hay " + iSumaCuentas + " elementos de iSumaCuentas");
@@ -1473,6 +1477,9 @@ public class MainActivity extends AppCompatActivity {
                 iErrores = almacenaImagen.ObtenRegistros(16);
                 iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
                 iCanjes = almacenaImagen.ObtenRegistros(20);
+                iIncidencias = almacenaImagen.ObtenRegistros(22);
+
+                Log.e(TAG_INFO, "Incidencias " + iIncidencias);
 
                 if (iMagenesGuardadas>0){
                     // Sube imagenes upload1.php
@@ -1508,6 +1515,9 @@ public class MainActivity extends AppCompatActivity {
                         i = almacenaImagen.ColocaCanjes();
                         j = almacenaImagen.ColocaCanjesComplemento();
                     }
+                }
+                else if(iIncidencias>0){
+                    i = almacenaImagen.ColocaIncidencias();
                 }
 
                 try {

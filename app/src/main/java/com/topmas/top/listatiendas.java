@@ -330,8 +330,9 @@ public class listatiendas extends AppCompatActivity {
                 int iCuentaErrores = almacenaImagen.ObtenRegistros(16);
                 int iCuentaCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);
                 int iCuentaCanjes = almacenaImagen.ObtenRegistros(20);
+                int iCuentaIncidencias = almacenaImagen.ObtenRegistros(22);
                 int iPendientes = (iCuenta+iCuentaPreciosCambiados+iCuentaPromociones+iCuentaRegistrosCompetencia+
-                        iCuentaCaducidad+iCuentaErrores+iCuentaCompetenciaPromocion+iCuentaCanjes);
+                        iCuentaCaducidad+iCuentaErrores+iCuentaCompetenciaPromocion+iCuentaCanjes+iCuentaIncidencias);
 
                 if (iPendientes>0) {
                     AlertDialog.Builder alerta = new AlertDialog.Builder(listatiendas.this);
@@ -343,6 +344,7 @@ public class listatiendas extends AppCompatActivity {
                             iCuentaCompetenciaPromocion + " datos de competencia promoción, "  + "\n" +
                             iCuentaErrores  + " datos de error(es) "  + "\n" +
                             iCuentaCanjes + " datos de canjes" + "\n" +
+                            iCuentaIncidencias + " datos de incidencias" + "\n" +
                             "No olvide conectarse en cuanto tenga señal suficiente, para colocar sus fotos en plataforma" + "\n" +
                             "(pulsar SI para salir)";
 
