@@ -399,10 +399,10 @@ public class Competencia_Promocion extends AppCompatActivity {
                     }
                 } catch (NullPointerException e) {
                     Toast.makeText(getApplicationContext(), " Todas las imágenes y campos deben tener valores ", Toast.LENGTH_LONG).show();
-                    Log.e(TAG_INFO,  e.toString());
+                    // Log.e(TAG_INFO,  e.toString());
                 } catch (NumberFormatException e) {
                     Toast.makeText(getApplicationContext(), " Todas las imágenes y campos deben tener valores ", Toast.LENGTH_LONG).show();
-                    Log.e(TAG_INFO,  e.toString());
+                    // Log.e(TAG_INFO,  e.toString());
                 }
             }
         });
@@ -650,12 +650,12 @@ public class Competencia_Promocion extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
                     imagenFoto1.setImageResource(android.R.color.transparent);
                     imagenFoto2.setImageResource(android.R.color.transparent);
-                    Log.e(TAG_INFO, "Fotos a borrar " + iFoto1 + ", " + iFoto2 + ", " + idCompetenciaPromo);
+                    // Log.e(TAG_INFO, "Fotos a borrar " + iFoto1 + ", " + iFoto2 + ", " + idCompetenciaPromo);
                     almacenaImagen.BorraFotoEnviada(iFoto1, iFoto2);
                     almacenaImagen.borrar_competencia_promocion(iFoto1);
 
                     int iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
-                    Log.e(TAG_INFO, "iCompetenciaPromocion " + iCompetenciaPromocion);
+                    // Log.e(TAG_INFO, "iCompetenciaPromocion " + iCompetenciaPromocion);
 
                 }
                 else if (s.equals(TAG_CARGA_FOTO_DISTANCIA)) {

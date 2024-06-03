@@ -742,7 +742,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                     + _fechahora +  "','" + _fechahora + "','" + _observaciones + "');";
 
             db.execSQL(sSql);
-            Log.e(TAG_INFO, sSql);
+            // Log.e(TAG_INFO, sSql);
             return 1;
         } catch (Exception e) {
             String Resultado = e.getMessage();
@@ -3124,17 +3124,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _invfinal = cursor.getInt(5);
                 _idobs = cursor.getInt(6);
 
-
-                /*
-                // Espera un segundo
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        // yourMethod();
-                    }
-                }, 1000);   //1 second
-                 */
-
                 // *******************
                 // Subir imagen
                 subirPreciosCambiados(
@@ -3382,16 +3371,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _idcompetencia = cursor.getInt(18);
                 _idfoto = cursor.getInt(19);
 
-                /*
-                // Espera un segundo
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        // yourMethod();
-                    }
-                }, 1000);   //1 second
-                 */
-
                 // *******************
                 // Subir imagen
                 uploadImagenCompetencia(
@@ -3625,17 +3604,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _error= cursor.getString(21);
                 _fechahora= cursor.getString(22);
 
-                /*
-                // Espera un segundo
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        // yourMethod();
-                    }
-                }, 1000);   //1 second
-
-                 */
-
                 cargaErrores(
                         _fabricante,
                         _marca,
@@ -3863,16 +3831,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _piezas = cursor.getInt(12);
                 _idcaducidad = cursor.getInt(13);
                 _idfoto = cursor.getInt(14);
-
-                /*
-                // Espera un segundo
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        // yourMethod();
-                    }
-                }, 1000);   //1 second
-                 */
 
                 // *******************
                 // Subir imagen
@@ -4149,16 +4107,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _idruta = cursor.getInt(2);
                 _fecha = cursor.getString(3);
                 _aplica = cursor.getInt(4);
-
-                /*
-                // Espera un segundo
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        // yourMethod();
-                    }
-                }, 1000);   //1 second
-                 */
 
                 // *******************
                 // Subir imagen

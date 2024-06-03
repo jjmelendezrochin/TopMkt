@@ -200,7 +200,7 @@ public class listaproductos extends AppCompatActivity {
             } else {
                 sRuta = TAG_SERVIDOR + "/CatalogoProductos/obtenerproductostienda1.php?idruta=" + pidRuta + "&producto=%" + sProducto + "%&idempresa=" + pidEmpresa;
             }
-            Log.e(TAG_URL, sRuta);
+            // Log.e(TAG_URL, sRuta);
             super.onPreExecute();
             pDialog = new ProgressDialog(listaproductos.this);
             pDialog.setMessage("Consultando en el servicio Web ...");

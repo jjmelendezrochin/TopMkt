@@ -92,6 +92,7 @@ import android.database.Cursor;
 import android.database.CursorWindow;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -109,6 +110,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -123,6 +125,12 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -358,6 +366,7 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                // ********************
                 enableSubmitIfReady();
                 if (isReady.get()) {
                     // Procesos consulta y actualizacion
@@ -390,6 +399,21 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab0 = findViewById(R.id.fab0);
         fab0.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+
+                // ********************
+                // Aqui se tiene que verificar la hora, solo se pueden subir datos despues de
+                // las 8 de la noche de cada dia.
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                Date now = new Date();
+                String sHora = sdf.format(now);
+                // Log.i(TAG_INFO, "Hora actual " + sHora);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    boolean result = isAfter8PM(sHora);
+                    if (!result){
+                        Toast.makeText(MainActivity.this, "Esta función está disponible solo después de las 8 pm", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
 
                 almacenaImagen = new AlmacenaImagen(getApplicationContext());
                 iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
@@ -555,8 +579,6 @@ public class MainActivity extends AppCompatActivity {
         String pNombre = txtUsuario.getText().toString();
         String pClave = txtPwd.getText().toString();
 
-        // ****************************************
-        // TODO AQUI HAY UNA VALIDACION DE UBICACION FAKE GPS
         // *****************************
         // Verifica si tiene un servicio GPS fake
         Funciones funciones = new Funciones();
@@ -884,6 +906,26 @@ public class MainActivity extends AppCompatActivity {
         cmdIngresar.setEnabled(isReady.get());
     }
 
+
+    // ************************************
+    // Función que valida si es después de la 8pm
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static boolean isAfter8PM(String timeString) {
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime timeToCompare;
+        try {
+            timeToCompare = LocalTime.parse(timeString, timeFormatter);
+        } catch (DateTimeParseException e) {
+            // Handle the case where the time string is not in the expected format
+            System.out.println("Invalid time format: " + e.getMessage());
+            return false;
+        }
+
+        LocalTime eightPM = LocalTime.of(20, 0); // 20:00 in 24-hour format
+
+        return timeToCompare.isAfter(eightPM);
+    }
+
     // ************************************
     // Clase que carga las fotos guardadas
     class CargaEmpresas extends AsyncTask<String, Void, String> {
@@ -1050,7 +1092,7 @@ public class MainActivity extends AppCompatActivity {
             else{
                 sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor_calendario.php?idpromotor=" + pidPromotor + "&tienda=" + sTienda + "&idempresa=" + pIdempresa;
             }
-            Log.e(TAG_URL, sRuta);
+            // Log.e(TAG_URL, sRuta);
 
             super.onPreExecute();
             pDialog = new ProgressDialog(MainActivity.this);
@@ -1484,7 +1526,7 @@ public class MainActivity extends AppCompatActivity {
                 iCanjes = almacenaImagen.ObtenRegistros(20);
                 iIncidencias = almacenaImagen.ObtenRegistros(22);
 
-                Log.e(TAG_INFO, "Incidencias " + iIncidencias);
+                // Log.e(TAG_INFO, "Incidencias " + iIncidencias);
 
                 if (iMagenesGuardadas>0){
                     // Sube imagenes upload1.php
@@ -1508,11 +1550,7 @@ public class MainActivity extends AppCompatActivity {
                     i = almacenaImagen.ColocaErrores();
                 }
                 else if(iCompetenciaPromocion>0){
-                    // Sube imagenes upload_competencia_promocion.php y upload_competencia_promocion_complemento.php
-                    // Log.e(TAG_ERROR, "VALOR DE progressStatus e iSumaCuentas son " + progressStatus + " y " + iSumaCuentas);
-                    // Log.e(TAG_ERROR, "Hay " + iCompetenciaPromocion + " elementos de competencia promocion");
                     i = almacenaImagen.ColocaCompetenciaPromocion();
-
                 }
                 else if(iCanjes>0){
                     // Sube imagenes upload_canjes.php y upload_canjes_complemento.php
@@ -1522,6 +1560,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 else if(iIncidencias>0){
+                    // Sube imagenes de incidencias upload_incidencia.php
                     i = almacenaImagen.ColocaIncidencias();
                 }
 

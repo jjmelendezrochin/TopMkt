@@ -600,7 +600,7 @@ public class Foto extends AppCompatActivity {
                 funciones.grabImage(this, photoURI, imagenFoto);
                 // Este es el ejemplo del contenido de la variable photouri
                 // photoURI content://com.topmas.android.fileprovider/my_images/Android/data/com.topmas.top/files/Pictures/JPEG_20240314_064624_543681154074022526.jpg
-                Log.e(TAG_INFO, "photoURI "  +photoURI.toString());
+                // Log.e(TAG_INFO, "photoURI "  +photoURI.toString());
 
                 Button btnNoSubir = findViewById(R.id.btnNoSubir);
                 Button btnSubir = findViewById(R.id.btnSubir);
@@ -757,7 +757,7 @@ public class Foto extends AppCompatActivity {
                     "&idoperacion=" + idoperacion +
                     "&idempresa="+ idempresa;
 
-            Log.e(TAG_URL, sRuta);
+            // Log.e(TAG_URL, sRuta);
             super.onPreExecute();
             pDialog = new ProgressDialog(Foto.this);
             pDialog.setMessage("Consultando en el servicio Web ...");

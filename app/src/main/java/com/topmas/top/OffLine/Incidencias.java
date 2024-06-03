@@ -85,6 +85,7 @@ public class Incidencias {
                 String versionName = BuildConfig.VERSION_NAME;
                 String sVerApp = versionName + ":" + versionCode;
 
+                /*
                 Log.e(TAG_INFO,"***************************");
                 Log.e(TAG_INFO,idincidencia);
                 Log.e(TAG_INFO,pidRuta);
@@ -100,6 +101,7 @@ public class Incidencias {
                 Log.e(TAG_INFO, String.valueOf(sinDatos));
                 Log.e(TAG_INFO,idincidencia);
                 Log.e(TAG_INFO,UPLOAD_INCIDENCIA);
+                 */
 
                 data.put(UPLOAD_IDINCIDENCIA, String.valueOf(idincidencia));
                 data.put(UPLOAD_IDRUTA, String.valueOf(pidRuta));
