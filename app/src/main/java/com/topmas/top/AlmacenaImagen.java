@@ -77,6 +77,7 @@ import static com.topmas.top.Foto.UPLOAD_SINDATOS;
 import static com.topmas.top.Foto.UPLOAD_TAMANIOPANTALLA;
 import static com.topmas.top.Foto.UPLOAD_UID;
 import static com.topmas.top.Foto.UPLOAD_URL;
+import static com.topmas.top.Foto.UPLOAD_URL_O;
 import static com.topmas.top.Foto.UPLOAD_USER_VALUE;
 import static com.topmas.top.Foto.UPLOAD_USUARIO;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
@@ -98,6 +99,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -114,6 +116,7 @@ import com.topmas.top.Objetos.oInfoDispositivo;
 import com.topmas.top.Objetos.oObs;
 import com.topmas.top.Objetos.oProducto;
 import com.topmas.top.Objetos.oPromocion;
+import com.topmas.top.OffLine.Fotos;
 import com.topmas.top.OffLine.Incidencias;
 
 import java.io.ByteArrayInputStream;
@@ -140,6 +143,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     Funciones funciones = new Funciones();
     Usuario usr = new Usuario();
     String idUsuario;
+    int idSeleccionado = 0;
 
     // **********************************
     // Constuctor
@@ -2264,7 +2268,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql;
         SQLiteDatabase db = getWritableDatabase();
         sSql = "Delete from almacenfotos where id = " + idfoto;
-        Log.e(TAG_INFO, sSql);
+        // Log.e(TAG_INFO, sSql);
         try {
             db.execSQL(sSql);
             return 0;
@@ -2947,17 +2951,18 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql = "Select distinct id, idpromotor, latitud, longitud, fechahora, idoperacion, idusuario, idruta, imagen  " +
                 " from almacenfotos " +
                 " where idoperacion<5 " +
+                " and id > " + this.idSeleccionado +
                 " order by id asc limit 1;";
-        Log.e(TAG_ERROR, "Colocarfoto");
-        Log.e(TAG_ERROR, sSql);
+        // Log.e(TAG_ERROR, "Colocarfoto");
+        // Log.e(TAG_ERROR, sSql);
         try {
             Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
             field.setAccessible(true);
             field.set(null, 100 * 1024 * 1024); //the 100MB is the new size
-            Log.e(TAG_ERROR, "AQUI1");
+            // Log.e(TAG_ERROR, "AQUI1");
             Cursor cursor;
             cursor = db.rawQuery(sSql, null);
-            Log.e(TAG_ERROR, "AQUI2");
+            // Log.e(TAG_ERROR, "AQUI2");
             // ************************************
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -2971,21 +2976,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _idruta = cursor.getInt(7);
                 _imagen = cursor.getString(8);
 
-                /*
-                // Espera un segundo
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        // yourMethod();
-                    }
-                }, 1000);   //1 second
-
-                 */
-
-                Log.e(TAG_ERROR, "AQUI3");
+                // Log.e(TAG_ERROR, "AQUI3");
                 // *******************
                 // Subir imagen
-                uploadImage(
+                Fotos foto = new Fotos();
+                foto.uploadImage(
+                        contexto.getApplicationContext(),
                         String.valueOf(_idpromotor),
                         String.valueOf(_latitud),
                         String.valueOf(_longitud),
@@ -2993,13 +2989,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         String.valueOf(_idoperacion),
                         String.valueOf(_idusuario),
                         String.valueOf(_idruta),
-                        String.valueOf(_imagen)
+                        String.valueOf(_imagen),
+                        String.valueOf(_id)
                 );
+                this.idSeleccionado = _id;
 
                 i++;
-                // *****************************
-                // Borrando el registro recien colocado
-                this.BorraFotoEnviada(_id);
                 // *****************************
                 cursor.moveToNext();
             }
@@ -3020,71 +3015,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         }
     }
 
-    //***********************
-    // Upload image function
-    public void uploadImage(
-            String _idpromotor,
-            String _latitud,
-            String _longitud,
-            String _fechahora,
-            String _idoperacion,
-            String _idusuario,
-            String _idruta,
-            String _imagen
-    ) {
-        class UploadImage extends AsyncTask<String, Void, String> {
 
-            private RequestHandler rh = new RequestHandler();
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-            }
-
-
-            @Override
-            protected String doInBackground(String... params) {
-                String idpromotor = params[0];
-                String latitud = params[1];
-                String longitud = params[2];
-                String fechahora = params[3];
-                String idoperacion = params[4];
-                String idusuario = params[5];
-                String idruta = params[6];
-                String imagen100 = params[7];
-
-                String uploadImage100 = imagen100;
-
-                HashMap<String, String> data = new HashMap<>();
-
-                int versionCode = BuildConfig.VERSION_CODE;
-                String versionName = BuildConfig.VERSION_NAME;
-                String sVerApp = versionName + ":" + versionCode;
-
-                data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
-                data.put(UPLOAD_LATITUD, String.valueOf(latitud));
-                data.put(UPLOAD_LONGITUD, String.valueOf(longitud));
-                data.put(UPLOAD_IDUSUARIO, idusuario);
-                data.put(UPLOAD_IDOPERACION, String.valueOf(idoperacion));
-                data.put(UPLOAD_IDRUTA, String.valueOf(idruta));
-                data.put(UPLOAD_FECHAHORA, fechahora);
-                data.put(UPLOAD_IMAGEN, uploadImage100);
-                data.put(UPLOAD_VERSION, sVerApp);
-                data.put(UPLOAD_SINDATOS, "1");
-                // Log.e(TAG_ERROR, "-- Enviando Imagen ");
-
-                return rh.sendPostRequest(UPLOAD_URL, data);
-            }
-        }
-
-        UploadImage ui = new UploadImage();
-        ui.execute(_idpromotor, _latitud, _longitud, _fechahora, _idoperacion, _idusuario, _idruta, _imagen);
-    }
 
     // **********************************
     // Obtiene datos para subir foto de la tabla almacenfotos

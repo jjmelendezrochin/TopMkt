@@ -58,6 +58,7 @@ public class Foto extends AppCompatActivity {
     // TODO PhotoUpload/upload_errores.php
 
     public static final String UPLOAD_URL = TAG_SERVIDOR + "/PhotoUpload/upload1.php";  // Usado para pruebas
+    public static final String UPLOAD_URL_O = TAG_SERVIDOR + "/PhotoUpload/upload1_o.php";  // Usado para pruebas
     public static final String UPLOAD_ERRORES = TAG_SERVIDOR + "/PhotoUpload/upload_errores.php";
 
     public static final String UPLOAD_IDPROMOTOR = "idpromotor";

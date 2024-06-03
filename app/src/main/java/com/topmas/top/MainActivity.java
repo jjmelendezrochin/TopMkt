@@ -921,7 +921,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
-        LocalTime eightPM = LocalTime.of(20, 0); // 20:00 in 24-hour format
+        LocalTime eightPM = LocalTime.of(16, 0); // 20:00 in 24-hour format
 
         return timeToCompare.isAfter(eightPM);
     }
