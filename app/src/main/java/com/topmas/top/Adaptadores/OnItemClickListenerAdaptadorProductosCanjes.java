@@ -107,18 +107,6 @@ public class OnItemClickListenerAdaptadorProductosCanjes implements AdapterView.
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         pName = preferences.getString(TAG_USUARIO, pName);
 
-/*
-        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
-            //log(throwable.getMessage(), thread.getId());
-            funciones.RegistraError(pName, "Producto setDefaultUncaughtExceptionHandler",
-                    (Exception) throwable, OnItemClickListenerAdaptadorProductosCanjes.this, context);
-        });
-
-         */
-
-
-        // Toast.makeText(context.getApplicationContext(),  " idproducto " + idproducto, Toast.LENGTH_LONG).show();
-
         //AlertDialog.Builder builder = new AlertDialog.Builder(context.getApplicationContext());
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);

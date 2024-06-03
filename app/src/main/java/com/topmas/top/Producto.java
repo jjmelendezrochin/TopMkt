@@ -106,15 +106,10 @@ public class Producto extends AppCompatActivity {
         pName = preferences.getString(TAG_USUARIO, pName);
 
         Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
-            //log(throwable.getMessage(), thread.getId());
             funciones.RegistraError(pName, "Producto setDefaultUncaughtExceptionHandler", (Exception) throwable, Producto.this, getApplicationContext());
         });
 
         imagenProducto = findViewById(R.id.imagenproducto1);
-
-        // Log.e(TAG_ERROR, "-- pidproducto " + (pidproducto));
-        // Log.e(TAG_ERROR, "-- pidruta " + (pidruta));
-        // Log.e(TAG_ERROR, "-- pUpc " + (pUpc));
 
         AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
         solicitainventario = almacenaImagen.consulta_configuracion();

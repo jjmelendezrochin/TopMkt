@@ -718,7 +718,12 @@ public class MainActivity extends AppCompatActivity {
                 // Append Server Response To Content String
                 sRespusta = sb.toString();
                 //Log.e(TAG_ERROR, sRespusta);
-
+            } catch (java.net.SocketException e0) {
+                    Error = e0.getMessage();
+                    funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService (java.net.SocketException e0)", e0, MainActivity.this, getApplicationContext());
+                    Log.e(TAG_ERROR, e0.toString());
+                    //Toast.makeText(getApplicationContext(), " Error al obtener los datos del promotor, favor de intentar nuevamente en un sitio con mayor señal" +  Error,Toast.LENGTH_LONG).show();
+                    this.cancel(true);
             } catch (Exception e) {
                 Error = e.getMessage();
                 funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService", e, MainActivity.this, getApplicationContext());

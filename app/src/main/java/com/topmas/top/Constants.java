@@ -129,5 +129,5 @@ public final class Constants {
     // TODO *****************************************
     // Generales
     public static final String TAG_SERVIDOR = "http://www.topmas.mx/TopMas";             // SERVIDOR AMBIENTE PRODUCCION
-    // public static final String TAG_SERVIDOR = "http://www.jjcorp.com.mx/TopMas";            // SERVIDOR AMBIENTE PRUEBAS
+    //public static final String TAG_SERVIDOR = "http://www.jjcorp.com.mx/TopMas";            // SERVIDOR AMBIENTE PRUEBAS
 }

@@ -188,12 +188,13 @@ public class AdaptadorProductosTienda extends BaseAdapter {
                     connection.connect();
                     InputStream input = connection.getInputStream();
                     return BitmapFactory.decodeStream(input);
+                } catch (java.net.ConnectException e0) {
+                    funciones.RegistraError(pName, "AdaptadorProductosTienda, MuestraImagen (java.net.ConnectException)", e0, context, context);
                 } catch (FileNotFoundException e1) {
                     funciones.RegistraError(pName, "AdaptadorProductosTienda, MuestraImagen (FileNotFoundException)", e1, context, context);
                 } catch (Exception e) {
                     funciones.RegistraError(pName, "AdaptadorProductosTienda, MuestraImagen", e, context, context);
                 }
-
                 return null;
             }
 

@@ -102,7 +102,6 @@ public class Foto extends AppCompatActivity {
     private double pLatitud = 0;
     private double pLongitud = 0;
     private int iResp=0;            // Es el id de la tabla almacenfoto de la foto recien subida
-
     static final int REQUEST_IMAGE_CAPTURE = 1;
     ImageView imagenFoto;
     Button imgizq;
@@ -319,6 +318,11 @@ public class Foto extends AppCompatActivity {
                     BitmapDrawable drawable = (BitmapDrawable) imagenFoto.getDrawable();
                     Bitmap bitmap = drawable.getBitmap();
                 }
+                catch (java.lang.ClassCastException e0){
+                    funciones.RegistraError(idUsuario, "Foto,btnSubir.setOnClickListener", e0, Foto.this, getApplicationContext());
+                    Toast.makeText(getApplicationContext(), "Error al tomar la foto, favor de intentar nuevamente", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 catch( java.lang.NullPointerException e)
                 {
                     funciones.RegistraError(idUsuario, "Foto,btnSubir.setOnClickListener", e, Foto.this, getApplicationContext());
@@ -326,9 +330,24 @@ public class Foto extends AppCompatActivity {
                     return;
                 }
 
-                if(pLatitud==0 || idUsuario.length()==0 || pLongitud==0)
+                // *****************************
+                // Verifica Latitud y Longitud
+                if (pLatitud==0 || pLongitud==0){
+                    Localizacion loc = new Localizacion();
+                    pLatitud = Double.parseDouble(loc.sLatitud);
+                    pLatitud = Double.parseDouble(loc.sLongitud);
+                }
+
+
+                if (pLatitud==0 || pLongitud==0){
+                    Toast.makeText(getApplicationContext(),"No hay latitud, longitud " + String.valueOf(idUsuario) + ", Longitud: " + String.valueOf(pLongitud) + ", Latitud: " + String.valueOf(pLatitud)  + " intente nuevamente",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                if(idUsuario.isEmpty())
                 {
-                    Toast.makeText(getApplicationContext(),"No hay latitud, longitud o usuario, idUsuario: " + String.valueOf(idUsuario) + ", Longitud: " + String.valueOf(pLongitud) + ", Latitud: " + String.valueOf(pLatitud)  + " cierre la app e intente nuevamente",
+                    Toast.makeText(getApplicationContext(),"idUsuario: " + String.valueOf(idUsuario) + ", cierre la app e intente nuevamente",
                             Toast.LENGTH_LONG).show();
                 }
                 else {
@@ -344,6 +363,11 @@ public class Foto extends AppCompatActivity {
                     }
                     else{
                         if (funciones.RevisarConexion(getApplicationContext())) {
+                            if (pLatitud==0 || pLongitud==0){
+                                Localizacion loc = new Localizacion();
+                                pLatitud = Double.parseDouble(loc.sLatitud);
+                                pLatitud = Double.parseDouble(loc.sLongitud);
+                            }
                             uploadImage();
                         }
                         else{
@@ -508,7 +532,7 @@ public class Foto extends AppCompatActivity {
                 String versionName = BuildConfig.VERSION_NAME;
                 String sVerApp =  versionName + ":" + versionCode;
 
-                /**/
+                /*
                 Log.e(TAG_ERROR, String.valueOf(idpromotor));
                 Log.e(TAG_ERROR, String.valueOf(pLatitud));
                 Log.e(TAG_ERROR, String.valueOf(pLongitud));
@@ -517,6 +541,7 @@ public class Foto extends AppCompatActivity {
                 Log.e(TAG_ERROR, String.valueOf(idRuta));
                 Log.e(TAG_ERROR, fechahora);
                 Log.e(TAG_ERROR, UPLOAD_URL);
+                */
 
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));

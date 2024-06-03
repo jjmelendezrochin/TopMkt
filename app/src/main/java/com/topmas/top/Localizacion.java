@@ -13,8 +13,8 @@ import java.util.List;
 /* Aqui empieza la Clase Localizacion */
 public class Localizacion implements LocationListener {
     private static final String TAG_GEOPOSICION = "GEOPOSICION";
-    private String sLatitud = "";
-    private String sLongitud = "";
+    public String sLatitud = "";
+    public String sLongitud = "";
 
 
     MainActivity mainActivity;

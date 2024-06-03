@@ -263,10 +263,11 @@ public class Incidencia extends AppCompatActivity {
             if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == RESULT_OK && data != null) {
                 Uri selectedImageUri = data.getData();
                 imageView.setImageURI(selectedImageUri);
+                imageView = findViewById(R.id.imageClipboard);
+                imageView.setVisibility(View.VISIBLE);
 
                 platitud = usr.getLatitud();
                 plongitud = usr.getLongitud();
-
 
                 // ***************************************
                 // Obtiene el nombre del usuario en y promotor las preferencias
@@ -282,6 +283,7 @@ public class Incidencia extends AppCompatActivity {
                 BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
                 Bitmap bitmap = drawable.getBitmap();
                 // ***********************
+
                 // Guardar la imagen despues de tomarla
                 iFoto = almacenaImagen.guardaFotos(pidPromotor, platitud, plongitud, fechahora.trim(), idoperacion, idUsuario, pidRuta, bitmap);
                 Toast.makeText(getApplicationContext(), "Foto Guardada", LENGTH_LONG).show();
