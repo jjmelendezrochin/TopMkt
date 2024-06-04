@@ -21,17 +21,14 @@ import static com.topmas.top.Constants.DATABASE_NAME;
 import static com.topmas.top.Constants.DATABASE_VERSION;
 import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_ACTIVIDADBTL;
-import static com.topmas.top.Constants.TAG_APLICA;
 import static com.topmas.top.Constants.TAG_CANJES;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_DISTANCIA;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_IDEMOSTRADOR;
 import static com.topmas.top.Constants.TAG_IDEMPAQUE;
-import static com.topmas.top.Constants.TAG_IDEMPRESA;
 import static com.topmas.top.Constants.TAG_IDOBS;
 import static com.topmas.top.Constants.TAG_IDPRODUCTO;
-import static com.topmas.top.Constants.TAG_IDPROMOCION;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
 import static com.topmas.top.Constants.TAG_IEMPLAYE;
@@ -76,12 +73,9 @@ import static com.topmas.top.Foto.UPLOAD_SERIE;
 import static com.topmas.top.Foto.UPLOAD_SINDATOS;
 import static com.topmas.top.Foto.UPLOAD_TAMANIOPANTALLA;
 import static com.topmas.top.Foto.UPLOAD_UID;
-import static com.topmas.top.Foto.UPLOAD_URL;
-import static com.topmas.top.Foto.UPLOAD_URL_O;
 import static com.topmas.top.Foto.UPLOAD_USER_VALUE;
 import static com.topmas.top.Foto.UPLOAD_USUARIO;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
-import static com.topmas.top.Promocion.PROMOCION_URL;
 
 import android.content.Context;
 import android.content.Intent;
@@ -91,6 +85,7 @@ import android.database.Cursor;
 import android.database.CursorWindow;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -99,7 +94,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -107,17 +101,20 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
+
 import com.topmas.top.Objetos.oCanje;
 import com.topmas.top.Objetos.oInfoDispositivo;
 import com.topmas.top.Objetos.oObs;
 import com.topmas.top.Objetos.oProducto;
 import com.topmas.top.Objetos.oPromocion;
+import com.topmas.top.OffLine.CompetenciaPromocion;
+import com.topmas.top.OffLine.Errores;
 import com.topmas.top.OffLine.Fotos;
 import com.topmas.top.OffLine.Incidencias;
+import com.topmas.top.OffLine.PreciosCambiados;
+import com.topmas.top.OffLine.Promocion;
+import com.topmas.top.OffLine.Competencia;
+import com.topmas.top.OffLine.Caducidad;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -144,6 +141,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     Usuario usr = new Usuario();
     String idUsuario;
     int idSeleccionado = 0;
+    int idcompetencia = 0;
+    int idcaducidad = 0;
+    int idcompetenciapromo = 0;
+    int id = 0;
+    int _id = 0;
+    int idpro = 0;
 
     // **********************************
     // Constuctor
@@ -292,6 +295,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         // Vista vw_producto_ruta_fecha
         String sSql8 = "Create table vw_producto_ruta_fecha" +
                 "(" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "idproducto INTEGER," +
                 "idruta INTEGER," +
                 "idpromotor INTEGER," +
@@ -349,6 +353,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         // TODO Tabla de promociones_tiendas
         String sSql12 = "Create table promociones_tiendas" +
                 "(" +
+                "idpro INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "idpromocion INTEGER," +
                 "idpromotor INTEGER," +
                 "idruta INTEGER," +
@@ -781,9 +786,6 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         sSql = "Select count(*) from competencia " +
                 "  where idfoto = '" + _idfoto +
                 "' and cast(fecha as date)  = cast(CURRENT_DATE as date);";
-
-        // Log.e(TAG_INFO, "sSql " + sSql);
-        db.beginTransaction();
         try {
 
             cursor = db1.rawQuery(sSql, null);
@@ -805,20 +807,14 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         " values ('" + _producto + "','" + _precio + "','" +  _presentacion + "','" + _idruta + "', '" + _idpromotor +
                         "','" + _idempaque +"','" + _demostrador +"','" + _exhibidor + "','" + _emplaye +"','" + _actividadbtl+"','" + _canjes + "','" + _idfoto + "',  CURRENT_DATE);";
             }
-
+            // Log.e(TAG_INFO, sSql);
             db.execSQL(sSql);
-            db.setTransactionSuccessful();
             return 1;
         } catch (Exception e) {
             this.inserta_error1(idUsuario, e, "inserta_competencia" );
             String Resultado = e.getMessage();
-            // Toast.makeText(this.contexto, ERROR_FOTO + " Error al insertar en la tabla competencia " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
-            // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
-            db.endTransaction();
-            // db1.close();
-            // db.close();
         }
     }
 
@@ -2276,9 +2272,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String Resultado = ex.getMessage();
             Toast.makeText(this.contexto, ERROR_FOTO + " Error al borrar la foto " + Resultado, Toast.LENGTH_LONG).show();
             return idfoto;
-            // Log.e(TAG_ERROR, ex.getMessage());
         } finally {
-            // db.close();
         }
     }
 
@@ -2313,10 +2307,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String Resultado = ex.getMessage();
             Toast.makeText(this.contexto, ERROR_FOTO + " Error al borrar la foto enviada " + Resultado, Toast.LENGTH_LONG).show();
             return idfoto;
-            // Log.e(TAG_ERROR, ex.getMessage());
         } finally {
-            // db.endTransaction();
-            // db.close();
         }
     }
 
@@ -3028,13 +3019,17 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int _invinicial;
         int _invfinal;
         int _idobs;
+        int _id;
         int i = 0;
 
         SQLiteDatabase db = getReadableDatabase();
         SQLiteDatabase db1 = getWritableDatabase();
-        String sSql = "   Select distinct idruta, idproducto, idpromotor,  precioreal, invinicial, invfinal, idobs " +
+        String sSql = "   Select distinct idruta, idproducto, idpromotor,  precioreal, invinicial, invfinal, idobs, id " +
                         " from vw_producto_ruta_fecha " +
-                        " where mod = 1 order by fda asc limit 1;";
+                        " where mod = 1 " +
+                        " and id > " + this.id +
+                        " order by fda asc limit 1;";
+        // Log.e(TAG_INFO, sSql);
 
         try {
             Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
@@ -3054,25 +3049,23 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _invinicial = cursor.getInt(4);
                 _invfinal = cursor.getInt(5);
                 _idobs = cursor.getInt(6);
+                _id = cursor.getInt(7);
 
-                // *******************
                 // Subir imagen
-                subirPreciosCambiados(
+                PreciosCambiados precios = new PreciosCambiados();
+                precios.subirPreciosCambiados(
+                        contexto,
                         String.valueOf(_idruta),
                         String.valueOf(_idproducto),
                         String.valueOf(_idpromotor),
                         String.valueOf(_precioreal),
                         String.valueOf(_invinicial),
                         String.valueOf(_invfinal),
-                        String.valueOf(_idobs)
+                        String.valueOf(_idobs),
+                        String.valueOf(_id)
                 );
+                this.id = _id;
                 i++;
-                // ******************************
-                // Borrando el registro recien colocado
-                String sAct = "  Delete from  vw_producto_ruta_fecha " +
-                        " where  idproducto = '" + _idproducto + "' " + " and idpromotor = '" + _idpromotor + "' " +
-                       " and idruta = '" + _idruta + "' and DATE(fda) = DATE(CURRENT_DATE)";
-                db1.execSQL(sAct);
                 // *****************************
                 cursor.moveToNext();
             }
@@ -3081,7 +3074,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         } catch (Exception e) {
             String Resultado = e.getMessage();
             this.inserta_error1(idUsuario, e, "ColocaPreciosCambiados()" );
-            Toast.makeText(this.contexto, " E2 " + Resultado, Toast.LENGTH_LONG).show();
+
             return 0;
             // Log.e(TAG_ERROR,Resultado);
             // Por si hay una excepcion
@@ -3091,6 +3084,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // db1.close();
         }
     }
+
 
     //***********************
     // Upload image function
@@ -3151,6 +3145,20 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         subirPreciosCambiados subirprecios = new subirPreciosCambiados();
         subirprecios.execute(_idruta, _idproducto,  _idpromotor, _precioreal, _invinicial, _invfinal, _idobs);
     }
+
+    // ***********************************
+    // Función que Borra_vw_producto_ruta_fecha
+    public void Borra_vw_producto_ruta_fecha(int _id)
+    {
+        SQLiteDatabase db1 = getWritableDatabase();
+        // ******************************
+        // Borrando el registro recien colocado
+        String sAct = "  Delete from  vw_producto_ruta_fecha " +
+                " where  id = '" + _id + "'";
+        // Log.e(TAG_INFO, sAct);
+        db1.execSQL(sAct);
+    }
+
 
     // **********************************
     // Obtiene datos para subir foto de la tabla almacenfotos de los datos de la competencia
@@ -3260,13 +3268,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int _idfoto;
 
         SQLiteDatabase db = getReadableDatabase();
-        SQLiteDatabase db1 = getWritableDatabase();
 
         String sSql = "Select distinct af.id, af.idpromotor, af.latitud, af.longitud, af.fechahora, af.idoperacion, af.idusuario, af.idruta, af.imagen  " +
                 " , c.producto, c.precio, c.presentacion, c.idempaque, c.demostrador, " +
                 " c.exhibidor, c.emplaye, c.actividadbtl, c.canjes, c.idcompetencia, c.idfoto " +
                 " from almacenfotos af inner join competencia c on af.id = c.idfoto" +
-                " where af.idoperacion=5 " +
+                " where af.idoperacion=5 and c.idcompetencia > " + this.idcompetencia +
                 " order by af.id asc limit 1;";
         // Log.e(TAG_ERROR, sSql);
 
@@ -3304,7 +3311,9 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
                 // *******************
                 // Subir imagen
-                uploadImagenCompetencia(
+                Competencia competencia = new Competencia();
+                competencia.uploadImagenCompetencia(
+                        contexto,
                         String.valueOf(_idpromotor),
                         String.valueOf(_latitud),
                         String.valueOf(_longitud),
@@ -3321,15 +3330,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         String.valueOf(_exhibidor),
                         String.valueOf(_emplaye),
                         String.valueOf(_actividadbtl),
-                        String.valueOf(_canjes)
+                        String.valueOf(_canjes),
+                        String.valueOf(_id),
+                        String.valueOf(_idcompetencia)
                 );
+                this.idcompetencia = _idcompetencia;
                 i++;
-                // *****************************
-                // Borrando el registro recien colocado
-                this.BorraFotoEnviada(_id);
-                String sBorrado0 = "Delete from competencia where idcompetencia = " + _idcompetencia + ";";
-                db1.execSQL(sBorrado0);
-                // *****************************
                 cursor.moveToNext();
             }
             cursor.close();
@@ -3339,110 +3345,22 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             this.inserta_error1(idUsuario, e, "ColocaCompetencia()" );
             Toast.makeText(this.contexto,  "E3 " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
-            // Log.e(TAG_ERROR,Resultado);
-            // Por si hay una excepcion
         } finally {
-            // assert cursor != null;
-            // db1.close();
-            // db.close();
         }
     }
 
-    //***********************
-    // Upload image Competencia function
-    public void uploadImagenCompetencia(
-            String _idpromotor,
-            String _latitud,
-            String _longitud,
-            String _fechahora,
-            String _idoperacion,
-            String _idusuario,
-            String _idruta,
-            String _imagen,
-            String _producto,
-            String _precio,
-            String _presentacion,
-            String _idempaque,
-            String _demostrador,
-            String _exhibidor,
-            String _emplaye,
-            String _actividadbtl,
-            String _canjes
-    ) {
-        class UploadImageCompetencia extends AsyncTask<String, Void, String> {
-
-            private RequestHandler rh = new RequestHandler();
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-            }
-
-
-            @Override
-            protected String doInBackground(String... params) {
-                String idpromotor = params[0];
-                String latitud = params[1];
-                String longitud = params[2];
-                String fechahora = params[3];
-                String idoperacion = params[4];
-                String idusuario = params[5];
-                String idruta = params[6];
-                String imagen100 = params[7];
-                String producto = params[8];
-                String precio = params[9];
-                String presentacion = params[10];
-                String idEmpaque = params[11];
-                String demostrador = params[12];
-                String exhibidor = params[13];
-                String emplaye = params[14];
-                String actividadbtl = params[15];
-                String canjes = params[16];
-
-                String uploadImage100 = imagen100;
-
-                HashMap<String, String> data = new HashMap<>();
-
-                int versionCode = BuildConfig.VERSION_CODE;
-                String versionName = BuildConfig.VERSION_NAME;
-                String sVerApp = versionName + ":" + versionCode;
-
-                data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
-                data.put(UPLOAD_LATITUD, String.valueOf(latitud));
-                data.put(UPLOAD_LONGITUD, String.valueOf(longitud));
-                data.put(UPLOAD_IDUSUARIO, idusuario);
-                data.put(UPLOAD_IDOPERACION, String.valueOf(idoperacion));
-                data.put(UPLOAD_IDRUTA, String.valueOf(idruta));
-                data.put(UPLOAD_FECHAHORA, fechahora);
-                data.put(UPLOAD_IMAGEN, uploadImage100);
-                data.put(UPLOAD_VERSION, sVerApp);
-                data.put(UPLOAD_SINDATOS, "1");
-
-                data.put(TAG_producto, String.valueOf(producto));
-                data.put(TAG_PRECIO, String.valueOf(precio));
-                data.put(TAG_PRESENTACION, String.valueOf(presentacion));
-                data.put(TAG_IDEMPAQUE, String.valueOf(idEmpaque));
-
-                data.put(TAG_IDEMOSTRADOR, String.valueOf(demostrador));
-                data.put(TAG_IEXHIBIDOR, String.valueOf(exhibidor));
-                data.put(TAG_IEMPLAYE, String.valueOf(emplaye));
-                data.put(TAG_ACTIVIDADBTL, String.valueOf(actividadbtl));
-                data.put(TAG_CANJES, String.valueOf(canjes));
-
-                return rh.sendPostRequest(UPLOAD_COMPETENCIA,data);
-
-            }
-        }
-
-        UploadImageCompetencia ui = new UploadImageCompetencia();
-        ui.execute(_idpromotor, _latitud, _longitud, _fechahora, _idoperacion, _idusuario, _idruta, _imagen,
-                _producto, _precio, _presentacion, _idempaque,_demostrador, _exhibidor,_emplaye, _actividadbtl,_canjes);
+    // **********************
+    // Borra competencia
+    public void Borrar_Competencia(int _id, int _idcompetencia){
+        SQLiteDatabase db1 = getWritableDatabase();
+        // *****************************
+        // Borrando el registro recien colocado
+        this.BorraFotoEnviada(_id);
+        String sBorrado0 = "Delete from competencia where idcompetencia = " + _idcompetencia + ";";
+        db1.execSQL(sBorrado0);
+        // *****************************
     }
+
 
     // **********************
     // Muestra elementos almacenados
@@ -3499,10 +3417,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String _seccion;
         String _error;
         String _fechahora;
+        String _id;
 
         SQLiteDatabase db = getReadableDatabase();
-        SQLiteDatabase db1 = getWritableDatabase();
-        String sSql = "Select fabricante, marca, modelo, board ,hardware ,serie ,uid ,android_id ,resolucion ,tamaniopantalla ,densidad ,bootloader ,user_value ,host_value ,version ,api_value ,build_id ,build_time ,fingerprint ,usuario, seccion, error ,fechahora from errores where procesado = 0;";
+        String sSql = "   Select fabricante, marca, modelo, board ,hardware ,serie ,uid ,android_id ,resolucion ,tamaniopantalla ,densidad ,bootloader" +
+                        " ,user_value ,host_value ,version ,api_value ,build_id ,build_time ,fingerprint ,usuario, seccion, error ,fechahora, _id " +
+                        " from errores where procesado = 0 and _id > " + this._id ;
 
         // Log.e(TAG_ERROR, sSql);
         Cursor cursor;
@@ -3534,8 +3454,11 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _seccion= cursor.getString(20);
                 _error= cursor.getString(21);
                 _fechahora= cursor.getString(22);
+                _id= cursor.getString(23);
 
-                cargaErrores(
+                Errores errores = new Errores();
+                errores.cargaErrores(
+                        contexto,
                         _fabricante,
                         _marca,
                         _modelo,
@@ -3558,155 +3481,36 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         _usuario,
                         _seccion,
                         _error,
-                        _fechahora
+                        _fechahora,
+                        _id
                 );
                 i++;
-
+                this._id = Integer.parseInt(_id);
                 cursor.moveToNext();
             }
             cursor.close();
-            // *****************************
-            // Borrando el registro recien colocado
 
-            String sBorrado = "Delete from errores where procesado = 0;";
-            db1.execSQL(sBorrado);
-            // Log.e(TAG_ERROR, sBorrado);
-            // *****************************
             return i;
         } catch (Exception e) {
             String Resultado = e.getMessage();
             //Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar errores " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
-            // assert cursor != null;
-            // db.close();
-            // db1.close();
         }
     }
 
-    //***********************
-    // Función utilizada para guardar los errores de la App
-    private void cargaErrores(
-            String _fabricante,
-            String _marca,
-            String _modelo,
-            String _board,
-            String _hardware,
-            String _serie,
-            String _uid,
-            String _android_id,
-            String _resolucion,
-            String _tamaniopantalla,
-            String _densidad,
-            String _bootloader,
-            String _user_value,
-            String _host_value,
-            String _version,
-            String _api_value,
-            String _build_id,
-            String _build_time,
-            String _fingerprint,
-            String _usuario,
-            String _seccion,
-            String _error,
-            String _fechahora
-    )
-    {
-        class EstableceErrores extends AsyncTask<String, Void, String> {
-
-            private RequestHandler rh = new RequestHandler();
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-                HashMap<String, String> data = new HashMap<>();
-                String  fabricante= params[0];
-                String  marca= params[1];
-                String  modelo= params[2];
-                String  board= params[3];
-                String  hardware= params[4];
-                String  serie= params[5];
-                String  uid= params[6];
-                String  android_id= params[7];
-                String  resolucion= params[8];
-                String  tamaniopantalla= params[9];
-                String  densidad= params[10];
-                String  bootloader= params[11];
-                String  user_value= params[12];
-                String  host_value= params[13];
-                String  version= params[14];
-                String  api_value= params[15];
-                String  build_id= params[16];
-                String  build_time= params[17];
-                String  fingerprint= params[18];
-                String  usuario= params[19];
-                String  seccion = params[20];
-                String  error= params[21];
-                String  fechahora= params[22];
-
-                data.put(UPLOAD_FABRICANTE, fabricante);
-                data.put(UPLOAD_MARCA,marca);
-                data.put(UPLOAD_MODELO,modelo);
-                data.put(UPLOAD_BOARD,board);
-                data.put(UPLOAD_HARDWARE,hardware);
-                data.put(UPLOAD_SERIE,serie);
-                data.put(UPLOAD_UID,uid);
-                data.put(UPLOAD_ANDROID_ID,android_id);
-                data.put(UPLOAD_RESOLUCION,resolucion);
-                data.put(UPLOAD_TAMANIOPANTALLA,tamaniopantalla);
-                data.put(UPLOAD_DENSIDAD,densidad);
-                data.put(UPLOAD_BOOTLOADER,bootloader);
-                data.put(UPLOAD_USER_VALUE,user_value);
-                data.put(UPLOAD_HOST_VALUE,host_value);
-                data.put(UPLOAD_VERSION,version);
-                data.put(UPLOAD_API_VALUE,api_value);
-                data.put(UPLOAD_BUILD_ID,build_id);
-                data.put(UPLOAD_BUILD_TIME,build_time);
-                data.put(UPLOAD_FINGERPRINT,fingerprint);
-                data.put(UPLOAD_USUARIO,usuario);
-                data.put(UPLOAD_SECCION,seccion);
-                data.put(UPLOAD_ERROR,error);
-                data.put(UPLOAD_FECHAHORA,fechahora);
-
-                return rh.sendPostRequest(UPLOAD_ERRORES,data);
-            }
-        }
-
-        EstableceErrores ui = new EstableceErrores();
-        ui.execute(
-                _fabricante,
-                _marca,
-                _modelo,
-                _board,
-                _hardware,
-                _serie,
-                _uid,
-                _android_id,
-                _resolucion,
-                _tamaniopantalla,
-                _densidad,
-                _bootloader,
-                _user_value,
-                _host_value,
-                _version,
-                _api_value,
-                _build_id,
-                _build_time,
-                _fingerprint,
-                _usuario,
-                _seccion,
-                _error,
-                _fechahora);
+    // **********************
+    public void Borra_Errores(int _id){
+        // *****************************
+        // Borrando el registro recien colocado
+        SQLiteDatabase db1 = getWritableDatabase();
+        String sBorrado = "Delete from errores where _id = " + _id;
+        db1.execSQL(sBorrado);
+        // Log.e(TAG_ERROR, sBorrado);
+        // *****************************
     }
+
+
 
     // **********************************
     // Obtiene datos para subir foto de la tabla caducidad
@@ -3732,11 +3536,10 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int _idfoto;
 
         SQLiteDatabase db = getReadableDatabase();
-        SQLiteDatabase db1 = getWritableDatabase();
         String sSql = "Select distinct af.id, af.idpromotor, af.latitud, af.longitud, af.fechahora, af.idoperacion, af.idusuario, af.idruta, af.imagen  " +
                 " , c.idproducto, c.lote, c.caducidad, c.piezas, c.idcaducidad, c.idfoto" +
                 " from almacenfotos af inner join caducidad c on af.id = c.idfoto" +
-                " where af.idoperacion=6 " +
+                " where af.idoperacion=6 and c.idcaducidad > " + this.idcaducidad +
                 " order by af.id asc limit 1;";
 
         // Log.e(TAG_ERROR, sSql);
@@ -3765,7 +3568,9 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
 
                 // *******************
                 // Subir imagen
-                cargaCaducidad(
+                Caducidad caducidad = new Caducidad();
+                caducidad.cargaCaducidad(
+                        contexto,
                         String.valueOf(_id),
                         String.valueOf(_idpromotor),
                         String.valueOf(_latitud),
@@ -3778,15 +3583,12 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         String.valueOf(_idproducto),
                         String.valueOf(_lote),
                         String.valueOf(_caducidad),
-                        String.valueOf(_piezas)
+                        String.valueOf(_piezas),
+                        String.valueOf(_idcaducidad)
                 );
+                this.idcaducidad = _idcaducidad;
                 i++;
-                // *****************************
-                // Borrando el registro recien colocado
-                this.BorraFotoEnviada(_idfoto);
-                String sBorrado = "Delete from caducidad where idcaducidad = " + _idcaducidad + ";";
-                db1.execSQL(sBorrado);
-                // *****************************
+
                 cursor.moveToNext();
             }
             cursor.close();
@@ -3796,95 +3598,21 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al consultar caducidad " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
         } finally {
-            // assert cursor != null;
-            // db.close();
-            // db1.close();
         }
     }
 
-    //***********************
-    // Función utilizada para guardar la caducidad del producto
-    private void cargaCaducidad(
-            String _id,
-            String _idpromotor,
-            String _latitud,
-            String _longitud,
-            String _fechahora,
-            String _idoperacion,
-            String _idusuario,
-            String _idruta,
-            String _imagen,
-            String _idproducto,
-            String _lote,
-            String _caducidad,
-            String _piezas
-    )
-    {
-        class EstableceCaducidad extends AsyncTask<String, Void, String> {
 
-            private RequestHandler rh = new RequestHandler();
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-                HashMap<String, String> data = new HashMap<>();
-                String id           = params[0];
-                String idpromotor   = params[1];
-                String latitud      = params[2];
-                String longitud     = params[3];
-                String fechahora    = params[4];
-                String idoperacion   = params[5];
-                String idusuario   = params[6];
-                String idruta       = params[7];
-                String imagen       = params[8];
-                String idproducto  = params[9];
-                String lote        = params[10];
-                String caducidad    = params[11];
-                String piezas       = params[12];
-
-                Calendar c = Calendar.getInstance();
-                //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                //String fechahora1 = sdf.format(fechahora);
-
-                int versionCode = BuildConfig.VERSION_CODE;
-                String versionName = BuildConfig.VERSION_NAME;
-                String sVerApp =  versionName + ":" + versionCode;
-
-                data.put(UPLOAD_idproducto, String.valueOf(idproducto));
-                data.put(UPLOAD_lote, String.valueOf(lote));
-                data.put(UPLOAD_caducidad, caducidad);
-                data.put(UPLOAD_piezas, String.valueOf(piezas));
-
-                data.put(UPLOAD_IDRUTA, String.valueOf(idruta));
-                data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
-                data.put(UPLOAD_LATITUD, String.valueOf(latitud));
-                data.put(UPLOAD_LONGITUD, String.valueOf(longitud));
-                data.put(UPLOAD_IDUSUARIO, idusuario);
-                data.put(UPLOAD_IDOPERACION, idoperacion);
-                //data.put(UPLOAD_FECHAHORA, fechahora1);
-
-                data.put(UPLOAD_IMAGEN, imagen);
-                data.put(UPLOAD_VERSION, sVerApp);
-                data.put(UPLOAD_SINDATOS, "1");
-
-                return rh.sendPostRequest(UPLOAD_CADUCIDAD,data);
-
-            }
-
-        }
-
-        EstableceCaducidad ui = new EstableceCaducidad();
-        ui.execute(_id, _idpromotor, _latitud, _longitud, _fechahora, _idoperacion, _idusuario, _idruta, _imagen, _idproducto, _lote, _caducidad, _piezas);
-
+    // **********************************
+    // Borra caducidad
+    public void Borra_Caducidad(int _idfoto, int _idcaducidad){
+        SQLiteDatabase db1 = getWritableDatabase();
+        // *****************************
+        // Borrando el registro recien colocado
+        this.BorraFotoEnviada(_idfoto);
+        String sBorrado = "Delete from caducidad where idcaducidad = " + _idcaducidad + ";";
+        // Log.i(TAG_INFO, sBorrado);
+        db1.execSQL(sBorrado);
+        // *****************************
     }
 
 
@@ -4020,11 +3748,14 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int _idruta;
         String _fecha;
         int _aplica;
+        int _idpro;
 
         int i = 0;
         SQLiteDatabase db = getReadableDatabase();
-        SQLiteDatabase db1 = getWritableDatabase();
-        String sSql = "Select idpromocion, idpromotor, idruta, fecha, aplica from promociones_tiendas where mod = 1";
+
+        String sSql = " Select idpromocion, idpromotor, idruta, fecha, aplica, idpro " +
+                      " from promociones_tiendas " +
+                      " where mod = 1  and idpro > " + this.idpro;
         Log.e(TAG_ERROR, sSql);
         Cursor cursor;
         cursor = db.rawQuery(sSql, null);
@@ -4038,24 +3769,22 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 _idruta = cursor.getInt(2);
                 _fecha = cursor.getString(3);
                 _aplica = cursor.getInt(4);
+                _idpro = cursor.getInt(5);
 
                 // *******************
                 // Subir imagen
-
-                cargaPromocion(
+                Promocion promocion = new Promocion();
+                promocion.cargaPromocion(
+                        contexto,
                         String.valueOf(_idpromocion),
                         String.valueOf(_idpromotor),
                         String.valueOf("1"),
                         String.valueOf(_idruta),
-                        String.valueOf(_aplica)
+                        String.valueOf(_aplica),
+                        String.valueOf(_idpro)
                 );
                 i++;
-                // *****************************
-                // Borrando el registro recien colocado
-                String sBorrado = "Delete from promociones_tiendas where idpromocion = " + _idpromocion + ";";
-                db1.execSQL(sBorrado);
-                Log.e(TAG_ERROR, sBorrado);
-                // *****************************
+                this.idpro = _idpro;
                 cursor.moveToNext();
             }
             cursor.close();
@@ -4064,62 +3793,23 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             String Resultado = e.getMessage();
             Toast.makeText(this.contexto, ERROR_FOTO + " Error en tabla al obtener promociones " + Resultado, Toast.LENGTH_LONG).show();
             return 0;
-            // Log.e(TAG_ERROR,Resultado);
-            // Por si hay una excepcion
         } finally {
-            // assert cursor != null;
-            // db.close();
-            // db1.close();
         }
     }
 
-    //***********************
-    // Función utilizada para guardar la promoción
-    private void cargaPromocion(
-        String _idpromocion,
-        String _idpromotor,
-        String _idempresa,
-        String _idruta,
-        String _idaplica
-        )
+    // **********************************
+    // Borra Promocienes tiendas
+    public void Borra_Promociones_Tiendas(int _idpromocion)
     {
-        class EstablecePromocion extends AsyncTask<String, Void, String> {
-
-            private RequestHandler rh = new RequestHandler();
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-                HashMap<String, String> data = new HashMap<>();
-                String idpromocion = params[0];
-                String idpromotor = params[1];
-                String idempresa = params[2];
-                String idruta = params[3];
-                String idaplica= params[4];
-
-                data.put(TAG_IDPROMOCION, String.valueOf(idpromocion));
-                data.put(TAG_IDPROMOTOR, String.valueOf(idpromotor));
-                data.put(TAG_IDEMPRESA, String.valueOf(idempresa));
-                data.put(TAG_IDRUTA, String.valueOf(idruta));
-                data.put(TAG_APLICA, String.valueOf(idaplica));
-                return rh.sendPostRequest(PROMOCION_URL, data);
-            }
-
-        }
-
-        EstablecePromocion ui = new EstablecePromocion();
-        ui.execute(_idpromocion, _idpromotor, _idempresa, _idruta, _idaplica);
-
+        SQLiteDatabase db1 = getWritableDatabase();
+        // *****************************
+        // Borrando el registro recien colocado
+        String sBorrado = "Delete from promociones_tiendas where idpromocion = " + _idpromocion + ";";
+        db1.execSQL(sBorrado);
+        Log.e(TAG_ERROR, sBorrado);
+        // *****************************
     }
+
 
     // **********************************
     // TODO Coloca competencia promoción en modo desconectado etapa 1
@@ -4159,6 +3849,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 " from competencia_promocion c  " +
                 " inner join almacenfotos af on af.id = c.idfoto " +
                 " inner join almacenfotos af1 on af1.id = c.idfoto1 " +
+                " where c.idcompetenciapromo > " + this.idcompetenciapromo +
                 " order by c.idcompetenciapromo asc limit 1;";
 
         // Log.e(TAG_ERROR, sSql);
@@ -4194,7 +3885,9 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 // Log.e(TAG_INFO, "ColocaCompetenciaPromocion " + String.valueOf(i));
                 // *******************
                 // Subir imagen
-                cargaCompetenciaPromocion(
+                CompetenciaPromocion competenciaPromocion = new CompetenciaPromocion();
+                competenciaPromocion.cargaCompetenciaPromocion(
+                        contexto,
                         String.valueOf(_idpromotor),
                         String.valueOf(_latitud),
                         String.valueOf(_longitud),
@@ -4216,6 +3909,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                         String.valueOf(_idfoto2),
                         String.valueOf(_idcompetenciapromo)
                 );
+                this.idcompetenciapromo = _idcompetenciapromo;
                 i++;
 
                 // *****************************
@@ -4233,174 +3927,20 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         }
     }
 
-    //***********************
-    // Función utilizada para guardar competencia promoción
-    private void cargaCompetenciaPromocion(
-            String _idpromotor,
-            String _pLatitud,
-            String _pLongitud,
-            String _pName,
-            String _idoperacion,
-            String _idRuta,
-            String _fechahora,
-            String _uploadImage1,
-            String _uploadImage2,
-            String _iconPromo,
-            String _por_participa,
-            String _no_frentes,
-            String _por_descuento,
-            String _comentario,
-            String _idproducto,
-            String _precio,
-            String _sVerApp,
-            String _idfoto1,
-            String _idfoto2,
-            String _idCompetenciaPromo
-    )
-    {
-        class EstableceCompetenciaPromocion extends AsyncTask<String, Void, String> {
 
-            private RequestHandler rh = new RequestHandler();
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
-                // Log.e(TAG_INFO, "Mensaje de borrado " + s);
-
-                // **************************************
-                // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
-                if (s.equals(TAG_CARGA_FOTO_EXITOSA)) {
-                    // Log.e(TAG_INFO, "Fotos a borrar " + _idfoto1 + ", " + _idfoto2 + ", " + _idCompetenciaPromo);
-
-                    int iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
-                    // Log.e(TAG_INFO, "Número de elementos restantes competencia promocion " + iCompetenciaPromocion);
-
-                }
-                else if (s.equals(TAG_CARGA_FOTO_DISTANCIA)) {
-
-                }
-                else{
-
-                }
-
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-                HashMap<String, String> data = new HashMap<>();
-                String idpromotor   = params[0];
-                String pLatitud     = params[1];
-                String pLongitud    = params[2];
-                String idUsuario    = params[3];
-                String idoperacion  = params[4];
-                String idRuta       = params[5];
-                String fechahora    = params[6];
-                String uploadImage1 = params[7];
-                String uploadImage2 = params[8];
-                String iconPromo    = params[9];
-                String por_participa= params[10];
-                String no_frentes   = params[11];
-                String por_descuento  = params[12];
-                String comentario   = params[13];
-                String idproducto   = params[14];
-                String precio       = params[15];
-                String sVerApp      = params[16];
-                String iFoto1       = params[17];
-                String iFoto2       = params[18];
-                String idCompetenciaPromo      = params[19];
-
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(contexto.getApplicationContext());
-                idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
-
-                data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
-                data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
-                data.put(UPLOAD_LONGITUD, String.valueOf(pLongitud));
-                data.put(UPLOAD_IDUSUARIO, idUsuario);
-                data.put(UPLOAD_IDOPERACION, String.valueOf(idoperacion));
-                data.put(UPLOAD_IDRUTA, String.valueOf(idRuta));
-                data.put(UPLOAD_FECHAHORA, fechahora);
-                data.put(UPLOAD_IMAGEN, uploadImage1);
-                data.put(UPLOAD_IMAGEN1, uploadImage2);
-
-                data.put(UPLOAD_CON_SIN_PARTICIPACION, String.valueOf(iconPromo));
-                data.put(UPLOAD_POR_PARTICIPACION, String.valueOf(por_participa));
-                data.put(UPLOAD_NO_FRENTES, String.valueOf(no_frentes));
-                data.put(UPLOAD_POR_DESCUENTO, String.valueOf(por_descuento));
-                data.put(UPLOAD_COMENTARIOS, String.valueOf(comentario));
-                data.put(UPLOAD_IDPRODUCTO, String.valueOf(idproducto));
-                data.put(UPLOAD_PRECIO, String.valueOf(precio));
-
-                data.put(UPLOAD_VERSION, sVerApp);
-                data.put(UPLOAD_SINDATOS, "1");
-
-                // *******************************************
-                /*
-                Log.e(TAG_ERROR, "idpromotor "  + String.valueOf(idpromotor));
-                Log.e(TAG_ERROR, "platitud "  + String.valueOf(pLatitud));
-                Log.e(TAG_ERROR, "plongitud "  + String.valueOf(pLongitud));
-                Log.e(TAG_ERROR, "idUsuario "  + idUsuario);
-                Log.e(TAG_ERROR, "idoperacion "  + String.valueOf(idoperacion));
-                Log.e(TAG_ERROR, "idRuta "  + String.valueOf(idRuta));
-                Log.e(TAG_ERROR, "fechahora "  + fechahora);
-                Log.e(TAG_ERROR, "uploadImage1 "  + uploadImage1);
-                Log.e(TAG_ERROR, "uploadImage2 "  + uploadImage2);
-
-                Log.e(TAG_ERROR, "iconPromo "  + String.valueOf(iconPromo));
-                Log.e(TAG_ERROR, "por_participa "  + String.valueOf(por_participa));
-                Log.e(TAG_ERROR, "no_frentes "  + String.valueOf(no_frentes));
-
-                Log.e(TAG_ERROR, "comentario "  + String.valueOf(comentario));
-                Log.e(TAG_ERROR, "idproducto "  + String.valueOf(idproducto));
-                Log.e(TAG_ERROR, "precio "  + String.valueOf(precio));
-
-                Log.e(TAG_ERROR, "sVerApp "  + sVerApp);
-                Log.e(TAG_ERROR, "UPLOAD_SINDATOS "  + "1");
-                Log.e(TAG_ERROR, "UPLOAD_COMPETENCIA_PROMOCION "  + UPLOAD_COMPETENCIA_PROMOCION);
-                 */
-                // *******************************************
-
-                // Log.e(TAG_ERROR, "Enviando datos");
-                return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION,data);
-            }
-        }
-
-        // *******************************************
-        // Borra los datos antes de mandar para que realice el siguiente proceso
-        BorraFotoEnviada(Integer.valueOf(_idfoto1), Integer.valueOf(_idfoto2));
-        borrar_competencia_promocion(Integer.valueOf(_idfoto1));
-
-        // *******************************************
-        // Log.e(TAG_INFO, "Proceso de envio fuera de linea");
-        EstableceCompetenciaPromocion ui = new EstableceCompetenciaPromocion();
-        ui.execute(_idpromotor, _pLatitud, _pLongitud, _pName, _idoperacion, _idRuta,_fechahora,
-                _uploadImage1, _uploadImage2, _iconPromo, _por_participa, _no_frentes, _por_descuento,
-                _comentario, _idproducto, _precio, _sVerApp,
-                _idfoto1, _idfoto2, _idCompetenciaPromo);
-    }
 
     // **************************
     // Borra competencia promoción
-    public void borrar_competencia_promocion(int _idfoto){
+    public void Borrar_Competencia_Promocion(int _idcompetenciapromocion){
         SQLiteDatabase db1 = getWritableDatabase();
         try{
-        String sBorrado = "Delete from competencia_promocion " +
-                " where idfoto = " + _idfoto + ";";
+        String sBorrado = "Delete from competencia_promocion where idcompetenciapromo = " + _idcompetenciapromocion + ";";
         // Log.e(TAG_INFO, sBorrado);
         db1.execSQL(sBorrado);
         } catch (Exception e) {
             String Resultado = e.getMessage();
-            // Log.e(TAG_ERROR, " Error al borrar competenciapromocion" + Resultado);
-            Toast.makeText(this.contexto, ERROR_FOTO + " Error al borrar competenciapromocion" +
-                    Resultado, Toast.LENGTH_LONG).show();
             return;
         } finally {
-            // db1.close();
         }
     }
 
@@ -5486,5 +5026,29 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         } finally {
             // db.close();
         }
+    }
+
+    // **********************************
+    // Función que consulta el número de registros existentes en la tabla de tiendas
+    public int ObtenerCompetenciaPromocion() {
+            int iResultado = 0;
+            SQLiteDatabase db = getReadableDatabase();
+            String sSql;
+
+            sSql = "Select max(icompetenciapromocion) from competencia_promocion where icompetenciapromo > 0";
+            Cursor cursor = null;
+            try {
+
+                cursor = db.rawQuery(sSql, null);
+                while (cursor.moveToNext()) {
+                    iResultado = cursor.getInt(0);
+                }
+                cursor.close();
+            } catch (Exception e) {
+                String Resultado = e.getMessage();
+            } finally {
+            }
+            //Log.e(TAG_INFO, "Consulta lista tiendas "  + sSql + ", son " + iResultado);
+            return iResultado;
     }
 }

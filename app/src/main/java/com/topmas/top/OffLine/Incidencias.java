@@ -125,8 +125,18 @@ public class Incidencias {
                 // pDialog.dismiss();
                 // Log.e(TAG_INFO, "Valor de resultado de inserción " + s);
                 // **************************************
-                if (s.equals(TAG_CARGA_FOTO_EXITOSA)) {
-                    // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
+                if (s.equals("1")) {
+                    // *****************************
+                    // Borrando el registro recien colocado
+                    // Se debe borrar la foto porque ya se subio
+                    AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
+                    // Log.i(TAG_INFO, "Borrando incidencia " + idinc);
+                    int i = almacenaImagen.BorraIncidencia(Integer.parseInt(idinc));
+                    // *****************************
+                }
+                else{
+                    // No se debe borrar la foto
+                    // Log.i(TAG_INFO, "No se debe borrar foto " + _ifoto);
                 }
                 // **************************************
             }

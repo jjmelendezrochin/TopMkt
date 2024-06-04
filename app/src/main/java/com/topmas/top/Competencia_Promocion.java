@@ -650,13 +650,10 @@ public class Competencia_Promocion extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
                     imagenFoto1.setImageResource(android.R.color.transparent);
                     imagenFoto2.setImageResource(android.R.color.transparent);
-                    // Log.e(TAG_INFO, "Fotos a borrar " + iFoto1 + ", " + iFoto2 + ", " + idCompetenciaPromo);
+                    int idCompetenciaPromo = almacenaImagen.ObtenerCompetenciaPromocion();
+                    Log.e(TAG_INFO, "Fotos a borrar " + iFoto1 + ", " + iFoto2 + ", " + idCompetenciaPromo);
                     almacenaImagen.BorraFotoEnviada(iFoto1, iFoto2);
-                    almacenaImagen.borrar_competencia_promocion(iFoto1);
-
-                    int iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
-                    // Log.e(TAG_INFO, "iCompetenciaPromocion " + iCompetenciaPromocion);
-
+                    almacenaImagen.Borrar_Competencia_Promocion(idCompetenciaPromo);
                 }
                 else if (s.equals(TAG_CARGA_FOTO_DISTANCIA)) {
                     Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();

@@ -921,7 +921,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
-        LocalTime eightPM = LocalTime.of(16, 0); // 20:00 in 24-hour format
+        LocalTime eightPM = LocalTime.of(20, 0); // 20:00 in 24-hour format
 
         return timeToCompare.isAfter(eightPM);
     }
@@ -1159,7 +1159,7 @@ public class MainActivity extends AppCompatActivity {
                 String Resultado = "Se generó el siguiente error : " + Error;
                 //funciones.RegistraError(pName, "listatiendas,ConsultaTiendas 1", Error, MainActivity.this, getApplicationContext());
                 //Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error en el proceso de lectura de datos " +  Resultado,Toast.LENGTH_LONG).show();
-                Log.e(TAG_ERROR, Resultado);
+                // Log.e(TAG_ERROR, Resultado);
             } else {
                 try {
                     JSONObject jsonResponse, jsonChidNode, jsonObjRuta, jsonObjProd, jsonObjProdFto;
@@ -1169,7 +1169,7 @@ public class MainActivity extends AppCompatActivity {
                     assert sRespusta != null;
                     jsonResponse = new JSONObject(sRespusta);
                     jsonarray = jsonResponse.getJSONArray(TAG_RESPUESTA);       // Arreglo
-                    Log.e(TAG_INFO, String.valueOf(jsonarray));
+                    // Log.e(TAG_INFO, String.valueOf(jsonarray));
                     iLongitudArreglo = jsonarray.length();
                     //Log.e(TAG_INFO, "Longitud Arreglo "+String.valueOf(iLongitudArreglo));
 
@@ -1534,6 +1534,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if(iPreciosCambiados>0){
                     i = almacenaImagen.ColocaPreciosCambiados();
+                    // Log.i(TAG_INFO, "Coloca precios cambiados " + String.valueOf(i));
                 }
                 else if(iRegistrosCompetencia>0){
                     // Sube imagenes upload_competencia.php

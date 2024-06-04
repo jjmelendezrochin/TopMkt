@@ -271,11 +271,11 @@ public class Caducidad extends AppCompatActivity {
                         String sfechacaducidad = sdf.format(fechacaducidad);
                         AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
                         int iResultado = almacenaImagen.inserta_caducidad(idproducto, lote,  sfechacaducidad, piezas, idRuta,  idpromotor, iFoto);
-                        //Log.e(TAG_INFO, "Valor de resultado de inserción " + iResultado);
+                        Log.e(TAG_INFO, "Valor de resultado de inserción " + iResultado);
                         if (iResultado>0)
                         {
                             LimpiaCajas();
-                            Toast.makeText(getApplicationContext(), "Dato almacenado",Toast.LENGTH_LONG);
+                            Toast.makeText(getApplicationContext(), "Dato almacenado",Toast.LENGTH_LONG).show();
                             finish();
                         }
                     }
