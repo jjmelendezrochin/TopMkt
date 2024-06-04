@@ -324,8 +324,8 @@ public class listatiendas extends AppCompatActivity {
                 AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
                 int iCuenta = almacenaImagen.ObtenRegistros(0);
                 int iCuentaPreciosCambiados = almacenaImagen.ObtenRegistros(9);
-                int iCuentaPromociones = almacenaImagen.ObtenRegistros(10);
-                int iCuentaRegistrosCompetencia = almacenaImagen.ObtenRegistros(12);
+                int iCuentaRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
+                int iCuentaPromociones = almacenaImagen.ObtenRegistros(12);
                 int iCuentaCaducidad = almacenaImagen.ObtenRegistros(14);
                 int iCuentaErrores = almacenaImagen.ObtenRegistros(16);
                 int iCuentaCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);

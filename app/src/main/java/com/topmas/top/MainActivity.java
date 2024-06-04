@@ -1533,6 +1533,7 @@ public class MainActivity extends AppCompatActivity {
                     i = almacenaImagen.Colocarfoto();
                 }
                 else if(iPreciosCambiados>0){
+                    // Log.e(TAG_INFO, "precios cambiados " + iPreciosCambiados);
                     i = almacenaImagen.ColocaPreciosCambiados();
                 }
                 else if(iRegistrosCompetencia>0){

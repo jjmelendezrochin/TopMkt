@@ -256,6 +256,11 @@ public class Competencia extends AppCompatActivity {
                     // *****************************
                     // Verifica la forma en que subirá los datos
                     if (funciones.RevisarConexion(getApplicationContext())) {
+                        if (pLatitud==0 || pLongitud==0){
+                            Localizacion loc = new Localizacion();
+                            pLatitud = Double.parseDouble(loc.sLatitud);
+                            pLatitud = Double.parseDouble(loc.sLongitud);
+                        }
                         uploadImageCompetencia();
                     } else {
                         AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
@@ -263,7 +268,7 @@ public class Competencia extends AppCompatActivity {
                         // Log.e(TAG_INFO, "* Valor de resultado de inserción  de competencia" + iResultado);
                         if (iResultado>0)
                         {
-                            Toast.makeText(getApplicationContext(), "Dato almacenado",Toast.LENGTH_LONG);
+                            Toast.makeText(getApplicationContext(), "Dato almacenado",Toast.LENGTH_LONG).show();
                             finish();
                         }
                     }
