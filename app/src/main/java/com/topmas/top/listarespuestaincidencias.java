@@ -2,6 +2,7 @@ package com.topmas.top;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.topmas.top.Constants.TAG_DIRECCION;
+import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
 import static com.topmas.top.Constants.TAG_LATITUD;
@@ -12,6 +13,7 @@ import static com.topmas.top.Constants.TAG_USUARIO;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.topmas.top.Objetos.oRespuestaIncidencia;
 
 import java.util.Objects;
 
@@ -43,15 +46,15 @@ public class listarespuestaincidencias extends AppCompatActivity {
 
     // Este numero debe de ser el numero de registros de la tabla
     int iCuentaIncidencias = 1000;
+
     int[] idinc = new int[iCuentaIncidencias];
     String[] fechasdeincidencias = new String[iCuentaIncidencias];
     String[] tiposdeincidencias = new String[iCuentaIncidencias];
     String[] observacionesdeincidencias = new String[iCuentaIncidencias];
-    int[] rutasdeincidencias = new int[iCuentaIncidencias];
-    String[] tiendasdeincidencias = new String[iCuentaIncidencias];
-    String[] direccionesdeincidencias = new String[iCuentaIncidencias];
-    String[] fechasderespuestasincidencias = new String[iCuentaIncidencias];
-    String[] respuestasdeincidencias = new String[iCuentaIncidencias];
+    int[] leida = new int[iCuentaIncidencias];
+
+    int iNumIncidencias = 0;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listarespuestaincidencias);
@@ -66,7 +69,7 @@ public class listarespuestaincidencias extends AppCompatActivity {
 
         //View view = this.findViewById(R.id.LinearLayout);
         lista = findViewById(R.id.lista1);
-        txtBuscar = (findViewById(R.id.txtBuscar));
+        // txtBuscar = (findViewById(R.id.txtBuscar));
 
         Intent i = getIntent();
         pidRuta = i.getIntExtra(TAG_IDRUTA, pidRuta);
@@ -106,70 +109,22 @@ public class listarespuestaincidencias extends AppCompatActivity {
     //************************************
     // Muestra la lista de respuestas de incidencias en el telefono
     public void MuestraRespuestaIncidencias(int pidPromotor) {
-        int iNumIncidencias = almacenaImagen.ObtenRegistros(23);
-        int[] idsinc;
-        String[] fechasincidencias;
-        String[] tipoincidencias;
-        String[] observaciones;
-        int[] idrutas;
-        String[] tiendas;
-        String[] direcciones;
-        String[] fechasrespuestasincidencias;
-        String[] respuestasincidencias;
+        iNumIncidencias = almacenaImagen.ObtenRegistros(23);
+        // oRespuestaIncidencia[] respuestas =  almacenaImagen.obtenRespuestaIncidencias();
 
-        idsinc = almacenaImagen.Obtenidsincidencias(this.pidPromotor);
-        fechasincidencias = almacenaImagen.Obtenfechasincidencias(this.pidPromotor);
-        tipoincidencias = almacenaImagen.Obtentiposincidencias(this.pidPromotor);
-        observaciones = almacenaImagen.Obtenobservacionesincidencias(pidPromotor);
-        idrutas = almacenaImagen.ObtenRutasIncidencias(pidPromotor);
-        tiendas = almacenaImagen.Obtentiendasincidencias(pidPromotor);
-        direcciones = almacenaImagen.Obtendireccionesincidencias(pidPromotor);
-        fechasrespuestasincidencias = almacenaImagen.Obtenfechasrespuestaincidencias(this.pidPromotor);
-        respuestasincidencias = almacenaImagen.Obtenrespuestaincidencias(this.pidPromotor);
-
-        for (int k = 0; k < iNumIncidencias; k++) {
-            idinc[k] = idsinc[k];
-            fechasdeincidencias[k] = fechasincidencias[k];
-            tiposdeincidencias[k] = tipoincidencias[k];
-            observacionesdeincidencias[k] = observaciones[k];
-            rutasdeincidencias[k] = idrutas[k];
-            tiendasdeincidencias[k] = tiendas[k];
-            direccionesdeincidencias[k] = direcciones[k];
-            fechasderespuestasincidencias[k] = fechasrespuestasincidencias[k];
-            respuestasdeincidencias[k] = respuestasincidencias[k];
-        }
         // ******************************
         // Establece la forma de acceso y muestra las tiendas
+        idinc = almacenaImagen.Obtenidsincidencias(this.pidPromotor);
+        leida = almacenaImagen.obtenLeidaincidencias(this.pidPromotor);
+        fechasdeincidencias = almacenaImagen.Obtenfechasincidencias(this.pidPromotor);
+        tiposdeincidencias = almacenaImagen.Obtentiposincidencias(this.pidPromotor);
+        observacionesdeincidencias = almacenaImagen.Obtenobservacionesincidencias(this.pidPromotor);
         MuestraLista();
     }
 
     // **************************
     // Muestra lista después del proceso
     public void MuestraLista() {
-        // Declarar el numero de elementos exacto del areglo
-        int iNumIncidencias = almacenaImagen.ObtenRegistros(23);
-        int[] idinc1                    = new int[iNumIncidencias];
-        String[] fechasdeincidencias1   = new String[iNumIncidencias];
-        String[] tiposdeincidencias1    = new String[iNumIncidencias];
-        String[] observacionesincidencias1 = new String[iNumIncidencias];
-        int[] idrutasincidencias1       = new int[iNumIncidencias];
-        String[] tiendasincidencias1    = new String[iNumIncidencias];
-        String[] direccionesincidencias1 = new String[iNumIncidencias];
-        String[] fechasderespuestasincidencias1    = new String[iNumIncidencias];
-        String[] respuestasincidencias1 = new String[iNumIncidencias];
-
-        for (int k = 0; k < iNumIncidencias; k++) {
-            idinc1[k] = idinc[k];
-            fechasdeincidencias1[k] = "[" + idinc1[k] + "] " + fechasdeincidencias[k];
-            tiposdeincidencias1[k] = tiposdeincidencias[k].toUpperCase();
-            observacionesincidencias1[k] = observacionesdeincidencias[k].toUpperCase();
-            idrutasincidencias1[k] = rutasdeincidencias[k];
-            tiendasincidencias1[k] = tiendasdeincidencias[k].toUpperCase();
-            direccionesincidencias1[k] = direccionesdeincidencias[k].toUpperCase();
-            fechasderespuestasincidencias1[k] = fechasderespuestasincidencias[k].toUpperCase();
-            respuestasincidencias1[k] = respuestasdeincidencias[k].toUpperCase();
-        }
-
         if (iNumIncidencias == 0) {
             Toast.makeText(getApplicationContext(), "Este promotor no tiene respuestas de incidencias",
                     Toast.LENGTH_LONG).show();
@@ -179,15 +134,11 @@ public class listarespuestaincidencias extends AppCompatActivity {
         // Llamada al proceso de asignacion del adaptador a la lista de respuesta de incidencias
         AdaptadorRespuestasIncidencias adaptador = new AdaptadorRespuestasIncidencias(
                 this,
-                idinc1,
-                fechasdeincidencias1,
-                tiposdeincidencias1,
-                observacionesincidencias1,
-                idrutasincidencias1,
-                tiendasincidencias1,
-                direccionesincidencias1,
-                fechasderespuestasincidencias1,
-                respuestasincidencias1
+                idinc,
+                leida,
+                fechasdeincidencias,
+                tiposdeincidencias,
+                observacionesdeincidencias
                 );
         lista.setAdapter(adaptador);
 

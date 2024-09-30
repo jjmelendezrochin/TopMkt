@@ -130,9 +130,12 @@ import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 @SuppressWarnings("WeakerAccess") // Suprime error ACCESS CAN BE PRIVATE
 // TODO Aqui se encuentran todas las funciones de acceso a la base de datos Sqlite
@@ -1563,7 +1566,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String sSql = "Insert into resp_incidencias(idinc, idincidencia, idfoto, idpromotor, idruta, fechahora, observaciones, respuesta, fechahora_respuesta, image, leida)" +
                 "values ('" + _idinc + "','" + _idincidencia + "','" + _idfoto + "','" + _idpromotor + "','" + _idruta + "','" +
                 _fechahora + "','" + _observaciones + "','" + _respuesta + "','" + _fechahora_respuesta + "', '" + _image + "','0');";
-        Log.e(TAG_INFO, "sSql " + sSql);
+        // Log.e(TAG_INFO, "sSql " + sSql);
         // db.beginTransaction();
         try {
             db.execSQL(sSql);
@@ -1573,7 +1576,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         } catch (Exception e) {
             String Resultado = e.getMessage();
             // this.inserta_error1(idUsuario, e, "AlmacenaImagen.inserta_promo" );
-            Log.e(TAG_INFO, "**** Error aqui " + Resultado);
+            // Log.e(TAG_INFO, "**** Error aqui " + Resultado);
             return 0;
         } finally {
             // Log.e(TAG_INFO, "conclusion de transacciòn en la tabla listatiendas");
@@ -2099,6 +2102,31 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         catch (SQLiteException e) {
             Log.e(TAG_ERROR,e.getMessage());
             // Captura el error específico de SQLite
+            if (e.getMessage().contains("no such table: resp_incidencias")) {
+                // ************************************
+                // TODO Tabla resp_incidencias
+                String sSql28 = "Create table resp_incidencias " +
+                        "(" +
+                        "idinc INTEGER," +
+                        "idincidencia int, " +
+                        "idfoto int, " +
+                        "idpromotor int, " +
+                        "idruta int, " +
+                        "fechahora text, " +
+                        "observaciones text, " +
+                        "respuesta text, " +
+                        "fechahora_respuesta text, " +
+                        "image text, " +
+                        "leida int " +
+                        ");";
+                // Log.e(TAG_INFO, sSql28);
+                db.execSQL(sSql28);
+
+                // ************************************
+                // TODO Creaciòn de indice unico en resp_incidencias
+                String sSql29 = "CREATE UNIQUE INDEX idc_resp_incidencias ON resp_incidencias(idinc)";
+                db.execSQL(sSql29);
+            }
             if (e.getMessage().contains("no such table: cat_incidencias")) {
                 // ************************************
                 // TODO Tabla cat_incidencias
@@ -2125,7 +2153,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
                 Log.e(TAG_INFO, sSql27);
                 db.execSQL(sSql27);
             } else {
-                Log.e(TAG_ERROR,"Error generado al consultar tablas");
+                // Log.e(TAG_ERROR,"Error generado al consultar tablas");
             }
          }
          catch (AssertionError e) {
@@ -2579,7 +2607,40 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         int idinc;
         SQLiteDatabase db = getReadableDatabase();
         String sSql;
-        sSql = "Select idinc from resp_incidencias where idpromotor = " + pidpromotor + " order by 1 DESC;";
+        sSql = "Select idinc from resp_incidencias where idpromotor = " + pidpromotor + " order by idinc DESC;";
+        // Log.e(TAG_ERROR, "Consulta " + sSql);
+
+        Cursor cursor = null;
+        int i = 0;
+        try {
+            cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                idinc = cursor.getInt(0);
+                retorno[i] = idinc;
+                i++;
+            }
+            cursor.close();
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            //Toast.makeText(this.contexto, ERROR_FOTO + " Error al obtener las rutas de las tiendas " +  Resultado,Toast.LENGTH_LONG).show();
+        } finally {
+            // assert cursor != null;
+            // db.close();
+        }
+        // Log.e(TAG_ERROR, "Numero de tiendas devueltas " + i);
+        return retorno;
+    }
+
+    // **********************************
+    // Función que obtiene un arreglo de ids de incidencias
+    // TODO Función que obtiene un arreglo de Leida de incidencias
+    public int[] obtenLeidaincidencias(int pidpromotor) {
+        int iNumRespIncidencias = this.ObtenRegistros(23);
+        int[] retorno = new int[iNumRespIncidencias];
+        int idinc;
+        SQLiteDatabase db = getReadableDatabase();
+        String sSql;
+        sSql = "Select leida from resp_incidencias where idpromotor = " + pidpromotor + " order by idinc DESC;";
         // Log.e(TAG_ERROR, "Consulta " + sSql);
 
         Cursor cursor = null;
@@ -2613,7 +2674,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String sSql;
         sSql = "Select  strftime('%d/%m/%Y %H:%M:%S', fechahora) as fecha  from resp_incidencias " +
-                " where idpromotor = " + pidpromotor + " order by 1 DESC";
+                " where idpromotor = " + pidpromotor + " order by idinc DESC";
         // Log.e(TAG_ERROR, "Consulta " + sSql);
 
         Cursor cursor = null;
@@ -2681,7 +2742,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String sSql;
         sSql = "Select ci.descripcion from resp_incidencias ri inner join cat_incidencias ci  on ri.idincidencia  = ci._id " +
-                " where idpromotor = " + pidpromotor + " order by 1 DESC";
+                " where idpromotor = " + pidpromotor + " order by idinc DESC";
         // Log.e(TAG_ERROR, "Consulta " + sSql);
 
         Cursor cursor = null;
@@ -2690,7 +2751,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             cursor = db.rawQuery(sSql, null);
             while (cursor.moveToNext()) {
                 tipo = cursor.getString(0);
-                retorno[i] = tipo;
+                retorno[i] = tipo.toUpperCase();
                 i++;
             }
             cursor.close();
@@ -2713,7 +2774,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String sSql;
         sSql = "Select ri.observaciones from resp_incidencias ri " +
-                " where idpromotor = " + pidpromotor + " order by 1 DESC";
+                " where idpromotor = " + pidpromotor + " order by idinc DESC";
         // Log.e(TAG_ERROR, "Consulta " + sSql);
 
         Cursor cursor = null;
@@ -2722,7 +2783,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             cursor = db.rawQuery(sSql, null);
             while (cursor.moveToNext()) {
                 observacion = cursor.getString(0);
-                retorno[i] = observacion;
+                retorno[i] = observacion.toUpperCase();
                 i++;
             }
             cursor.close();
@@ -2776,7 +2837,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String tienda;
         SQLiteDatabase db = getReadableDatabase();
         String sSql;
-        sSql = "Select l.tienda from resp_incidencias ri INNER JOIN listatiendas l ON ri.idruta = l.idruta where ri.idpromotor = " + pidpromotor + " order by 1 DESC;";
+        sSql = "  Select l.tienda from resp_incidencias ri INNER JOIN listatiendas l ON ri.idruta = l.idruta " +
+                " where ri.idpromotor = " + pidpromotor + " order by 1 DESC;";
         // Log.e(TAG_ERROR, "Consulta " + sSql);
 
         Cursor cursor = null;
@@ -2807,7 +2869,8 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
         String direccioncompleta;
         SQLiteDatabase db = getReadableDatabase();
         String sSql;
-        sSql = "Select l.direccioncompleta from resp_incidencias ri INNER JOIN listatiendas l ON ri.idruta = l.idruta where ri.idpromotor = " + pidpromotor + " order by 1 DESC;";
+        sSql = "  Select l.direccioncompleta from resp_incidencias ri INNER JOIN listatiendas l ON ri.idruta = l.idruta " +
+                " where ri.idpromotor = " + pidpromotor + " order by 1 DESC;";
         // Log.e(TAG_ERROR, "Consulta " + sSql);
 
         Cursor cursor = null;
@@ -3167,20 +3230,24 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     // Función que obtiene la respuesta de las incidencias
     public oRespuestaIncidencia obtenRespuestaIncidencia(int pidinc) {
         String sSql;
-        int pidincidencia;
-        int pidfoto;
-        int pidpromotor;
-        int pidruta;
-        String pfechahora;
-        String pobservaciones;
-        String prespuesta;
-        String pfechahora_respuesta;
-        String pimage;
-        int pleida;
+        int pidincidencia = 0;
+        int pidfoto = 0;
+        int pidpromotor = 0;
+        int pidruta = 0;
+        String pfechahora= "";
+        String pobservaciones= "";
+        String prespuesta= "";
+        String pfechahora_respuesta= "";
+        String pimage= "";
+        String ptienda = "";
+        String pdireccioncompleta= "";
+        int pleida = 0;
 
         SQLiteDatabase db = getReadableDatabase();
-        sSql = "  SELECT idincidencia, idfoto, idpromotor, idruta, fechahora, observaciones, respuesta, fechahora_respuesta, image, leida " +
-                " FROM resp_incidencias ri  where ri.idinc = " + pidinc;
+        sSql = "  Select ri.idinc, ri.idincidencia, ri.idfoto, ri.idpromotor, ri.idruta,  strftime('%d/%m/%Y %H:%M:%S', ri.fechahora)  as fechahora, " +
+                " ri.observaciones, ri.respuesta, strftime('%d/%m/%Y %H:%M:%S',ri.fechahora_respuesta) as fechahora_respuesta, " +
+                " ri.image, ri.leida, l.tienda, l.direccioncompleta " +
+                " from resp_incidencias ri INNER JOIN listatiendas l ON ri.idruta = l.idruta where ri.idinc = " + pidinc;
         Log.e(TAG_ERROR, sSql);
 
         Cursor cursor=null;
@@ -3190,18 +3257,21 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
             // ************************************
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                pidincidencia = Integer.parseInt(cursor.getString(0)) ;
-                pidfoto = Integer.parseInt(cursor.getString(1));
-                pidpromotor = Integer.parseInt(cursor.getString(2));
-                pidruta = Integer.parseInt(cursor.getString(3));
-                pfechahora = cursor.getString(4);
-                pobservaciones = cursor.getString(5);
-                prespuesta = cursor.getString(6);
-                pfechahora_respuesta = cursor.getString(7);
-                pimage = cursor.getString(8);
-                pleida = Integer.parseInt(cursor.getString(9)) ;
+                pidinc = Integer.parseInt(cursor.getString(0)) ;
+                pidincidencia = Integer.parseInt(cursor.getString(1)) ;
+                pidfoto = Integer.parseInt(cursor.getString(2));
+                pidpromotor = Integer.parseInt(cursor.getString(3));
+                pidruta = Integer.parseInt(cursor.getString(4));
+                pfechahora = cursor.getString(5);
+                pobservaciones = cursor.getString(6);
+                prespuesta = cursor.getString(7);
+                pfechahora_respuesta = cursor.getString(8);
+                pimage = cursor.getString(9);
+                pleida = Integer.parseInt(cursor.getString(10)) ;
+                ptienda = cursor.getString(11);
+                pdireccioncompleta = cursor.getString(12) ;
                 objresp = new oRespuestaIncidencia(pidinc, pidincidencia, pidfoto, pidpromotor, pidruta,
-                        pfechahora, pobservaciones, prespuesta, pfechahora_respuesta, pimage, pleida);
+                        pfechahora, pobservaciones, prespuesta, pfechahora_respuesta, pimage, pleida, ptienda, pdireccioncompleta);
                 cursor.moveToNext();
             }
             cursor.close();
@@ -3619,7 +3689,7 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
     public void estableceLeidorespuesta(int idinc){
         SQLiteDatabase db = getWritableDatabase();
         String sql = "Update resp_incidencias set leida = 1 where idinc = '" + idinc + "';";
-        // Log.e(TAG_ERROR, sql);
+        Log.e(TAG_ERROR, sql);
         db.execSQL(sql);
     }
 
@@ -5099,6 +5169,60 @@ public class AlmacenaImagen extends SQLiteOpenHelper {
            return 0;
         } finally {
             // db.close();
+        }
+    }
+
+    // **********************************
+    // TODO Mètodo para obtener el id de la primera notificaciòn no atendida
+    public int obtenNotificacion() {
+        String sSql;
+        Cursor cursor = null;
+        int iRet = 0;
+        SQLiteDatabase db = getReadableDatabase();
+
+        sSql = "Select  IFNULL(count(*),0) as id from resp_incidencias where leida is null or leida = 0;";
+
+        try {
+            cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                iRet = cursor.getInt(0);
+            }
+            cursor.close();
+            return iRet;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            this.inserta_error1(idUsuario, e, "obtenNotificacion" );
+            return iRet;
+        } finally {
+        }
+    }
+
+    // **********************************
+    // TODO Método para consultar la cadena  de canjes por tienda y promotor
+    public String obtenTipoIncidencia(
+            int _idincidencia
+    ) {
+        String sSql;
+        Cursor cursor = null;
+        String sProducto = "";
+        int cantidad = 0;
+        String sRetorno = "";
+        SQLiteDatabase db = getReadableDatabase();
+
+        sSql = "Select ci.descripcion from cat_incidencias ci where _id = " + _idincidencia;
+
+        try {
+            cursor = db.rawQuery(sSql, null);
+            while (cursor.moveToNext()) {
+                sRetorno = cursor.getString(0).toUpperCase();
+            }
+            cursor.close();
+            return sRetorno;
+        } catch (Exception e) {
+            String Resultado = e.getMessage();
+            this.inserta_error1(idUsuario, e, "obtenTipoIncidencia" );
+            return sRetorno;
+        } finally {
         }
     }
 

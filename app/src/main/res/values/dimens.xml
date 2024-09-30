@@ -11,7 +11,7 @@
     <dimen name="margen_incidencia">5dp</dimen>
     <dimen name="margen_arriba">6dp</dimen>
     <dimen name="tamanioletraspincaducidad">8dp</dimen>
-    <dimen name="tamanioletraproductos">16dp</dimen>
+    <dimen name="tamanioletraproductos">16sp</dimen>
     <dimen name="tamaniocajaproductos">40dp</dimen>
     <dimen name="tamaniobotonmenu1">80dp</dimen>
     <dimen name="tamaniobotonmenu0">50dp</dimen>

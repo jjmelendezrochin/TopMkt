@@ -44,7 +44,6 @@
                 android:id="@+id/renglon1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/renglon0"
                 android:layout_marginTop="@dimen/margen_productos"
                 android:orientation="horizontal">
 
@@ -69,7 +68,6 @@
                 android:id="@+id/renglon2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/renglon1"
                 android:layout_marginTop="@dimen/margen_productos"
                 android:orientation="horizontal">
 
@@ -92,7 +90,6 @@
                 android:id="@+id/renglon3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/renglon2"
                 android:layout_marginTop="@dimen/margen_productos"
                 android:orientation="horizontal">
 
@@ -115,7 +112,6 @@
                 android:id="@+id/renglon4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/renglon3"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/margen_productos"
                 android:orientation="horizontal">
@@ -139,7 +135,6 @@
                 android:id="@+id/renglon5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/renglon4"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/margen_productos"
                 android:orientation="horizontal">
@@ -163,7 +158,6 @@
                 android:id="@+id/renglon6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/renglon5"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/margen_productos"
                 android:orientation="horizontal">
@@ -173,14 +167,14 @@
                     android:layout_width="@dimen/tamaniobotonmenu1"
                     android:layout_height="@dimen/tamaniobotonmenu1"
                     android:layout_marginLeft="@dimen/marginstarmenu"
-                    app:srcCompat="@drawable/img_nuevoticket" />
+                    app:srcCompat="@drawable/nuevo_ticket" />
 
                 <ImageView
                     android:id="@+id/imgRespuestaIncidencia"
                     android:layout_width="@dimen/tamaniobotonmenu1"
                     android:layout_height="@dimen/tamaniobotonmenu1"
                     android:layout_marginLeft="30dp"
-                    app:srcCompat="@drawable/baseline_how_to_vote_24" />
+                    app:srcCompat="@drawable/respuesta_ticket" />
 
             </LinearLayout>
 
@@ -188,7 +182,6 @@
                 android:id="@+id/renglon7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/renglon6"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/margen_productos"
                 android:orientation="horizontal">
@@ -208,7 +201,6 @@
                 android:id="@+id/renglon8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/renglon7"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/margen_productos"
                 android:orientation="horizontal">

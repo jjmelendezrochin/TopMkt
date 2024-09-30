@@ -1,43 +1,5 @@
 package com.topmas.top;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Application;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
 import static com.topmas.top.Constants.TAG_ACCESSTOKEN;
 import static com.topmas.top.Constants.TAG_ACTIV;
 import static com.topmas.top.Constants.TAG_ACTIVIDAD;
@@ -62,11 +24,13 @@ import static com.topmas.top.Constants.TAG_FDA;
 import static com.topmas.top.Constants.TAG_FDC;
 import static com.topmas.top.Constants.TAG_FECHAVISITA;
 import static com.topmas.top.Constants.TAG_FINAL;
+import static com.topmas.top.Constants.TAG_FUENTE;
 import static com.topmas.top.Constants.TAG_IDACTIVIDAD;
 import static com.topmas.top.Constants.TAG_IDCADENA;
 import static com.topmas.top.Constants.TAG_IDEMPAQUE;
 import static com.topmas.top.Constants.TAG_IDEMPRESA;
 import static com.topmas.top.Constants.TAG_IDFORMATO;
+import static com.topmas.top.Constants.TAG_IDINC;
 import static com.topmas.top.Constants.TAG_IDOBS;
 import static com.topmas.top.Constants.TAG_IDPRODUCTO;
 import static com.topmas.top.Constants.TAG_IDPRODUCTOFORMATOPRECIO;
@@ -100,12 +64,51 @@ import static com.topmas.top.Constants.TAG_TIENDA;
 import static com.topmas.top.Constants.TAG_UDA;
 import static com.topmas.top.Constants.TAG_UDC;
 import static com.topmas.top.Constants.TAG_UPC;
-import static com.topmas.top.Constants.TAG_USUARIO;
 import static com.topmas.top.Constants.TAG_VERSIONAPP;
 import static com.topmas.top.Constants.TAG_VISTA;
 import static com.topmas.top.Constants.TAG_empaque;
 import static com.topmas.top.Constants.TAG_ruta;
 import static com.topmas.top.Constants.TAG_solicita;
+
+import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class listatiendas extends AppCompatActivity {
 
@@ -120,13 +123,12 @@ public class listatiendas extends AppCompatActivity {
     EditText txtBuscar ;
     String sMensaje="";
 
-    private static Activity context;
     private ProgressDialog pDialog;
     private final Usuario usr = new Usuario();
-    private Funciones funciones = new Funciones();
+    private final Funciones funciones = new Funciones();
     private ListView lista;
-    private int iLongitudArreglo;
-    private int iLongitudArregloTiendas;
+    private  int iLongitudArreglo;
+    // private int iLongitudArregloTiendas;
     private AlmacenaImagen almacenaImagen;
     private int iNumTiendas = 0;
     // private ProgressBar progressBar;
@@ -212,18 +214,21 @@ public class listatiendas extends AppCompatActivity {
     // LinearLayout LayoutProgreso;
     // LinearLayout LayoutProgreso1;
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listatiendas);
-        context = listatiendas.this;
         //View view = this.findViewById(R.id.LinearLayout);
         lista =  findViewById(R.id.lista1);
         txtBuscar = findViewById(R.id.txtBuscar);
-        // progressBar =  findViewById(R.id.progressBar);
-        // textoAvance = findViewById(R.id.textoAvance);
-        // LayoutProgreso = findViewById(R.id.LayoutProgreso);
-        // LayoutProgreso1 = findViewById(R.id.LayoutProgreso1);
+
+        if (ContextCompat.checkSelfPermission(listatiendas.this,
+                Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(listatiendas.this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+        }
 
         Intent i = getIntent();
         pidPromotor = i.getIntExtra(TAG_IDPROMOTOR,pidPromotor );
@@ -235,9 +240,7 @@ public class listatiendas extends AppCompatActivity {
         pExpira = i.getStringExtra(TAG_EXPIRESIN);
         pConsultaenWeb = i.getIntExtra(TAG_CONSULTAENWEB, pConsultaenWeb);
 
-        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
-            funciones.RegistraError(pName, "listatiendas setDefaultUncaughtExceptionHandler", (Exception) throwable, listatiendas.this, getApplicationContext());
-        });
+        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> funciones.RegistraError(pName, "listatiendas setDefaultUncaughtExceptionHandler", (Exception) throwable, listatiendas.this, getApplicationContext()));
 
         // Obtiene el idpromotor si no trae este valor
         // Log.e(TAG_ERROR, "* Promotor " + pidPromotor);
@@ -253,20 +256,12 @@ public class listatiendas extends AppCompatActivity {
             AlertDialog.Builder alerta = new AlertDialog.Builder(listatiendas.this);
             alerta.setMessage(sMensaje)
                     .setCancelable(false)
-                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent main = new Intent(getApplicationContext(),
-                                    MainActivity.class);
-                            startActivity(main);
-                        }
+                    .setPositiveButton("Si", (dialog, which) -> {
+                        Intent main = new Intent(getApplicationContext(),
+                                MainActivity.class);
+                        startActivity(main);
                     })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
+                    .setNegativeButton("No", (dialog, which) -> dialog.cancel());
 
             try {
                 alerta.show();
@@ -305,7 +300,7 @@ public class listatiendas extends AppCompatActivity {
         // Numero de tiendas en la tabla
         almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
         iNumTiendas = almacenaImagen.ObtenRegistrosTiendas(pidPromotor, sTienda);
-        iLongitudArregloTiendas= iNumTiendas;
+        // iLongitudArregloTiendas= iNumTiendas;
         // Log.e(TAG_ERROR,"** Número de tiendas " + iLongitudArregloTiendas );
 
         // *****************************
@@ -334,7 +329,7 @@ public class listatiendas extends AppCompatActivity {
 
                 if (iPendientes>0) {
                     AlertDialog.Builder alerta = new AlertDialog.Builder(listatiendas.this);
-                    String sMensaje = "Usted tiene " + "\n" + String.valueOf(iCuenta) + " imágenes almacenadas "  + "\n" +
+                    String sMensaje = "Usted tiene " + "\n" + iCuenta + " imágenes almacenadas "  + "\n" +
                             iCuentaPreciosCambiados + " precios cambiados, "  + "\n" +
                             iCuentaPromociones + " promociones, "  + "\n" +
                             iCuentaRegistrosCompetencia + " datos de competencia,"  + "\n" +
@@ -446,15 +441,56 @@ public class listatiendas extends AppCompatActivity {
             }
         });
 
+        // ******************************************
+        // Obtiene la primer notificación no atendida
+        int iCta = almacenaImagen.obtenNotificacion();
+        // Log.e(TAG_ERROR, "iCta " + iCta);
+        if (iCta>0)
+        {
+            makeNotification(iCta);
+        }
+        // ******************************************
+    }
 
+    public void makeNotification(int iCta){
+        String chanelIdNotification = "CHANEL_ID_NOTIFICATION";
+        String chanelDescription = "Notificaciones Top Mas";
+        Notification.Builder builder = new Notification.Builder(getApplicationContext(),chanelIdNotification);
+        builder.setSmallIcon(R.drawable.ic_notifications)
+                .setContentTitle("Notificación")
+                .setContentText("Usted tiene " + iCta + " respuesas de incidencia ")
+                .setAutoCancel(true)
+                .setChannelId(chanelIdNotification)
+                .setColorized(true)
+                .setPriority(Notification.PRIORITY_DEFAULT );
+        Intent intent = new Intent(getApplicationContext(), listarespuestaincidencias.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(TAG_FUENTE, "NOTIFICACION");
+        intent.putExtra(TAG_IDINC, Integer.valueOf(String.valueOf(iCta)));
 
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
+                0, intent, PendingIntent.FLAG_MUTABLE);
+        builder.setContentIntent(pendingIntent);
 
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationChannel notificationChannel =
+                notificationManager.getNotificationChannel(chanelIdNotification);
+
+        if (notificationChannel == null){
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            notificationChannel = new NotificationChannel(chanelIdNotification, "some description", importance);
+            notificationChannel.setLightColor(Color.GREEN);
+            notificationChannel.enableVibration(true);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+        notificationManager.notify(0, builder.build());
     }
 
     //************************************
     // Muestra la lista de las tiendas registradas en el teléfono
     public void MuestraTiendasTelefono(String sTienda){
-
         try {
             iNumTiendas = almacenaImagen.ObtenRegistrosTiendas(pidPromotor, sTienda);
             iLongitudArreglo = iNumTiendas;
@@ -727,7 +763,7 @@ public class listatiendas extends AppCompatActivity {
                     }
 
                     int iCuenta = almacenaImagen.ObtenRegistrosTiendas(pidPromotor,sTienda);
-                    iLongitudArregloTiendas = iCuenta;
+                    // iLongitudArregloTiendas = iCuenta;
                     int iCuentaProductos  = almacenaImagen.ObtenRegistros(1);
                     int iCuentaProFtoPrecio  = almacenaImagen.ObtenRegistros(2);
                     int iCuentaRutas  = almacenaImagen.ObtenRegistros(3);
@@ -741,6 +777,7 @@ public class listatiendas extends AppCompatActivity {
                     // ******************************************
                     // Inserciòn de tiendas si el numero de registros es diferente
                     if (iCuenta != jj){
+                        //pDialog.setMessage("Inserción de tiendas ...");
                         almacenaImagen.TruncarTablaTiendas(pidPromotor);
                         for (int j = 0; j < jj; j++)
                             almacenaImagen.insertatienda(pidPromotor, ruta[j], Integer.valueOf(determinante[j]),
@@ -749,7 +786,8 @@ public class listatiendas extends AppCompatActivity {
                     // Log.e(TAG_ERROR, " conteo de tiendas " + jj);
                     // ******************************************
                     // Inserciòn de productos si el numero de registros es diferente
-                    if (iCuentaProductos != k && iCuentaProductos == 0){
+                    if (iCuentaProductos != k && iCuentaProductos>0){
+                        //pDialog.setMessage("Inserción de productos ...");
                         almacenaImagen.TruncarTabla(1);
                         for (int a = 0; a < k; a++) {
                             almacenaImagen.insertaproducto(idproducto[a], upc[a] , descripcion[a], descripcion1[a], cantidad_caja[a], cantidad_kgs[a], idempresa[a], categoria1[a], categoria2[a], udc[a], fdc[a], uda[a], fda[a], ruta_archivo[a]);
@@ -759,6 +797,7 @@ public class listatiendas extends AppCompatActivity {
                     // ******************************************
                     // Inserciòn de productosformatoprecio  si el numero de registros es diferente
                     if (iCuentaProFtoPrecio != l){
+                        //pDialog.setMessage("Inserción de precios ...");
                         almacenaImagen.TruncarTabla(2);
                         for (int a = 0; a < l; a++) {
                             almacenaImagen.inserta_productoformatoprecio(idproductoformatoprecio[a], idproducto1[a],idformato[a], idempresa[a], precio[a], udc1[a], fdc1[a], uda1[a], fda1[a]);
@@ -768,6 +807,7 @@ public class listatiendas extends AppCompatActivity {
                     // ******************************************
                     // Inserciòn de rutas si el numero de registros es diferente
                     if (iCuentaRutas != m){
+                       //pDialog.setMessage("Inserción de rutas ...");
                         almacenaImagen.TruncarTabla(3);
                         for (int a = 0; a < m; a++) {
                             almacenaImagen.inserta_rutas(idruta[a], idcadena[a], idformato1[a],1, udc1[a], fdc1[a], uda1[a], fda1[a]);
@@ -913,8 +953,6 @@ public class listatiendas extends AppCompatActivity {
             funciones.RegistraError(pName, "ListaTiendas, OcultaProgress", e, listatiendas.this, getApplicationContext());
             // e.printStackTrace();
         }
-        // progressBar.setVisibility(View.GONE);
-        // LayoutProgreso.setVisibility(View.GONE);
-        // LayoutProgreso1.setVisibility(View.GONE);
+
     }
 }

@@ -34,26 +34,46 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Respuestas de la Incidencia"
+                        android:text="@string/respuestas_de_la_incidencia"
                         android:textColor="@color/verdeCorporativo"
-                        android:textSize="20dp" />
+                        android:textSize="20sp" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/Bloque00000"
+                    android:id="@+id/Bloque10000"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/lblNotif"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="20dp"
+                        android:text="@string/notificaci_n"
+                        android:textColor="@color/colorFuente"
+                        android:textSize="@dimen/tamanioletraproductos"
+                        tools:ignore="SpUsage" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/Bloque00000"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margen_respuestaincidencia"
+                    android:orientation="horizontal">
+
+                    <TextView
                         android:id="@+id/lblTienda"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="20dp"
-                        android:text="Tienda"
+                        android:layout_marginStart="20dp"
+                        android:text="@string/tienda"
                         android:textColor="@color/colorFuente"
-                        android:textSize="@dimen/tamanioletraproductos" />
+                        android:textSize="@dimen/tamanioletraproductos"
+                        tools:ignore="SpUsage" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -74,7 +94,8 @@
                         android:inputType=""
                         android:paddingStart="20dp"
                         android:enabled="false"
-                        android:textColor="@color/verdeCorporativo" />
+                        android:textColor="@color/verdeCorporativo"
+                        tools:ignore="RtlSymmetry" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -88,17 +109,17 @@
                         android:id="@+id/lblUsuario"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="20dp"
-                        android:text="Usuario"
+                        android:layout_marginStart="20dp"
+                        android:text="@string/usuario"
                         android:textColor="@color/colorFuente"
-                        android:textSize="@dimen/tamanioletraproductos" />
+                        android:textSize="@dimen/tamanioletraproductos"
+                        tools:ignore="SpUsage" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/Bloque0000000"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/Bloque1a"
                     android:layout_marginTop="@dimen/margen_respuestaincidencia"
                     android:orientation="horizontal">
 
@@ -113,7 +134,8 @@
                         android:inputType=""
                         android:paddingStart="20dp"
                         android:enabled="false"
-                        android:textColor="@color/verdeCorporativo" />
+                        android:textColor="@color/verdeCorporativo"
+                        tools:ignore="RtlSymmetry" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -127,8 +149,8 @@
                         android:id="@+id/lblfecha"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="20dp"
-                        android:text="Fecha incidencia"
+                        android:layout_marginStart="20dp"
+                        android:text="@string/fecha_incidencia"
                         android:textColor="@color/colorFuente"
                         android:textSize="@dimen/tamanioletraproductos" />
                 </LinearLayout>
@@ -137,7 +159,6 @@
                     android:id="@+id/Bloque00"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/Bloque1a"
                     android:layout_marginTop="@dimen/margen_respuestaincidencia"
                     android:orientation="horizontal">
 
@@ -166,8 +187,8 @@
                         android:id="@+id/lblfecharespuesta"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="20dp"
-                        android:text="Fecha Respuesta"
+                        android:layout_marginStart="20dp"
+                        android:text="@string/fecha_respuesta"
                         android:textColor="@color/colorFuente"
                         android:textSize="@dimen/tamanioletraproductos" />
                 </LinearLayout>
@@ -176,7 +197,6 @@
                     android:id="@+id/Bloquee00"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/Bloque1a"
                     android:layout_marginTop="@dimen/margen_respuestaincidencia"
                     android:orientation="horizontal">
 
@@ -205,8 +225,8 @@
                         android:id="@+id/Titulo7"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="20dp"
-                        android:text="Tipo Incidencia"
+                        android:layout_marginStart="20dp"
+                        android:text="@string/tipo_incidencia"
                         android:textColor="@color/colorFuente"
                         android:textSize="@dimen/tamanioletraproductos" />
                 </LinearLayout>
@@ -218,11 +238,18 @@
                     android:layout_marginTop="@dimen/margen_respuestaincidencia"
                     android:orientation="horizontal">
 
-                    <Spinner
-                        android:id="@+id/spinIncidencia"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp" />
+                    <TextView
+                        android:id="@+id/txtTipoIncidencia"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:background="@drawable/caja_bordesredondeados"
+                        android:ems="10"
+                        android:inputType=""
+                        android:paddingStart="20dp"
+                        android:enabled="false"
+                        android:textColor="@color/verdeCorporativo" />
                 </LinearLayout>
 
 
@@ -236,10 +263,9 @@
                         android:id="@+id/imageClipboard"
                         android:layout_width="363dp"
                         android:layout_height="392dp"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginStart="20dp"
                         android:layout_marginTop="@dimen/margen_arriba"
                         android:layout_marginEnd="0dp"
-                        android:layout_marginRight="0dp"
                         android:layout_marginBottom="5dp"
                         android:background="@android:color/transparent"
                         android:contentDescription="@string/imagenconfoto"
@@ -257,31 +283,17 @@
                     android:id="@+id/Bloque1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/Bloque"
                     android:layout_gravity="center"
                     android:gravity="center_horizontal|center_vertical"
                     android:orientation="horizontal"
                     android:weightSum="3"
-                    app:layout_constraintTop_toBottomOf="@+id/Bloque">
-
-
-                    <Button
-                        android:id="@+id/btnPaste"
-                        android:layout_width="158.4dp"
-                        android:layout_height="50.4dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/margen_respuestaincidencia"
-                        android:background="@drawable/img_seleccionar" />
-
-
-                </LinearLayout>
+                    app:layout_constraintTop_toBottomOf="@+id/Bloque"/>
 
 
                 <LinearLayout
                     android:id="@+id/Bloque1a"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/Bloque1a"
                     android:layout_marginTop="@dimen/margen_respuestaincidencia"
                     android:orientation="horizontal">
 
@@ -289,8 +301,8 @@
                         android:id="@+id/Observaciones"
                         android:layout_width="134dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:text="Observaciones"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/observaciones"
                         android:textColor="@color/colorFuente"
                         android:textSize="@dimen/tamanioletraproductos" />
 
@@ -300,7 +312,6 @@
                     android:id="@+id/Bloque2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/Bloque1a"
                     android:layout_marginTop="@dimen/margen_respuestaincidencia"
                     android:orientation="horizontal">
 
@@ -322,7 +333,6 @@
                     android:id="@+id/Bloque1a000"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/Bloque1a"
                     android:layout_marginTop="@dimen/margen_respuestaincidencia"
                     android:orientation="horizontal">
 
@@ -330,8 +340,8 @@
                         android:id="@+id/lblRespuesta"
                         android:layout_width="134dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:text="Respuesta"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/respuesta"
                         android:textColor="@color/colorFuente"
                         android:textSize="@dimen/tamanioletraproductos" />
 
@@ -341,8 +351,7 @@
                     android:id="@+id/Bloque2a0000"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/Bloque1a"
-                    android:layout_marginTop="@dimen/margen_competencia"
+                    android:layout_marginTop="@dimen/margen_respuestaincidencia"
                     android:orientation="horizontal">
 
                     <EditText
@@ -372,8 +381,8 @@
                         android:layout_width="140dp"
                         android:layout_height="35dp"
                         android:layout_gravity="center"
-                        android:layout_marginTop="5px"
-                        android:background="@drawable/img_guardar" />
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/cerrar" />
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>

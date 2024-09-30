@@ -560,20 +560,15 @@ public class MainActivity extends AppCompatActivity {
         TextView version = findViewById(R.id.Version);
         String sVersionApp = versionName.trim() + ":" + String.valueOf(versionCode).trim();
 
-        if (versionapp.length() == 0)
-            versionapp = sVersionApp;
-
         // **********************************
         // Evita el texto null
-        if (versionName == null) {
-            versionName = "nueva";
-        }
-        if (versionapp == "") {
-            versionapp = "nueva";
-        }
+        if (versionapp.isEmpty())
+            versionapp = sVersionApp;
 
+
+        String sVersion = "Ver " + versionName + ":" + versionCode + " " + (FAKE_VALIDATION ? " a " : " b ");
         version.setTextColor(Color.BLUE);
-        version.setText("Ver " + versionName + ":" + versionCode + " " + (FAKE_VALIDATION ? " a " : " b "));
+        version.setText(sVersion);
 
         // **************************************
         // Gesto para identificar si se pulso hacia abajo el activity
@@ -1495,8 +1490,8 @@ public class MainActivity extends AppCompatActivity {
                     // Log.e(TAG_ERROR, " conteo de incidencias " + t);
                     // ******************************************
                     // Inserción de cat_empaque
-                    Log.e(TAG_ERROR, " conteo de incidencias " + iCuentaCatalIncidencias);
-                    Log.e(TAG_ERROR, " valor de u " + u);
+                    // Log.e(TAG_ERROR, " conteo de incidencias " + iCuentaCatalIncidencias);
+                    // Log.e(TAG_ERROR, " valor de u " + u);
                     if (iCuentaCatalIncidencias != u){
                         almacenaImagen.TruncarTabla(21);
                         for (int a = 0; a < u; a++) {
@@ -1511,7 +1506,7 @@ public class MainActivity extends AppCompatActivity {
                         almacenaImagen.inserta_respuestaincidencia(idinc_ri[a], idincidencia_ri[a], idfoto_ri[a], idpromotor_ri[a], idruta_ri[a], fechahora_ri[a],
                                 observaciones_ri[a], respuesta_ri[a], fechahora_respuesta_ri[a], image_ri[a]);
                     }
-                    Log.e(TAG_ERROR, " conteo de respuesta incidencias " + v);
+                    // Log.e(TAG_ERROR, " conteo de respuesta incidencias " + v);
 
                     // ******************************************
                     // Actualizaciòn de configuracion

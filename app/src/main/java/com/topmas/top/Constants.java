@@ -53,7 +53,7 @@ public final class Constants {
     // TODO ****************************
     // TODO Aqui se cambia para crear nueva bd y tablas
     // TODO ****************************
-    public static final boolean FAKE_VALIDATION = false;        // Debe validar si la ubicación es Fake en la App
+    public static final boolean FAKE_VALIDATION = true;        // Debe validar si la ubicación es Fake en la App true version a false version b
     public static final boolean DEV_ENVIROMENT  = true;         // Si estamos en desarrollo establece usuario y contraseña automaticamente
     public static final String DATABASE_NAME = "topmk_40";
     public static final int DATABASE_VERSION = 1;               // Versión de BD
@@ -131,6 +131,7 @@ public final class Constants {
     public static final String TAG_FECHAHORARESPUESTA = "fechahora_respuesta";
     public static final String TAG_IMAGE = "image";
     public static final String TAG_LEIDA = "leida";
+    public static final String TAG_FUENTE = "fuente";
     // **********************************************
 
     // Generales

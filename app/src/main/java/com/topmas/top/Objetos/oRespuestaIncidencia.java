@@ -14,6 +14,9 @@ public class oRespuestaIncidencia {
     public static String _image;
     public static int _leida;
 
+    public static String _tienda;
+    public static String _direccioncompleta;
+
     public oRespuestaIncidencia(
             int pidinc,
             int pidincidencia,
@@ -25,7 +28,9 @@ public class oRespuestaIncidencia {
             String prespuesta,
             String pfechahora_respuesta,
             String pimage,
-            int pleida
+            int pleida,
+            String ptienda,
+            String pdireccioncompleta
     ){
         _idinc          = pidinc;
         _idincidencia   = pidincidencia;
@@ -38,7 +43,10 @@ public class oRespuestaIncidencia {
         _fechahora_respuesta     =   pfechahora_respuesta;
         _image          = pimage;
         _leida          = pleida;
+        _tienda          = ptienda;
+        _direccioncompleta          = pdireccioncompleta;
     }
+    /*
     public static Integer get_idinc(){return _idinc;}
     public static Integer get_idincidencia(){return _idincidencia;}
     public static Integer get_idfoto(){return _idfoto;}
@@ -50,4 +58,5 @@ public class oRespuestaIncidencia {
     public static String get_fechahora_respuesta(){return _fechahora_respuesta;}
     public static String get_image(){return _image;}
     public static Integer get_leida(){return _leida;}
+     */
 }
