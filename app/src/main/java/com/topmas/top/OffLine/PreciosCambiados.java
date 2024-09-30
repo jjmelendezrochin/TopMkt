@@ -13,6 +13,7 @@ import static com.topmas.top.Constants.TAG_SERVIDOR;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
 import com.topmas.top.AlmacenaImagen;
 import com.topmas.top.BuildConfig;
 import com.topmas.top.RequestHandler;
@@ -31,7 +32,7 @@ public class PreciosCambiados {
             String _invinicial,
             String _invfinal,
             String _idobs,
-            String _id
+            String _idproductorutafecha
     ) {
         class subirPreciosCambiados extends AsyncTask<String, Void, String> {
 
@@ -46,11 +47,16 @@ public class PreciosCambiados {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 // Log.e(TAG_INFO, "Valor de retorno " + s);
-                if (Integer.valueOf(s) > 0) {
-                    // ******************************
-                    // Borrando el registro recien colocado en el telefono solo si el resultado es > 0
-                    AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
-                    almacenaImagen.Borra_vw_producto_ruta_fecha(Integer.valueOf(_id));
+                if (s == ""){
+                    Log.e(TAG_INFO, "Sin valor de retorno");
+                }
+                else {
+                    if (Integer.valueOf(s) > 0) {
+                        // ******************************
+                        // Borrando el registro recien colocado en el telefono solo si el resultado es > 0
+                        AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
+                        almacenaImagen.Borra_vw_producto_ruta_fecha(Integer.valueOf(_idproductorutafecha));
+                    }
                 }
             }
 
@@ -87,6 +93,6 @@ public class PreciosCambiados {
         }
 
         subirPreciosCambiados subirprecios = new subirPreciosCambiados();
-        subirprecios.execute(_idruta, _idproducto,  _idpromotor, _precioreal, _invinicial, _invfinal, _idobs, _id);
+        subirprecios.execute(_idruta, _idproducto,  _idpromotor, _precioreal, _invinicial, _invfinal, _idobs, _idproductorutafecha);
     }
 }

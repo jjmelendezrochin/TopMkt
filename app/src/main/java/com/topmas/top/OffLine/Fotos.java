@@ -1,6 +1,7 @@
 package com.topmas.top.OffLine;
 
-import static com.topmas.top.Constants.TAG_INFO;
+import static com.topmas.top.Competencia_Promocion.TAG_INFO;
+import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Foto.UPLOAD_FECHAHORA;
 import static com.topmas.top.Foto.UPLOAD_IDOPERACION;
 import static com.topmas.top.Foto.UPLOAD_IDPROMOTOR;
@@ -19,6 +20,7 @@ import android.util.Log;
 
 import com.topmas.top.AlmacenaImagen;
 import com.topmas.top.BuildConfig;
+import com.topmas.top.Constants;
 import com.topmas.top.RequestHandler;
 
 import java.util.HashMap;
@@ -58,12 +60,10 @@ public class Fotos {
                     AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
                     // Log.i(TAG_INFO, "Borrando foto " + _ifoto);
                     int i = almacenaImagen.BorraFotoEnviada(Integer.parseInt(_ifoto));
-
                     // *****************************
                 }
                 else{
-                    // No se debe borrar la foto
-                    // Log.i(TAG_INFO, "No se debe borrar foto " + _ifoto);
+                    Log.e(Constants.TAG_INFO, "Sin valor de retorno");
                 }
             }
 
@@ -88,6 +88,22 @@ public class Fotos {
                 String versionName = BuildConfig.VERSION_NAME;
                 String sVerApp = versionName + ":" + versionCode;
 
+                /*
+                Log.e(TAG_ERROR, "*************************");
+                Log.e(TAG_ERROR, String.valueOf(idpromotor));
+                Log.e(TAG_ERROR, String.valueOf(latitud));
+                Log.e(TAG_ERROR, String.valueOf(longitud));
+                Log.e(TAG_ERROR, idusuario);
+                Log.e(TAG_ERROR, String.valueOf(idoperacion));
+                Log.e(TAG_ERROR, String.valueOf(idruta));
+                Log.e(TAG_ERROR, fechahora);
+                Log.e(TAG_ERROR, String.valueOf(uploadImage100));
+                Log.e(TAG_ERROR, sVerApp);
+                Log.e(TAG_ERROR, "1");
+                Log.e(TAG_ERROR, String.valueOf(UPLOAD_URL_O));
+                Log.e(TAG_ERROR, "*************************");
+*/
+
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(latitud));
                 data.put(UPLOAD_LONGITUD, String.valueOf(longitud));
@@ -98,7 +114,7 @@ public class Fotos {
                 data.put(UPLOAD_IMAGEN, uploadImage100);
                 data.put(UPLOAD_VERSION, sVerApp);
                 data.put(UPLOAD_SINDATOS, "1");
-                // Log.e(TAG_ERROR, "-- Enviando Imagen ");
+                // Log.e(TAG_INFO, "-- Enviando Imagen ");
 
                 return rh.sendPostRequest(UPLOAD_URL_O, data);
             }

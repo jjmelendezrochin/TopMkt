@@ -1,17 +1,14 @@
 package com.topmas.top.OffLine;
 
-import static com.topmas.top.Competencia_Promocion.TAG_INFO;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_COMENTARIOS;
-import static com.topmas.top.Competencia_Promocion.UPLOAD_COMPETENCIA_PROMOCION;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_CON_SIN_PARTICIPACION;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_IDPRODUCTO;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_NO_FRENTES;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_POR_DESCUENTO;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_POR_PARTICIPACION;
 import static com.topmas.top.Competencia_Promocion.UPLOAD_PRECIO;
-import static com.topmas.top.Constants.TAG_CARGA_FOTO_DISTANCIA;
-import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_ERROR;
+import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
 import static com.topmas.top.Constants.TAG_USUARIO;
 import static com.topmas.top.Foto.UPLOAD_FECHAHORA;
@@ -81,9 +78,14 @@ public class CompetenciaPromocion {
                 // Log.i(TAG_INFO, "Resultado " + s );
                 // **************************************
                 // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
-                if (s.equals("1")) {
-                    almacenaImagen.BorraFotoEnviada(Integer.valueOf(_idfoto1), Integer.valueOf(_idfoto2));
-                    almacenaImagen.Borrar_Competencia_Promocion(Integer.valueOf(_idCompetenciaPromo));
+                if (s == ""){
+                    Log.e(TAG_INFO, "Sin valor de retorno");
+                }
+                else {
+                    if (s.equals("1")) {
+                        almacenaImagen.BorraFotoEnviada(Integer.valueOf(_idfoto1), Integer.valueOf(_idfoto2));
+                        almacenaImagen.Borrar_Competencia_Promocion(Integer.valueOf(_idCompetenciaPromo));
+                    }
                 }
             }
 
@@ -114,6 +116,30 @@ public class CompetenciaPromocion {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(contexto.getApplicationContext());
                 idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
 
+                /*
+                Log.e(TAG_ERROR, "*************************");
+                Log.e(TAG_ERROR, String.valueOf(idpromotor));
+                Log.e(TAG_ERROR, String.valueOf(pLatitud));
+                Log.e(TAG_ERROR, String.valueOf(pLongitud));
+                Log.e(TAG_ERROR, idUsuario);
+                Log.e(TAG_ERROR, String.valueOf(idoperacion));
+                Log.e(TAG_ERROR, String.valueOf(idRuta));
+                Log.e(TAG_ERROR, fechahora);
+                Log.e(TAG_ERROR, uploadImage1);
+                Log.e(TAG_ERROR, uploadImage2);
+                Log.e(TAG_ERROR, String.valueOf(iconPromo));
+                Log.e(TAG_ERROR, String.valueOf(por_participa));
+                Log.e(TAG_ERROR, String.valueOf(no_frentes));
+                Log.e(TAG_ERROR, String.valueOf(por_descuento));
+                Log.e(TAG_ERROR, String.valueOf(comentario));
+                Log.e(TAG_ERROR, String.valueOf(idproducto));
+                Log.e(TAG_ERROR, String.valueOf(precio));
+                Log.e(TAG_ERROR, sVerApp);
+                Log.e(TAG_ERROR, "1");
+                Log.e(TAG_ERROR, "*************************");
+
+                 */
+
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
                 data.put(UPLOAD_LONGITUD, String.valueOf(pLongitud));
@@ -137,6 +163,7 @@ public class CompetenciaPromocion {
 
                 /*
                 // *******************************************
+                String TAG_ERROR = "ERROR";
                 Log.e(TAG_ERROR, "idpromotor "  + String.valueOf(idpromotor));
                 Log.e(TAG_ERROR, "platitud "  + String.valueOf(pLatitud));
                 Log.e(TAG_ERROR, "plongitud "  + String.valueOf(pLongitud));
@@ -146,21 +173,17 @@ public class CompetenciaPromocion {
                 Log.e(TAG_ERROR, "fechahora "  + fechahora);
                 Log.e(TAG_ERROR, "uploadImage1 "  + uploadImage1);
                 Log.e(TAG_ERROR, "uploadImage2 "  + uploadImage2);
-
                 Log.e(TAG_ERROR, "iconPromo "  + String.valueOf(iconPromo));
                 Log.e(TAG_ERROR, "por_participa "  + String.valueOf(por_participa));
                 Log.e(TAG_ERROR, "no_frentes "  + String.valueOf(no_frentes));
-
                 Log.e(TAG_ERROR, "comentario "  + String.valueOf(comentario));
                 Log.e(TAG_ERROR, "idproducto "  + String.valueOf(idproducto));
                 Log.e(TAG_ERROR, "precio "  + String.valueOf(precio));
-
                 Log.e(TAG_ERROR, "sVerApp "  + sVerApp);
                 Log.e(TAG_ERROR, "UPLOAD_SINDATOS "  + "1");
                 Log.e(TAG_ERROR, "UPLOAD_COMPETENCIA_PROMOCION "  + UPLOAD_COMPETENCIA_PROMOCION_O);
-                */
                 // *******************************************
-
+                */
 
                 // Log.e(TAG_ERROR, "Enviando datos");
                 return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION_O,data);

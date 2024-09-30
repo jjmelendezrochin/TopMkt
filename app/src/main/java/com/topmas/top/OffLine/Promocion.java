@@ -5,11 +5,12 @@ import static com.topmas.top.Constants.TAG_IDEMPRESA;
 import static com.topmas.top.Constants.TAG_IDPROMOCION;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
+import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
-import static com.topmas.top.Promocion.PROMOCION_URL;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.topmas.top.AlmacenaImagen;
 import com.topmas.top.RequestHandler;
@@ -42,9 +43,14 @@ public class Promocion {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                if (Integer.valueOf(s) > 0) {
-                    AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
-                    almacenaImagen.Borra_Promociones_Tiendas(Integer.parseInt(_idpromocion));
+                if (s == ""){
+                    Log.e(TAG_INFO, "Sin valor de retorno");
+                }
+                else {
+                    if (Integer.valueOf(s) > 0) {
+                        AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
+                        almacenaImagen.Borra_Promociones_Tiendas(Integer.parseInt(_idpromocion));
+                    }
                 }
             }
 

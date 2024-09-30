@@ -12,6 +12,7 @@ import static com.topmas.top.Constants.TAG_FAKEGPS_MSG;
 import static com.topmas.top.Constants.TAG_IDFORMATO;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
+import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_LATITUD;
 import static com.topmas.top.Constants.TAG_LONGITUD;
 import static com.topmas.top.Constants.TAG_NAME;
@@ -65,7 +66,7 @@ public class MenuTienda extends AppCompatActivity
         TextView txtTipoconexion = findViewById(R.id.formaConexion);
         //****************************
         // Agregando el nombre al titulo
-        //tienda = tienda + " "  + usr.getnombre();
+        tienda = tienda + " "  + usr.getnombre();
 
         if (pidpromotor == 0){
             pidpromotor = usr.getid();
@@ -73,6 +74,7 @@ public class MenuTienda extends AppCompatActivity
         //****************************
         // Obteniendo la empresa desde la que se firmo el usuario
         String pidEmpresa =  usr.getidempresa();
+        // Log.e(TAG_INFO, "La empresa es " + pidEmpresa);
 
         //****************************
         // Revisa el tipo de conexión
@@ -136,6 +138,7 @@ public class MenuTienda extends AppCompatActivity
         ImageView imgproductomenu = findViewById(R.id.imgproductomenu);
         ImageView imgreporteresurtido = findViewById(R.id.imgreporteresurtido);
         ImageView imgIncidencia = findViewById(R.id.imgIncidencia);
+        ImageView imgRespuestaIncidencia = findViewById(R.id.imgRespuestaIncidencia);
 
         // ****************************************
         // TODO AQUI HAY UNA VALIDACION DE UBICACION
@@ -160,6 +163,8 @@ public class MenuTienda extends AppCompatActivity
             imgCompetencia1.setVisibility(View.GONE);
             imgproductomenu.setVisibility(View.GONE);
             imgreporteresurtido.setVisibility(View.GONE);
+            imgIncidencia.setVisibility(View.GONE);
+            imgRespuestaIncidencia.setVisibility(View.GONE);
             return;
         }
 
@@ -190,15 +195,17 @@ public class MenuTienda extends AppCompatActivity
         imgreporteresurtido.setVisibility(View.VISIBLE);
         imgIncidencia.setVisibility(View.VISIBLE);
 
+        if (pidEmpresa== null) {
+            pidEmpresa = usr.getidempresa();
+        }
+
         // Log.e(TAG_INFO, "La empresa es " + pidEmpresa);
         // Canjes solo visibles para Santa Clara
         if (pidEmpresa.equals("2")){
             imgCanjes.setVisibility(View.VISIBLE);
-            //Log.e(TAG_INFO, "Visible" );
         }
         else{
             imgCanjes.setVisibility(View.GONE);
-            //Log.e(TAG_INFO, "Oculta" );
         }
 
         //****************************
@@ -327,7 +334,6 @@ public class MenuTienda extends AppCompatActivity
             }
         });
 
-
         // ****************************
         // Incidencias
         imgIncidencia.setOnClickListener(new View.OnClickListener(){
@@ -342,6 +348,20 @@ public class MenuTienda extends AppCompatActivity
                 startActivity(incidencia);
             }
         });
-/**/
+
+        //****************************
+        // Imagen Lista de respuesta de incidencias
+        imgRespuestaIncidencia.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view) {
+                Intent listaRespuestaIncidencias = new Intent(getApplicationContext(), listarespuestaincidencias.class);
+                listaRespuestaIncidencias.putExtra(TAG_IDRUTA, idruta);
+                listaRespuestaIncidencias.putExtra(TAG_IDPROMOTOR, pidpromotor);
+                listaRespuestaIncidencias.putExtra(TAG_TIENDA, tienda);
+                listaRespuestaIncidencias.putExtra(TAG_LATITUD, latitud);
+                listaRespuestaIncidencias.putExtra(TAG_LONGITUD, longitud);
+                listaRespuestaIncidencias.putExtra(TAG_DIRECCION, direccion);
+                startActivity(listaRespuestaIncidencias);
+            }
+        });
     }
 }

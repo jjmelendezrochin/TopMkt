@@ -1,5 +1,7 @@
 package com.topmas.top.OffLine;
 
+import static com.topmas.top.Constants.TAG_ERROR;
+import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
 import static com.topmas.top.Foto.UPLOAD_ANDROID_ID;
 import static com.topmas.top.Foto.UPLOAD_API_VALUE;
@@ -9,7 +11,6 @@ import static com.topmas.top.Foto.UPLOAD_BUILD_ID;
 import static com.topmas.top.Foto.UPLOAD_BUILD_TIME;
 import static com.topmas.top.Foto.UPLOAD_DENSIDAD;
 import static com.topmas.top.Foto.UPLOAD_ERROR;
-import static com.topmas.top.Foto.UPLOAD_ERRORES;
 import static com.topmas.top.Foto.UPLOAD_FABRICANTE;
 import static com.topmas.top.Foto.UPLOAD_FECHAHORA;
 import static com.topmas.top.Foto.UPLOAD_FINGERPRINT;
@@ -28,6 +29,7 @@ import static com.topmas.top.Foto.UPLOAD_VERSION;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.topmas.top.AlmacenaImagen;
 import com.topmas.top.RequestHandler;
@@ -35,7 +37,7 @@ import com.topmas.top.RequestHandler;
 import java.util.HashMap;
 
 public class Errores {
-    String UPLOAD_ERRORES_0 = TAG_SERVIDOR + "/PhotoUpload/upload_errores_0.php";
+    String UPLOAD_ERRORES_0 = TAG_SERVIDOR + "/PhotoUpload/upload_errores_o.php";
     //***********************
     // Función utilizada para guardar los errores de la App
     public void cargaErrores(
@@ -78,9 +80,14 @@ public class Errores {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                if (Integer.valueOf(s) > 0) {
-                    AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
-                    almacenaImagen.Borra_Errores(Integer.parseInt(_id));
+                if (s == ""){
+                    Log.e(TAG_INFO, "Sin valor de retorno");
+                }
+                else {
+                    if (Integer.valueOf(s) > 0) {
+                        AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
+                        almacenaImagen.Borra_Errores(Integer.parseInt(_id));
+                    }
                 }
             }
 
@@ -111,6 +118,21 @@ public class Errores {
                 String  error       = params[21];
                 String  fechahora   = params[22];
                 String  id          = params[23];
+/*
+                Log.e(TAG_ERROR, "*************************");
+                Log.e(TAG_ERROR, String.valueOf(fabricante));
+                Log.e(TAG_ERROR, String.valueOf(marca));
+                Log.e(TAG_ERROR, String.valueOf(modelo));
+                Log.e(TAG_ERROR, board);
+                Log.e(TAG_ERROR, String.valueOf(hardware));
+                Log.e(TAG_ERROR, String.valueOf(serie));
+                Log.e(TAG_ERROR, fechahora);
+                Log.e(TAG_ERROR, uid);
+                Log.e(TAG_ERROR, "1");
+                Log.e(TAG_ERROR, String.valueOf(UPLOAD_ERRORES_0));
+                Log.e(TAG_ERROR, "*************************");
+
+ */
 
                 data.put(UPLOAD_FABRICANTE, fabricante);
                 data.put(UPLOAD_MARCA,marca);
@@ -135,7 +157,6 @@ public class Errores {
                 data.put(UPLOAD_SECCION,seccion);
                 data.put(UPLOAD_ERROR,error);
                 data.put(UPLOAD_FECHAHORA,fechahora);
-
 
                 return rh.sendPostRequest(UPLOAD_ERRORES_0,data);
             }

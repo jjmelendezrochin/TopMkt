@@ -1,14 +1,21 @@
 package com.topmas.top;
 
+import static com.topmas.top.Constants.TAG_DIRECCION;
+import static com.topmas.top.Constants.TAG_IDFORMATO;
+import static com.topmas.top.Constants.TAG_IDPROMOTOR;
+import static com.topmas.top.Constants.TAG_IDRUTA;
+import static com.topmas.top.Constants.TAG_LATITUD;
+import static com.topmas.top.Constants.TAG_LONGITUD;
+import static com.topmas.top.Constants.TAG_TIENDA;
+import static com.topmas.top.Constants.TAG_USUARIO;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -18,23 +25,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.topmas.top.Adaptadores.AdaptadorPromociones;
-import com.topmas.top.Adaptadores.OnItemClickListenerAdaptadorPromociones;
 import com.topmas.top.Objetos.oPromocion;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import static com.topmas.top.Constants.TAG_DIRECCION;
-import static com.topmas.top.Constants.TAG_ERROR;
-import static com.topmas.top.Constants.TAG_IDFORMATO;
-import static com.topmas.top.Constants.TAG_IDPROMOTOR;
-import static com.topmas.top.Constants.TAG_IDRUTA;
-import static com.topmas.top.Constants.TAG_LATITUD;
-import static com.topmas.top.Constants.TAG_LONGITUD;
-import static com.topmas.top.Constants.TAG_TIENDA;
-import static com.topmas.top.Constants.TAG_USUARIO;
 
 
 public class listapromociones extends AppCompatActivity {

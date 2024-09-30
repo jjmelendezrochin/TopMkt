@@ -1,6 +1,7 @@
 package com.topmas.top;
 
 import static android.widget.Toast.LENGTH_LONG;
+import static com.topmas.top.Constants.DEV_ENVIROMENT;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_DESCRIPCIONINCIDENCIA;
 import static com.topmas.top.Constants.TAG_DIRECCION;
@@ -32,6 +33,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -42,6 +44,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
@@ -53,6 +56,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
@@ -64,8 +70,8 @@ import java.util.HashMap;
 public class Incidencia extends AppCompatActivity {
     int pidPromotor = 0;
     int pidRuta = 0;
-    Double platitud = 0.0;
-    Double plongitud = 0.0;
+    double pLatitud = 0;
+    double pLongitud = 0;
     String pdireccion = "";
     String ptienda = "";
     String pUsuario = "";
@@ -79,12 +85,14 @@ public class Incidencia extends AppCompatActivity {
     private static final int REQUEST_CODE_PICK_IMAGE = 100;
     ProgressDialog pDialog;
     public static final String UPLOAD_INCIDENCIA = TAG_SERVIDOR + "/PhotoUpload/upload_incidencia.php";
+    public static final String UPLOAD_INCIDENCIA_O = TAG_SERVIDOR + "/PhotoUpload/upload_incidencia_o.php";
     public static final String UPLOAD_IDINCIDENCIA = "idincidencia";
     public static final String UPLOAD_OBSERVACIONES = "observaciones";
     int iFoto = 0;            // Es el id de la tabla almacenfoto de la foto recien subida
     int idoperacion = 11;
     int idincidencia = 0;
     String fechahora = "";
+    private FusedLocationProviderClient fusedLocationClient;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -92,6 +100,7 @@ public class Incidencia extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_incidencia);
         almacenaImagen = new AlmacenaImagen(getApplicationContext());
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         imageView = findViewById(R.id.imageClipboard);
         btnPaste = findViewById(R.id.btnPaste);
@@ -106,8 +115,8 @@ public class Incidencia extends AppCompatActivity {
         Intent i = getIntent();
         pidRuta = i.getIntExtra(TAG_IDRUTA, 0);
         pidPromotor = i.getIntExtra(TAG_IDPROMOTOR, 0);
-        platitud = i.getDoubleExtra(TAG_LATITUD, 0.0);
-        plongitud = i.getDoubleExtra(TAG_LONGITUD, 0.0);
+        pLatitud = i.getDoubleExtra(TAG_LATITUD, 0.0);
+        pLongitud = i.getDoubleExtra(TAG_LONGITUD, 0.0);
         ptienda = i.getStringExtra(TAG_TIENDA);
         pdireccion = i.getStringExtra(TAG_DIRECCION);
 
@@ -158,8 +167,8 @@ public class Incidencia extends AppCompatActivity {
             MenuTienda.putExtra(TAG_IDRUTA, Integer.valueOf(pidRuta));
             MenuTienda.putExtra(TAG_IDPROMOTOR, Integer.valueOf(pidPromotor));
             MenuTienda.putExtra(TAG_TIENDA, ptienda);
-            MenuTienda.putExtra(TAG_LATITUD, platitud);
-            MenuTienda.putExtra(TAG_LONGITUD, plongitud);
+            MenuTienda.putExtra(TAG_LATITUD, pLatitud);
+            MenuTienda.putExtra(TAG_LONGITUD, pLongitud);
             MenuTienda.putExtra(TAG_DIRECCION, pdireccion);
             startActivity(MenuTienda);
         });
@@ -189,8 +198,8 @@ public class Incidencia extends AppCompatActivity {
                     // *****************************
                     // Verifica la forma en que subirá los datos
                     if (funciones.RevisarConexion(getApplicationContext())) {
-                        if (platitud != 0.00 &&
-                                plongitud != 0.00 &&
+                        if (pLatitud != 0.00 &&
+                                pLongitud != 0.00 &&
                                 pidRuta > 0 &&
                                 pidPromotor > 0
                         ) {
@@ -217,8 +226,8 @@ public class Incidencia extends AppCompatActivity {
                         // Consulta tabla de incidencias por si no existe la crea
                         int iRegs = almacenaImagen.ObtenRegistros(22);
                         int iResultado = almacenaImagen.inserta_incidencia(idincidencia, iFoto, pidPromotor, pidRuta, fechahora, observaciones);
-                        // Log.e(TAG_INFO, "Valor de resultado de inserción " + iResultado);
-                        // Log.e(TAG_INFO, "Nùmero de incidencias locales " + iRegs);
+                        Log.e(TAG_INFO, "Valor de resultado de inserción " + iResultado);
+                        Log.e(TAG_INFO, "Nùmero de incidencias locales " + iRegs);
                         if (iResultado > 0) {
                             LimpiaCajas();
                             Toast.makeText(getApplicationContext(), "Dato almacenado", Toast.LENGTH_LONG).show();
@@ -236,6 +245,40 @@ public class Incidencia extends AppCompatActivity {
                 }
             }
         });
+
+        // **************************************
+        // Ambiente desarrollo establecer DEV_ENVIROMENT a true
+        if (DEV_ENVIROMENT) {
+            spinIncidencia.setSelection(2);
+            EditText txtObservaciones = findViewById(R.id.txtObservaciones);
+            txtObservaciones.setText("Observaciones para pruebas");
+        }
+
+        // *******************
+        // Obtiene geoposición
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            // Use the location object
+                            pLatitud = location.getLatitude();
+                            pLongitud = location.getLongitude();
+                            // Do something with the location data
+                        }
+                    }
+                });
     }
 
     // ****************************
@@ -266,8 +309,15 @@ public class Incidencia extends AppCompatActivity {
                 imageView = findViewById(R.id.imageClipboard);
                 imageView.setVisibility(View.VISIBLE);
 
-                platitud = usr.getLatitud();
-                plongitud = usr.getLongitud();
+                /*
+                FusedLocation loc = new FusedLocation();
+                loc.getLastLocation();
+                platitud = loc.latitud;
+                plongitud = loc.longitud;
+                 */
+
+                // platitud = usr.getLatitud();
+                // plongitud = usr.getLongitud();
 
                 // ***************************************
                 // Obtiene el nombre del usuario en y promotor las preferencias
@@ -285,7 +335,7 @@ public class Incidencia extends AppCompatActivity {
                 // ***********************
 
                 // Guardar la imagen despues de tomarla
-                iFoto = almacenaImagen.guardaFotos(pidPromotor, platitud, plongitud, fechahora.trim(), idoperacion, idUsuario, pidRuta, bitmap);
+                iFoto = almacenaImagen.guardaFotos(pidPromotor, pLatitud, pLongitud, fechahora.trim(), idoperacion, idUsuario, pidRuta, bitmap);
                 Toast.makeText(getApplicationContext(), "Foto Guardada", LENGTH_LONG).show();
 
             }
@@ -327,8 +377,8 @@ public class Incidencia extends AppCompatActivity {
                 data.put(UPLOAD_IDINCIDENCIA, String.valueOf(idincidencia));
                 data.put(UPLOAD_IDRUTA, String.valueOf(pidRuta));
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(pidPromotor));
-                data.put(UPLOAD_LATITUD, String.valueOf(platitud));
-                data.put(UPLOAD_LONGITUD, String.valueOf(plongitud));
+                data.put(UPLOAD_LATITUD, String.valueOf(pLatitud));
+                data.put(UPLOAD_LONGITUD, String.valueOf(pLongitud));
                 data.put(UPLOAD_IDUSUARIO, almacenaImagen.idUsuario);
                 data.put(UPLOAD_IDOPERACION, String.valueOf(idoperacion));
                 data.put(UPLOAD_OBSERVACIONES, observaciones.trim());
@@ -369,7 +419,7 @@ public class Incidencia extends AppCompatActivity {
             imageView = findViewById(R.id.imageClipboard);
             Bitmap bm = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
             ui.execute(bm);
-        } catch (java.lang.NullPointerException e) {
+        } catch (NullPointerException e) {
             // funciones.RegistraError(idUsuario, "Caducidad, uploadCaducidad ", e, Caducidad.this, getApplicationContext());
             // Log.e(TAG_ERROR, "Error al tomar la foto " + e);
             Toast.makeText(getApplicationContext(), "Error al colocar una foto de incidencia", LENGTH_LONG).show();

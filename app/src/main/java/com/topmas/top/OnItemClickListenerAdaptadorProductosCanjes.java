@@ -1,4 +1,4 @@
-package com.topmas.top.Adaptadores;
+package com.topmas.top;
 
 import static com.topmas.top.Constants.TAG_IDPRODUCTO;
 import static com.topmas.top.Constants.TAG_IDRUTA;
@@ -25,12 +25,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.topmas.top.AlmacenaImagen;
-import com.topmas.top.Funciones;
-import com.topmas.top.Objetos.oCanje;
-import com.topmas.top.Objetos.oProducto;
-import com.topmas.top.R;
-import com.topmas.top.Usuario;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -38,6 +32,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import com.topmas.top.Objetos.oCanje;
+import com.topmas.top.Objetos.oProducto;
 
 public class OnItemClickListenerAdaptadorProductosCanjes implements AdapterView.OnItemClickListener{
 
@@ -75,13 +71,25 @@ public class OnItemClickListenerAdaptadorProductosCanjes implements AdapterView.
         // Log.e(TAG_ERROR, "idproducto " + idproducto);
         // Log.e(TAG_ERROR, "upc " + upc);
 
-        Intent Producto = new Intent(context, com.topmas.top.Producto.class);
+        Intent Producto = new Intent(context, Producto.class);
         Producto.putExtra(TAG_IDPRODUCTO, Integer.parseInt(idproducto));
         Producto.putExtra(TAG_IDRUTA, Integer.parseInt(idruta));
         Producto.putExtra(TAG_UPC,upc);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         pName = preferences.getString(TAG_USUARIO, pName);
+
+/*
+        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
+            //log(throwable.getMessage(), thread.getId());
+            funciones.RegistraError(pName, "Producto setDefaultUncaughtExceptionHandler",
+                    (Exception) throwable, OnItemClickListenerAdaptadorProductosCanjes.this, context);
+        });
+
+         */
+
+
+        // Toast.makeText(context.getApplicationContext(),  " idproducto " + idproducto, Toast.LENGTH_LONG).show();
 
         //AlertDialog.Builder builder = new AlertDialog.Builder(context.getApplicationContext());
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -201,7 +209,7 @@ public class OnItemClickListenerAdaptadorProductosCanjes implements AdapterView.
             View view1
     ) {
         AlmacenaImagen almacenaImagen = new AlmacenaImagen(context);
-        oProducto Producto = almacenaImagen.ObtenProducto(pidproducto, pidruta);
+        com.topmas.top.Objetos.oProducto Producto = almacenaImagen.ObtenProducto(pidproducto, pidruta);
         // Colocacion de datos en los arreglos
         descripcion = oProducto.get_descripcion();
         descripcion1 = oProducto.get_descripcion();

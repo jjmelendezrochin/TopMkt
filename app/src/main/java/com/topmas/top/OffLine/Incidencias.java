@@ -1,48 +1,28 @@
 package com.topmas.top.OffLine;
 
-import static android.widget.Toast.LENGTH_LONG;
-import static com.topmas.top.Canjes.UPLOAD_CANJES;
-import static com.topmas.top.Constants.ERROR_FOTO;
-import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
 import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_INFO;
-import static com.topmas.top.Constants.TAG_USUARIO;
-import static com.topmas.top.Foto.UPLOAD_ARREGLOPRODUCTO;
 import static com.topmas.top.Foto.UPLOAD_FECHAHORA;
 import static com.topmas.top.Foto.UPLOAD_IDOPERACION;
 import static com.topmas.top.Foto.UPLOAD_IDPROMOTOR;
 import static com.topmas.top.Foto.UPLOAD_IDRUTA;
 import static com.topmas.top.Foto.UPLOAD_IDUSUARIO;
 import static com.topmas.top.Foto.UPLOAD_IMAGEN;
-import static com.topmas.top.Foto.UPLOAD_IMAGEN1;
 import static com.topmas.top.Foto.UPLOAD_LATITUD;
-import static com.topmas.top.Foto.UPLOAD_LLAVE;
 import static com.topmas.top.Foto.UPLOAD_LONGITUD;
 import static com.topmas.top.Foto.UPLOAD_SINDATOS;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
 import static com.topmas.top.Incidencia.UPLOAD_IDINCIDENCIA;
 import static com.topmas.top.Incidencia.UPLOAD_INCIDENCIA;
+import static com.topmas.top.Incidencia.UPLOAD_INCIDENCIA_O;
 import static com.topmas.top.Incidencia.UPLOAD_OBSERVACIONES;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.topmas.top.AlmacenaImagen;
 import com.topmas.top.BuildConfig;
-import com.topmas.top.Foto;
-import com.topmas.top.Funciones;
-import com.topmas.top.Incidencia;
-import com.topmas.top.R;
 import com.topmas.top.RequestHandler;
 
 import java.util.HashMap;
@@ -84,7 +64,6 @@ public class Incidencias {
                 int versionCode = BuildConfig.VERSION_CODE;
                 String versionName = BuildConfig.VERSION_NAME;
                 String sVerApp = versionName + ":" + versionCode;
-
                 /*
                 Log.e(TAG_INFO,"***************************");
                 Log.e(TAG_INFO,idincidencia);
@@ -100,8 +79,10 @@ public class Incidencias {
                 Log.e(TAG_INFO,sVerApp);
                 Log.e(TAG_INFO, String.valueOf(sinDatos));
                 Log.e(TAG_INFO,idincidencia);
-                Log.e(TAG_INFO,UPLOAD_INCIDENCIA);
-                 */
+                Log.e(TAG_INFO, String.valueOf(iFoto));
+                Log.e(TAG_INFO,UPLOAD_INCIDENCIA_O);
+                Log.e(TAG_ERROR, "*************************");
+*/
 
                 data.put(UPLOAD_IDINCIDENCIA, String.valueOf(idincidencia));
                 data.put(UPLOAD_IDRUTA, String.valueOf(pidRuta));
@@ -116,7 +97,7 @@ public class Incidencias {
                 data.put(UPLOAD_VERSION, sVerApp);
                 data.put(UPLOAD_SINDATOS, String.valueOf(sinDatos));
 
-                return rh.sendPostRequest(UPLOAD_INCIDENCIA, data);
+                return rh.sendPostRequest(UPLOAD_INCIDENCIA_O, data);
             }
 
             @Override
@@ -131,12 +112,14 @@ public class Incidencias {
                     // Se debe borrar la foto porque ya se subio
                     AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
                     // Log.i(TAG_INFO, "Borrando incidencia " + idinc);
+                    int k = almacenaImagen.BorraFotoEnviada(iFoto);
                     int i = almacenaImagen.BorraIncidencia(Integer.parseInt(idinc));
+                    // Log.i(TAG_INFO, "Foto borrada " + iFoto);
+                    // Log.i(TAG_INFO, "Incidencia borrada " + Integer.parseInt(idinc));
                     // *****************************
                 }
                 else{
-                    // No se debe borrar la foto
-                    // Log.i(TAG_INFO, "No se debe borrar foto " + _ifoto);
+                    Log.e(TAG_INFO, "Sin valor de retorno");
                 }
                 // **************************************
             }
@@ -145,7 +128,7 @@ public class Incidencias {
         try {
             UploadIncidencia ui = new UploadIncidencia();
             ui.execute();
-        } catch (java.lang.NullPointerException e) {
+        } catch (NullPointerException e) {
         }
     }
 }

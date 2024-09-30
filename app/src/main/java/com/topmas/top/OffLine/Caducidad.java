@@ -1,10 +1,11 @@
 package com.topmas.top.OffLine;
 
-import static com.topmas.top.Caducidad.UPLOAD_CADUCIDAD;
 import static com.topmas.top.Caducidad.UPLOAD_caducidad;
 import static com.topmas.top.Caducidad.UPLOAD_idproducto;
 import static com.topmas.top.Caducidad.UPLOAD_lote;
 import static com.topmas.top.Caducidad.UPLOAD_piezas;
+import static com.topmas.top.Constants.TAG_ERROR;
+import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
 import static com.topmas.top.Foto.UPLOAD_IDOPERACION;
 import static com.topmas.top.Foto.UPLOAD_IDPROMOTOR;
@@ -18,6 +19,7 @@ import static com.topmas.top.Foto.UPLOAD_VERSION;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.topmas.top.AlmacenaImagen;
 import com.topmas.top.BuildConfig;
@@ -60,9 +62,14 @@ public class Caducidad {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                if (Integer.valueOf(s) > 0) {
-                    AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
-                    almacenaImagen.Borra_Caducidad(Integer.valueOf(_id), Integer.valueOf(_idcaducidad));
+                if (s == ""){
+                    Log.e(TAG_INFO, "Sin valor de retorno");
+                }
+                else {
+                    if (Integer.valueOf(s) > 0) {
+                        AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
+                        almacenaImagen.Borra_Caducidad(Integer.valueOf(_id), Integer.valueOf(_idcaducidad));
+                    }
                 }
             }
 
@@ -91,19 +98,32 @@ public class Caducidad {
                 String versionName = BuildConfig.VERSION_NAME;
                 String sVerApp =  versionName + ":" + versionCode;
 
+                /*
+                Log.e(TAG_ERROR, "*************************");
+                Log.e(TAG_ERROR, String.valueOf(idpromotor));
+                Log.e(TAG_ERROR, String.valueOf(latitud));
+                Log.e(TAG_ERROR, String.valueOf(longitud));
+                Log.e(TAG_ERROR, idusuario);
+                Log.e(TAG_ERROR, String.valueOf(idoperacion));
+                Log.e(TAG_ERROR, String.valueOf(idruta));
+                Log.e(TAG_ERROR, fechahora);
+                Log.e(TAG_ERROR, String.valueOf(imagen));
+                Log.e(TAG_ERROR, sVerApp);
+                Log.e(TAG_ERROR, "1");
+                Log.e(TAG_ERROR, String.valueOf(UPLOAD_CADUCIDAD_O));
+                Log.e(TAG_ERROR, "*************************");
+                */
+
                 data.put(UPLOAD_idproducto, String.valueOf(idproducto));
                 data.put(UPLOAD_lote, String.valueOf(lote));
                 data.put(UPLOAD_caducidad, caducidad);
                 data.put(UPLOAD_piezas, String.valueOf(piezas));
-
                 data.put(UPLOAD_IDRUTA, String.valueOf(idruta));
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(latitud));
                 data.put(UPLOAD_LONGITUD, String.valueOf(longitud));
                 data.put(UPLOAD_IDUSUARIO, idusuario);
                 data.put(UPLOAD_IDOPERACION, idoperacion);
-                //data.put(UPLOAD_FECHAHORA, fechahora1);
-
                 data.put(UPLOAD_IMAGEN, imagen);
                 data.put(UPLOAD_VERSION, sVerApp);
                 data.put(UPLOAD_SINDATOS, "1");

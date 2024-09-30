@@ -1,12 +1,15 @@
 package com.topmas.top;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,11 +25,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
@@ -36,6 +44,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import static com.topmas.top.Constants.DEV_ENVIROMENT;
 import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_ACTIVIDADBTL;
 import static com.topmas.top.Constants.TAG_CANJES;
@@ -102,6 +111,8 @@ public class Competencia extends AppCompatActivity {
     Funciones funciones = new Funciones();
     AlmacenaImagen almacenaImagen;
 
+    private FusedLocationProviderClient fusedLocationClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,9 +123,18 @@ public class Competencia extends AppCompatActivity {
         idRuta =  i.getIntExtra(TAG_IDRUTA,0);
         idoperacion =  5;       // OPERACIÓN FOTO COMPETENCIA
         almacenaImagen = new AlmacenaImagen(getApplicationContext());
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         idpromotor = usr.getid();
-        pLatitud = usr.getLatitud();
-        pLongitud = usr.getLongitud();
+        /*
+        FusedLocation loc = new FusedLocation();
+        loc.getLastLocation();
+        pLatitud = loc.latitud;
+        pLongitud = loc.longitud;
+         */
+
+        // pLatitud = usr.getLatitud();
+        // pLongitud = usr.getLongitud();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         pName = preferences.getString(TAG_USUARIO, pName);
@@ -260,7 +280,7 @@ public class Competencia extends AppCompatActivity {
                     } else {
                         AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
                         int iResultado = almacenaImagen.inserta_competencia(producto,precio,presentacion,idEmpaque, idRuta, idpromotor, idemostrador, iexhibidor, iemplaye, actividadbtl,canjes,iFoto);
-                        Log.e(TAG_INFO, "* Valor de resultado de inserción  de competencia" + iResultado);
+                        Log.e(TAG_INFO, "* Valor de resultado de inserción  de competencia " + iResultado);
                         if (iResultado>0)
                         {
                             Toast.makeText(getApplicationContext(), "Dato almacenado",Toast.LENGTH_LONG).show();
@@ -296,6 +316,57 @@ public class Competencia extends AppCompatActivity {
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
+
+        // **************************************
+        // Ambiente desarrollo establecer DEV_ENVIROMENT a true
+        if (DEV_ENVIROMENT) {
+            EditText cajaproducto = findViewById(R.id.txtProducto);
+            EditText cajaprecio = findViewById(R.id.txtPrecioCompetencia);
+            EditText cajapresentacion = findViewById(R.id.txtPresentacion);
+            EditText cajactividadbtl = findViewById(R.id.txtpor_participa);
+            EditText cajacanjes = findViewById(R.id.txt_no_frentes);
+
+            CheckBox chkDemostrador = findViewById(R.id.chkDemostrador);
+            CheckBox chkExhibidor = findViewById(R.id.chkExhibidor);
+            CheckBox chkEmplayes = findViewById(R.id.chkEmplayes);
+
+            cajaproducto.setText("producto");
+            cajaprecio.setText("1");
+            cajapresentacion.setText("presentación");
+            cajactividadbtl.setText("actividad btl");
+            cajacanjes.setText("canjes");
+
+            chkDemostrador.setChecked(true);
+            chkExhibidor.setChecked(true);
+            chkEmplayes.setChecked(true);
+
+            spinEmpaque.setSelection(1);
+        }
+
+        // Obtiene geoposición
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            // Use the location object
+                            pLatitud = location.getLatitude();
+                            pLongitud = location.getLongitude();
+                            // Do something with the location data
+                        }
+                    }
+                });
     }
 
     // ****************************
