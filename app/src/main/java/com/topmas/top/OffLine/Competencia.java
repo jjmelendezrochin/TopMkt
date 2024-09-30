@@ -1,8 +1,14 @@
 package com.topmas.top.OffLine;
 
+<<<<<<< HEAD
 import static com.topmas.top.Competencia.UPLOAD_COMPETENCIA;
 import static com.topmas.top.Constants.TAG_ACTIVIDADBTL;
 import static com.topmas.top.Constants.TAG_CANJES;
+=======
+import static com.topmas.top.Constants.TAG_ACTIVIDADBTL;
+import static com.topmas.top.Constants.TAG_CANJES;
+import static com.topmas.top.Constants.TAG_ERROR;
+>>>>>>> development
 import static com.topmas.top.Constants.TAG_IDEMOSTRADOR;
 import static com.topmas.top.Constants.TAG_IDEMPAQUE;
 import static com.topmas.top.Constants.TAG_IEMPLAYE;
@@ -21,6 +27,10 @@ import static com.topmas.top.Foto.UPLOAD_IMAGEN;
 import static com.topmas.top.Foto.UPLOAD_LATITUD;
 import static com.topmas.top.Foto.UPLOAD_LONGITUD;
 import static com.topmas.top.Foto.UPLOAD_SINDATOS;
+<<<<<<< HEAD
+=======
+import static com.topmas.top.Foto.UPLOAD_URL_O;
+>>>>>>> development
 import static com.topmas.top.Foto.UPLOAD_VERSION;
 
 import android.content.Context;
@@ -34,6 +44,10 @@ import com.topmas.top.RequestHandler;
 import java.util.HashMap;
 
 public class Competencia {
+<<<<<<< HEAD
+=======
+    public static final String UPLOAD_COMPETENCIA_O = TAG_SERVIDOR + "/PhotoUpload/upload_competencia_o.php";
+>>>>>>> development
     //***********************
     // Upload image Competencia function
     public void uploadImagenCompetencia(
@@ -70,6 +84,7 @@ public class Competencia {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
+<<<<<<< HEAD
                 if (s.equals("1")) {
                     // *****************************
                     // Borrando el registro recien colocado
@@ -80,6 +95,22 @@ public class Competencia {
                 }
             }
 
+=======
+                if (s == ""){
+                    Log.e(TAG_INFO, "Sin valor de retorno");
+                }
+                else {
+                    if (Integer.valueOf(s) > 0) {
+                        // ******************************
+                        // Borrando el registro recien colocado en el telefono solo si el resultado es > 0
+                        AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
+                        almacenaImagen.Borrar_Competencia(Integer.valueOf(_id), Integer.valueOf(_idcompetencia));
+                    }
+                }
+            }
+
+
+>>>>>>> development
             @Override
             protected String doInBackground(String... params) {
                 String idpromotor = params[0];
@@ -99,16 +130,25 @@ public class Competencia {
                 String emplaye = params[14];
                 String actividadbtl = params[15];
                 String canjes = params[16];
+<<<<<<< HEAD
+=======
+                String id = params[17];
+                String idcompetencia = params[18];
+>>>>>>> development
 
                 String uploadImage100 = imagen100;
 
                 HashMap<String, String> data = new HashMap<>();
+<<<<<<< HEAD
                 String UPLOAD_COMPETENCIA_O = TAG_SERVIDOR + "/PhotoUpload/upload_competencia_o.php";
+=======
+>>>>>>> development
 
                 int versionCode = BuildConfig.VERSION_CODE;
                 String versionName = BuildConfig.VERSION_NAME;
                 String sVerApp = versionName + ":" + versionCode;
 
+<<<<<<< HEAD
                 Log.e(TAG_INFO, String.valueOf(idpromotor));
                 Log.e(TAG_INFO, String.valueOf(latitud));
                 Log.e(TAG_INFO, String.valueOf(longitud));
@@ -118,6 +158,24 @@ public class Competencia {
                 Log.e(TAG_INFO, String.valueOf(fechahora));
                 Log.e(TAG_INFO, sVerApp);
                 Log.e(TAG_INFO, UPLOAD_COMPETENCIA_O);
+=======
+                /*
+                Log.e(TAG_ERROR, "*************************");
+                Log.e(TAG_ERROR, String.valueOf(idpromotor));
+                Log.e(TAG_ERROR, String.valueOf(latitud));
+                Log.e(TAG_ERROR, String.valueOf(longitud));
+                Log.e(TAG_ERROR, idusuario);
+                Log.e(TAG_ERROR, String.valueOf(idoperacion));
+                Log.e(TAG_ERROR, String.valueOf(idruta));
+                Log.e(TAG_ERROR, fechahora);
+                Log.e(TAG_ERROR, String.valueOf(uploadImage100));
+                Log.e(TAG_ERROR, sVerApp);
+                Log.e(TAG_ERROR, "1");
+                Log.e(TAG_ERROR, String.valueOf(UPLOAD_COMPETENCIA_O));
+                Log.e(TAG_ERROR, "*************************");
+
+                 */
+>>>>>>> development
 
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
                 data.put(UPLOAD_LATITUD, String.valueOf(latitud));
@@ -129,19 +187,28 @@ public class Competencia {
                 data.put(UPLOAD_IMAGEN, uploadImage100);
                 data.put(UPLOAD_VERSION, sVerApp);
                 data.put(UPLOAD_SINDATOS, "1");
+<<<<<<< HEAD
 
+=======
+>>>>>>> development
                 data.put(TAG_producto, String.valueOf(producto));
                 data.put(TAG_PRECIO, String.valueOf(precio));
                 data.put(TAG_PRESENTACION, String.valueOf(presentacion));
                 data.put(TAG_IDEMPAQUE, String.valueOf(idEmpaque));
+<<<<<<< HEAD
 
+=======
+>>>>>>> development
                 data.put(TAG_IDEMOSTRADOR, String.valueOf(demostrador));
                 data.put(TAG_IEXHIBIDOR, String.valueOf(exhibidor));
                 data.put(TAG_IEMPLAYE, String.valueOf(emplaye));
                 data.put(TAG_ACTIVIDADBTL, String.valueOf(actividadbtl));
                 data.put(TAG_CANJES, String.valueOf(canjes));
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> development
                 return rh.sendPostRequest(UPLOAD_COMPETENCIA_O,data);
             }
         }

@@ -36,8 +36,6 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
-import com.topmas.top.Objetos.oInfoDispositivo;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -95,7 +93,7 @@ public class Funciones {
         LocationManager mlocManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         Localizacion Local = new Localizacion();
         Activity activity = (Activity) context;
-        //Local.setMainActivity(this);
+
         final boolean gpsEnabled = mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         if (!gpsEnabled) {
             Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);

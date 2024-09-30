@@ -1,16 +1,24 @@
-package com.topmas.top.Adaptadores;
-
-import static com.topmas.top.Constants.TAG_IDPRODUCTO;
-import static com.topmas.top.Constants.TAG_IDRUTA;
-import static com.topmas.top.Constants.TAG_UPC;
+package com.topmas.top;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.topmas.top.R;
+import java.io.ByteArrayOutputStream;
+
+import static com.topmas.top.Constants.TAG_ERROR;
+import static com.topmas.top.Constants.TAG_IDPRODUCTO;
+import static com.topmas.top.Constants.TAG_IDRUTA;
+import static com.topmas.top.Constants.TAG_POSICION;
+import static com.topmas.top.Constants.TAG_UPC;
+import static com.topmas.top.Constants.TAG_imagen;
 
 public class OnItemClickListenerAdaptadorProductosTiendas implements AdapterView.OnItemClickListener {
 
@@ -30,7 +38,7 @@ public class OnItemClickListenerAdaptadorProductosTiendas implements AdapterView
         final String upc = cajaupc.getText().toString();
         //final String posicion = cajaposiciones.getText().toString();
 
-        Intent Producto = new Intent(context, com.topmas.top.Producto.class);
+        Intent Producto = new Intent(context, Producto.class);
         Producto.putExtra(TAG_IDPRODUCTO, Integer.parseInt(idproducto));
         Producto.putExtra(TAG_IDRUTA, Integer.parseInt(idruta));
         Producto.putExtra(TAG_UPC,upc);

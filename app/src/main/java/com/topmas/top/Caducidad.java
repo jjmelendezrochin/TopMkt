@@ -1,54 +1,11 @@
 package com.topmas.top;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Environment;
-import android.preference.PreferenceManager;
-import android.provider.MediaStore;
-import android.util.Base64;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.DialogFragment;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-
+import static com.topmas.top.Constants.DEV_ENVIROMENT;
 import static com.topmas.top.Constants.ERROR_FOTO;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_DISTANCIA;
 import static com.topmas.top.Constants.TAG_CARGA_FOTO_EXITOSA;
-import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
-import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
 import static com.topmas.top.Constants.TAG_UPC;
 import static com.topmas.top.Constants.TAG_USUARIO;
@@ -63,6 +20,50 @@ import static com.topmas.top.Foto.UPLOAD_SINDATOS;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
 import static com.topmas.top.Foto.rotateImage;
 
+import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.provider.MediaStore;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.DialogFragment;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+
 public class Caducidad extends AppCompatActivity {
     // TODO /CatalogoProductos/upload_caducidad.php
     public static final String UPLOAD_CADUCIDAD = TAG_SERVIDOR + "/PhotoUpload/upload_caducidad.php";
@@ -70,7 +71,6 @@ public class Caducidad extends AppCompatActivity {
     public static final String UPLOAD_lote = "lote";
     public static final String UPLOAD_caducidad = "caducidad";
     public static final String UPLOAD_piezas = "piezas";
-
     public Date fechacaducidad = null;
     Button btnFoto= null;
     Button imgizq;
@@ -91,6 +91,7 @@ public class Caducidad extends AppCompatActivity {
     String lote;
     int piezas;
 
+    private FusedLocationProviderClient fusedLocationClient;
     ProgressDialog pDialog;
 
     Usuario usr = new Usuario();
@@ -109,6 +110,7 @@ public class Caducidad extends AppCompatActivity {
         idRuta =  i.getIntExtra(TAG_IDRUTA,0);
         idoperacion =  6;       // OPERACIÓN FOTO COMPETENCIA
         almacenaImagen = new AlmacenaImagen(getApplicationContext());
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
@@ -275,7 +277,7 @@ public class Caducidad extends AppCompatActivity {
                         if (iResultado>0)
                         {
                             LimpiaCajas();
-                            Toast.makeText(getApplicationContext(), "Dato almacenado",Toast.LENGTH_LONG);
+                            Toast.makeText(getApplicationContext(), "Dato almacenado",Toast.LENGTH_LONG).show();
                             finish();
                         }
                     }
@@ -324,6 +326,47 @@ public class Caducidad extends AppCompatActivity {
                 newFragment.show(getSupportFragmentManager(), "datePicker");
             }
         });
+
+        // **************************************
+        // Ambiente desarrollo establecer DEV_ENVIROMENT a true
+        if (DEV_ENVIROMENT) {
+            EditText cajalote = findViewById(R.id.txtLote);
+            EditText cajapiezas = findViewById(R.id.txtPiezas);
+            TextView cajacaducidad = findViewById(R.id.txtFechaCaducidad);
+            spinProducto.setSelection(1,true);
+            cajalote.setText("12312");
+            cajapiezas.setText("12");
+            fechacaducidad = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            cajacaducidad.setText(sdf.format(fechacaducidad));
+
+        }
+
+        // *******************
+        // Obtiene geoposición
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            // Use the location object
+                            pLatitud = location.getLatitude();
+                            pLongitud = location.getLongitude();
+                            // Do something with the location data
+                        }
+                    }
+                });
     }
 
     // ****************************
@@ -494,9 +537,6 @@ public class Caducidad extends AppCompatActivity {
         try {
             if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
                 funciones.grabImage(this, photoURI, imagenFoto);
-
-                pLatitud = usr.getLatitud();
-                pLongitud = usr.getLongitud();
 
                 // ***************************************
                 // Obtiene el nombre del usuario en y promotor las preferencias

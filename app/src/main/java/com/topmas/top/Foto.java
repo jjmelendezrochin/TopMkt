@@ -12,16 +12,18 @@ import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_OPERACION;
 import static com.topmas.top.Constants.TAG_RESPUESTA;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
-import static com.topmas.top.Constants.TAG_URL;
 import static com.topmas.top.Constants.TAG_USUARIO;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,7 +37,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,11 +61,11 @@ import java.util.HashMap;
 
 
 public class Foto extends AppCompatActivity {
-    // TODO PhotoUpload/upload1.php
+    // TODO PhotoUpload/upload1a.php
     // TODO PhotoUpload/upload_errores.php
 
-    public static final String UPLOAD_URL = TAG_SERVIDOR + "/PhotoUpload/upload1.php";  // Usado para pruebas
-    public static final String UPLOAD_URL_O = TAG_SERVIDOR + "/PhotoUpload/upload1_o.php";  // Usado para pruebas
+    public static final String UPLOAD_URL = TAG_SERVIDOR + "/PhotoUpload/upload1a.php";
+    public static final String UPLOAD_URL_O = TAG_SERVIDOR + "/PhotoUpload/upload1_o.php";
     public static final String UPLOAD_ERRORES = TAG_SERVIDOR + "/PhotoUpload/upload_errores.php";
 
     public static final String UPLOAD_IDPROMOTOR = "idpromotor";
@@ -102,7 +109,8 @@ public class Foto extends AppCompatActivity {
     String idUsuario = "";
     private double pLatitud = 0;
     private double pLongitud = 0;
-    private int iResp=0;            // Es el id de la tabla almacenfoto de la foto recien subida
+    private int iResp = 0;            // Es el id de la tabla almacenfoto de la foto recien subida
+    private FusedLocationProviderClient fusedLocationClient;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     ImageView imagenFoto;
     Button imgizq;
@@ -117,9 +125,11 @@ public class Foto extends AppCompatActivity {
 
     private ProgressDialog pDialog;
     private final Usuario usr = new Usuario();
-    private int idoperacion=0, idRuta=0;
+    private int idoperacion = 0, idRuta = 0;
     Funciones funciones = new Funciones();
     AlmacenaImagen almacenaImagen;
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,11 +139,12 @@ public class Foto extends AppCompatActivity {
         // Obteniendo parametros
         Intent i = getIntent();
         almacenaImagen = new AlmacenaImagen(getApplicationContext());
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        idRuta =  i.getIntExtra(TAG_IDRUTA,0);
-        idoperacion =  i.getIntExtra(TAG_OPERACION,0);
-        idpromotor =  i.getIntExtra(TAG_IDPROMOTOR,0);
-        if (idpromotor == 0){
+        idRuta = i.getIntExtra(TAG_IDRUTA, 0);
+        idoperacion = i.getIntExtra(TAG_OPERACION, 0);
+        idpromotor = i.getIntExtra(TAG_IDPROMOTOR, 0);
+        if (idpromotor == 0) {
             idpromotor = usr.getid();
         }
 
@@ -157,12 +168,12 @@ public class Foto extends AppCompatActivity {
         }
 
         // Si la empresa es nulla es que se perdio el dato por lo que es conveniente volver a solicitarla de algun modo
-        if (idempresa == null){
+        if (idempresa == null) {
             Toast.makeText(getApplicationContext(), " Esta empresa es invalida, favor de especificar una ruta correcta", Toast.LENGTH_LONG).show();
             super.onBackPressed();
         }
 
-        Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             //log(throwable.getMessage(), thread.getId());
             funciones.RegistraError(idUsuario, "Foto setDefaultUncaughtExceptionHandler", (Exception) throwable, Foto.this, getApplicationContext());
         });
@@ -186,17 +197,17 @@ public class Foto extends AppCompatActivity {
         // Inicia Geolocalizaciòn
         funciones.locationStart(this);
 
-        btnSubir =  findViewById(R.id.btnSubir);
-        btnNoSubir=  findViewById(R.id.btnNoSubir);
-        imgizq =  findViewById(R.id.btnizquierda);
-        imgder =  findViewById(R.id.btnderecha);
-        imagenFoto =  findViewById(R.id.imagenFoto);
+        btnSubir = findViewById(R.id.btnSubir);
+        btnNoSubir = findViewById(R.id.btnNoSubir);
+        imgizq = findViewById(R.id.btnizquierda);
+        imgder = findViewById(R.id.btnderecha);
+        imagenFoto = findViewById(R.id.imagenFoto);
 
         // Muestra imagen de inicio
-         btnSubir.setVisibility(View.INVISIBLE);
-         btnNoSubir.setVisibility(View.INVISIBLE);
-         imgizq.setVisibility(View.INVISIBLE);
-         imgder.setVisibility(View.INVISIBLE);
+        btnSubir.setVisibility(View.INVISIBLE);
+        btnNoSubir.setVisibility(View.INVISIBLE);
+        imgizq.setVisibility(View.INVISIBLE);
+        imgder.setVisibility(View.INVISIBLE);
 
         // ********************************
         // Rotacion izquierda
@@ -207,7 +218,7 @@ public class Foto extends AppCompatActivity {
                 Bitmap bitmap = drawable.getBitmap();
                 int angle = -90;
                 //imagenFoto.setRotation(angle);
-                bitmap = rotateImage(bitmap ,angle);
+                bitmap = rotateImage(bitmap, angle);
                 imagenFoto.setImageBitmap(bitmap);
             }
         });
@@ -228,7 +239,7 @@ public class Foto extends AppCompatActivity {
                 Bitmap bitmap = drawable.getBitmap();
                 int angle = 90;
                 //imagenFoto.setRotation(angle);
-                bitmap = rotateImage(bitmap ,angle);
+                bitmap = rotateImage(bitmap, angle);
                 imagenFoto.setImageBitmap(bitmap);
 
                 pDialog.dismiss();
@@ -249,14 +260,13 @@ public class Foto extends AppCompatActivity {
                 // TODO ****************************
                 // TODO VALIDACION DE UBICACION FAKE
                 // TODO ****************************
-                if (funciones.ValidaUbicacionFake(usuario, getApplicationContext()))
-                {
+                if (funciones.ValidaUbicacionFake(usuario, getApplicationContext())) {
                     return;
                 }
 
                 int iFotosTienda = almacenaImagen.ObtenFotosTienda(idRuta);
-                if (iFotosTienda>=20){
-                    Toast.makeText(getApplicationContext() , " Solo se permiten 20 fotos por tienda " ,Toast.LENGTH_LONG).show();
+                if (iFotosTienda >= 20) {
+                    Toast.makeText(getApplicationContext(), " Solo se permiten 20 fotos por tienda ", Toast.LENGTH_LONG).show();
                     return;
                 }
                 // ********************
@@ -264,7 +274,7 @@ public class Foto extends AppCompatActivity {
                 try {
                     photoFile = createImageFile();
                 } catch (IOException ex) {
-                    Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al crear archivo de foto " +  ex.getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al crear archivo de foto " + ex.getMessage(), Toast.LENGTH_LONG).show();
                 }
 
                 // ********************
@@ -280,7 +290,33 @@ public class Foto extends AppCompatActivity {
                 } catch (Exception ex) {
                     funciones.RegistraError(idUsuario, "Foto setDefaultUncaughtExceptionHandler1", (Exception) ex, Foto.this, getApplicationContext());
                     // Log.e(TAG_ERROR, "Error camara " + ex.getMessage());
-                    Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al tomar la foto " +  ex.getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), ERROR_FOTO + " Error al tomar la foto " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        // *******************
+        // Obtiene geoposición
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+        .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    // Use the location object
+                    pLatitud = location.getLatitude();
+                    pLongitud = location.getLongitude();
+                    // Do something with the location data
                 }
             }
         });
@@ -308,9 +344,14 @@ public class Foto extends AppCompatActivity {
                 // TODO ****************************************
                 // TODO Proceso para subir imágenes
                 // TODO ****************************************
-                idpromotor = usr.getid();
-                pLatitud = usr.getLatitud();
-                pLongitud = usr.getLongitud();
+                // idpromotor = usr.getid();
+                // FusedLocation loc = new FusedLocation();
+                // loc.getLastLocation();
+
+
+                // pLatitud = loc.latitud;
+                // pLongitud = loc.longitud;
+
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
                 // Log.e(TAG_ERROR, "idUsuario en foto " + idUsuario);
@@ -319,11 +360,6 @@ public class Foto extends AppCompatActivity {
                     BitmapDrawable drawable = (BitmapDrawable) imagenFoto.getDrawable();
                     Bitmap bitmap = drawable.getBitmap();
                 }
-                catch (java.lang.ClassCastException e0){
-                    funciones.RegistraError(idUsuario, "Foto,btnSubir.setOnClickListener", e0, Foto.this, getApplicationContext());
-                    Toast.makeText(getApplicationContext(), "Error al tomar la foto, favor de intentar nuevamente", Toast.LENGTH_LONG).show();
-                    return;
-                }
                 catch( java.lang.NullPointerException e)
                 {
                     funciones.RegistraError(idUsuario, "Foto,btnSubir.setOnClickListener", e, Foto.this, getApplicationContext());
@@ -331,24 +367,9 @@ public class Foto extends AppCompatActivity {
                     return;
                 }
 
-                // *****************************
-                // Verifica Latitud y Longitud
-                if (pLatitud==0 || pLongitud==0){
-                    Localizacion loc = new Localizacion();
-                    pLatitud = Double.parseDouble(loc.sLatitud);
-                    pLatitud = Double.parseDouble(loc.sLongitud);
-                }
-
-
-                if (pLatitud==0 || pLongitud==0){
-                    Toast.makeText(getApplicationContext(),"No hay latitud, longitud " + String.valueOf(idUsuario) + ", Longitud: " + String.valueOf(pLongitud) + ", Latitud: " + String.valueOf(pLatitud)  + " intente nuevamente",
-                            Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                if(idUsuario.isEmpty())
+                if(pLatitud==0 || idUsuario.length()==0 || pLongitud==0)
                 {
-                    Toast.makeText(getApplicationContext(),"idUsuario: " + String.valueOf(idUsuario) + ", cierre la app e intente nuevamente",
+                    Toast.makeText(getApplicationContext(),"No hay latitud, longitud o usuario, idUsuario: " + String.valueOf(idUsuario) + ", Longitud: " + String.valueOf(pLongitud) + ", Latitud: " + String.valueOf(pLatitud)  + " cierre la app e intente nuevamente",
                             Toast.LENGTH_LONG).show();
                 }
                 else {
@@ -364,10 +385,20 @@ public class Foto extends AppCompatActivity {
                     }
                     else{
                         if (funciones.RevisarConexion(getApplicationContext())) {
-                            if (pLatitud==0 || pLongitud==0){
+                            if (pLatitud==0 || pLongitud == 0){
+                               /*
                                 Localizacion loc = new Localizacion();
                                 pLatitud = Double.parseDouble(loc.sLatitud);
-                                pLatitud = Double.parseDouble(loc.sLongitud);
+                                pLongitud = Double.parseDouble(loc.sLongitud);
+
+
+                                FusedLocation loc1 = new FusedLocation();
+                                loc1.getLastLocation();
+                                pLatitud = loc1.latitud;
+                                pLongitud = loc1.longitud;
+                                */
+                                Toast.makeText(getApplicationContext(),"No hay latitud, longitud o usuario, idUsuario: " + String.valueOf(idUsuario) + ", Longitud: " + String.valueOf(pLongitud) + ", Latitud: " + String.valueOf(pLatitud)  + " cierre la app e intente nuevamente",
+                                        Toast.LENGTH_LONG).show();
                             }
                             uploadImage();
                         }
@@ -534,6 +565,7 @@ public class Foto extends AppCompatActivity {
                 String sVerApp =  versionName + ":" + versionCode;
 
                 /*
+                Log.e(TAG_ERROR, "*************************");
                 Log.e(TAG_ERROR, String.valueOf(idpromotor));
                 Log.e(TAG_ERROR, String.valueOf(pLatitud));
                 Log.e(TAG_ERROR, String.valueOf(pLongitud));
@@ -541,7 +573,10 @@ public class Foto extends AppCompatActivity {
                 Log.e(TAG_ERROR, String.valueOf(idoperacion));
                 Log.e(TAG_ERROR, String.valueOf(idRuta));
                 Log.e(TAG_ERROR, fechahora);
-                Log.e(TAG_ERROR, UPLOAD_URL);
+                Log.e(TAG_ERROR, String.valueOf(uploadImage));
+                Log.e(TAG_ERROR, sVerApp);
+                Log.e(TAG_ERROR, String.valueOf(UPLOAD_URL));
+                Log.e(TAG_ERROR, "*************************");
                 */
 
                 data.put(UPLOAD_IDPROMOTOR, String.valueOf(idpromotor));
@@ -758,7 +793,6 @@ public class Foto extends AppCompatActivity {
                     "&idoperacion=" + idoperacion +
                     "&idempresa="+ idempresa;
 
-            // Log.e(TAG_URL, sRuta);
             super.onPreExecute();
             pDialog = new ProgressDialog(Foto.this);
             pDialog.setMessage("Consultando en el servicio Web ...");

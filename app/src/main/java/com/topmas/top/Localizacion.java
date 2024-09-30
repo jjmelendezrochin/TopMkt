@@ -16,7 +16,6 @@ public class Localizacion implements LocationListener {
     public String sLatitud = "";
     public String sLongitud = "";
 
-
     MainActivity mainActivity;
     public MainActivity getMainActivity() {
         return mainActivity;

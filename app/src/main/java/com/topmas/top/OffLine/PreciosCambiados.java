@@ -13,6 +13,10 @@ import static com.topmas.top.Constants.TAG_SERVIDOR;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+<<<<<<< HEAD
+=======
+
+>>>>>>> development
 import com.topmas.top.AlmacenaImagen;
 import com.topmas.top.BuildConfig;
 import com.topmas.top.RequestHandler;
@@ -31,7 +35,11 @@ public class PreciosCambiados {
             String _invinicial,
             String _invfinal,
             String _idobs,
+<<<<<<< HEAD
             String _id
+=======
+            String _idproductorutafecha
+>>>>>>> development
     ) {
         class subirPreciosCambiados extends AsyncTask<String, Void, String> {
 
@@ -45,12 +53,26 @@ public class PreciosCambiados {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
+<<<<<<< HEAD
                 Log.e(TAG_INFO, "Valor de retorno " + s);
                 if (Integer.valueOf(s) > 0) {
                     // ******************************
                     // Borrando el registro recien colocado en el telefono solo si el resultado es > 0
                     AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
                     almacenaImagen.Borra_vw_producto_ruta_fecha(Integer.valueOf(_id));
+=======
+                // Log.e(TAG_INFO, "Valor de retorno " + s);
+                if (s == ""){
+                    Log.e(TAG_INFO, "Sin valor de retorno");
+                }
+                else {
+                    if (Integer.valueOf(s) > 0) {
+                        // ******************************
+                        // Borrando el registro recien colocado en el telefono solo si el resultado es > 0
+                        AlmacenaImagen almacenaImagen = new AlmacenaImagen(contexto.getApplicationContext());
+                        almacenaImagen.Borra_vw_producto_ruta_fecha(Integer.valueOf(_idproductorutafecha));
+                    }
+>>>>>>> development
                 }
             }
 
@@ -72,7 +94,11 @@ public class PreciosCambiados {
 
                 // TODO /CatalogoProductos/createProductoRutaFecha1.php
                 String PRODUCTO_URL = TAG_SERVIDOR + "/CatalogoProductos/createProductoRutaFecha1_o.php";
+<<<<<<< HEAD
 
+=======
+                
+>>>>>>> development
                 data.put(TAG_IDRUTA, String.valueOf(pidruta));
                 data.put(TAG_IDPRODUCTO, String.valueOf(pidproducto));
                 data.put(TAG_IDPROMOTOR, String.valueOf(pidpromotor));
@@ -87,6 +113,10 @@ public class PreciosCambiados {
         }
 
         subirPreciosCambiados subirprecios = new subirPreciosCambiados();
+<<<<<<< HEAD
         subirprecios.execute(_idruta, _idproducto,  _idpromotor, _precioreal, _invinicial, _invfinal, _idobs, _id);
+=======
+        subirprecios.execute(_idruta, _idproducto,  _idpromotor, _precioreal, _invinicial, _invfinal, _idobs, _idproductorutafecha);
+>>>>>>> development
     }
 }

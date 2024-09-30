@@ -5,10 +5,12 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:requestLegacyExternalStorage="true" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- <uses-permission android:name="android.permission.CAMERA"/> -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- <uses-permission android:name="android.permission.CAMERA"/> -->
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" /> <!-- Habilitar camara en motorola 5g5 -->
@@ -27,15 +29,12 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".Incidencia"
-            android:exported="false" />
-        <activity
             android:name=".Canjes"
             android:exported="false" />
-        <!--<activity
+        <activity
             android:name=".OnItemClickListenerAdaptadorProductosCanjes"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />-->
+            android:theme="@style/Theme.AppCompat.Light"
+            android:exported="false" />
         <activity
             android:name=".Competencia_Promocion"
             android:exported="false" />
@@ -44,7 +43,7 @@
         <activity android:name=".listaproductos" />
         <activity
             android:name=".MenuTienda"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".listatiendas"
             android:screenOrientation="portrait" />
@@ -54,6 +53,7 @@
         <activity
             android:name=".Promocion"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".Foto"
             android:screenOrientation="portrait" />
@@ -76,7 +76,17 @@
         <activity
             android:name=".Producto"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".Incidencia"
+            android:exported="false" />
+        <activity
+            android:name=".listarespuestaincidencias"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+        <activity
+            android:name=".RespuestaIncidencia"
+            android:screenOrientation="portrait"
+            android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.topmas.android.fileprovider"

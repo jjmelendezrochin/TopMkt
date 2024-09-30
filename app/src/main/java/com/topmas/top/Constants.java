@@ -5,7 +5,6 @@ public final class Constants {
     public static final String ERROR_FOTO = "ERROR AL TOMAR UNA FOTO";
 
     public static final String TAG_ERROR = "ERROR";
-    public static final String TAG_URL = "URL";
     public static final String TAG_ID = "id";
     public static final String TAG_NAME = "name";
     public static final String TAG_EMAIL = "email";
@@ -56,7 +55,7 @@ public final class Constants {
     // TODO ****************************
     public static final boolean FAKE_VALIDATION = false;        // Debe validar si la ubicación es Fake en la App
     public static final boolean DEV_ENVIROMENT  = true;         // Si estamos en desarrollo establece usuario y contraseña automaticamente
-    public static final String DATABASE_NAME = "topmas_31";
+    public static final String DATABASE_NAME = "topmk_40";
     public static final int DATABASE_VERSION = 1;               // Versión de BD
     public static final String DEV_USER  = "prueba1";          // Usuario de prueba
     public static final String DEV_PWD  = "56789";             // Clave de prueba
@@ -74,6 +73,7 @@ public final class Constants {
     public static final String TAG_EMPAQUE = "EMPAQUE";
     public static final String TAG_SOLICITAINV = "SOLICITAINV";
     public static final String TAG_INCIDENCIA = "INCIDENCIA";
+    public static final String TAG_RESPINCIDENCIA = "RESP_INCIDENCIA";
     public static final String TAG_IDEMPRESA = "idempresa";
     public static final String TAG_UDC = "udc";
     public static final String TAG_FDC = "fdc";
@@ -111,7 +111,6 @@ public final class Constants {
     public static final String TAG_empaque = "empaque";
     public static final String TAG_solicita = "solicita";
     public static final String TAG_IDINCIDENCIA = "idincidencia";
-
     public static final String TAG_IDEMOSTRADOR = "idemostrador";
     public static final String TAG_IEXHIBIDOR = "iexhibidor";
     public static final String TAG_IEMPLAYE = "iemplaye";
@@ -124,10 +123,17 @@ public final class Constants {
     public static final String TAG_alias = "alias";
     public static final String TAG_FAKEGPS_MSG = "Se esta utilizando una aplicación no permitida en su teléfono, favor de contactar al área de sistemas para mayor información, esta información se va a grabar en la bitácora para seguimiento";
 
-    // TODO *****************************************
-    // TODO Cambio de ambientes prueba y producción
-    // TODO *****************************************
+    // **********************************************
+    // TAGS USADOS EN LECTURA DE RESPUESTA INCIDENCIAS
+    public static final String TAG_IDINC = "idinc";
+    public static final String TAG_IDFOTO = "idfoto";
+    public static final String TAG_FECHAHORA = "fechahora";
+    public static final String TAG_FECHAHORARESPUESTA = "fechahora_respuesta";
+    public static final String TAG_IMAGE = "image";
+    public static final String TAG_LEIDA = "leida";
+    // **********************************************
+
     // Generales
     public static final String TAG_SERVIDOR = "http://www.topmas.mx/TopMas";             // SERVIDOR AMBIENTE PRODUCCION
-    //public static final String TAG_SERVIDOR = "http://www.jjcorp.com.mx/TopMas";            // SERVIDOR AMBIENTE PRUEBAS
+    //public static final String TAG_SERVIDOR = "http://www.jjcorp.com.mx/TopMkt";       // SERVIDOR AMBIENTE PRUEBAS
 }

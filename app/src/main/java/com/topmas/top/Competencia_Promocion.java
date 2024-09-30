@@ -25,14 +25,17 @@ import static com.topmas.top.Foto.UPLOAD_SINDATOS;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
 import static com.topmas.top.Foto.rotateImage;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -51,8 +54,12 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
@@ -113,6 +120,7 @@ public class Competencia_Promocion extends AppCompatActivity {
     Usuario usr = new Usuario();
     Funciones funciones = new Funciones();
     AlmacenaImagen almacenaImagen;
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,9 +132,18 @@ public class Competencia_Promocion extends AppCompatActivity {
         idRuta =  i.getIntExtra(TAG_IDRUTA,0);
         idoperacion =  7;       // PRODUCTO EXHIBIDO , 8 COMPETENCIA (Se usan ambos en ete proceso pero solo se pasa 1)
         almacenaImagen = new AlmacenaImagen(getApplicationContext());
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         idpromotor = usr.getid();
-        pLatitud = usr.getLatitud();
-        pLongitud = usr.getLongitud();
+
+        /*
+        FusedLocation loc = new FusedLocation();
+        loc.getLastLocation();
+        pLatitud = loc.latitud;
+        pLongitud = loc.longitud;
+         */
+
+        // pLatitud = usr.getLatitud();
+        // pLongitud = usr.getLongitud();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
@@ -399,10 +416,10 @@ public class Competencia_Promocion extends AppCompatActivity {
                     }
                 } catch (NullPointerException e) {
                     Toast.makeText(getApplicationContext(), " Todas las imágenes y campos deben tener valores ", Toast.LENGTH_LONG).show();
-                    // Log.e(TAG_INFO,  e.toString());
+                    Log.e(TAG_INFO,  e.toString());
                 } catch (NumberFormatException e) {
                     Toast.makeText(getApplicationContext(), " Todas las imágenes y campos deben tener valores ", Toast.LENGTH_LONG).show();
-                    // Log.e(TAG_INFO,  e.toString());
+                    Log.e(TAG_INFO,  e.toString());
                 }
             }
         });
@@ -422,6 +439,31 @@ public class Competencia_Promocion extends AppCompatActivity {
             chkconPromo.setChecked(true);
             spinProducto.setSelection(1);
         }
+
+        // Obtiene geoposición
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            // Use the location object
+                            pLatitud = location.getLatitude();
+                            pLongitud = location.getLongitude();
+                            // Do something with the location data
+                        }
+                    }
+                });
     }
 
     // ****************************
@@ -610,6 +652,7 @@ public class Competencia_Promocion extends AppCompatActivity {
                 data.put(UPLOAD_VERSION, sVerApp);
                 data.put(UPLOAD_SINDATOS, "0");
 
+                /*
                 // *******************************************
                 Log.e(TAG_ERROR, "idpromotor "  + String.valueOf(idpromotor));
                 Log.e(TAG_ERROR, "platitud "  + String.valueOf(pLatitud));
@@ -633,6 +676,7 @@ public class Competencia_Promocion extends AppCompatActivity {
                 Log.e(TAG_ERROR, "UPLOAD_SINDATOS "  + "0");
                 Log.e(TAG_ERROR, "UPLOAD_COMPETENCIA_PROMOCION "  + UPLOAD_COMPETENCIA_PROMOCION);
                 // *******************************************
+                */
 
                 return rh.sendPostRequest(UPLOAD_COMPETENCIA_PROMOCION,data);
             }
@@ -650,12 +694,12 @@ public class Competencia_Promocion extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
                     imagenFoto1.setImageResource(android.R.color.transparent);
                     imagenFoto2.setImageResource(android.R.color.transparent);
-                    // Log.e(TAG_INFO, "Fotos a borrar " + iFoto1 + ", " + iFoto2 + ", " + idCompetenciaPromo);
+                    Log.e(TAG_INFO, "Fotos a borrar " + iFoto1 + ", " + iFoto2 + ", " + idCompetenciaPromo);
                     almacenaImagen.BorraFotoEnviada(iFoto1, iFoto2);
                     almacenaImagen.borrar_competencia_promocion(iFoto1);
 
                     int iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
-                    // Log.e(TAG_INFO, "iCompetenciaPromocion " + iCompetenciaPromocion);
+                    Log.e(TAG_INFO, "iCompetenciaPromocion " + iCompetenciaPromocion);
 
                 }
                 else if (s.equals(TAG_CARGA_FOTO_DISTANCIA)) {

@@ -26,9 +26,10 @@ import static com.topmas.top.Constants.TAG_EMPAQUE;
 import static com.topmas.top.Constants.TAG_EMPRESA;
 import static com.topmas.top.Constants.TAG_ERROR;
 import static com.topmas.top.Constants.TAG_EXPIRESIN;
-import static com.topmas.top.Constants.TAG_FAKEGPS_MSG;
 import static com.topmas.top.Constants.TAG_FDA;
 import static com.topmas.top.Constants.TAG_FDC;
+import static com.topmas.top.Constants.TAG_FECHAHORA;
+import static com.topmas.top.Constants.TAG_FECHAHORARESPUESTA;
 import static com.topmas.top.Constants.TAG_FECHAVISITA;
 import static com.topmas.top.Constants.TAG_FINAL;
 import static com.topmas.top.Constants.TAG_IDACTIVIDAD;
@@ -36,6 +37,8 @@ import static com.topmas.top.Constants.TAG_IDCADENA;
 import static com.topmas.top.Constants.TAG_IDEMPAQUE;
 import static com.topmas.top.Constants.TAG_IDEMPRESA;
 import static com.topmas.top.Constants.TAG_IDFORMATO;
+import static com.topmas.top.Constants.TAG_IDFOTO;
+import static com.topmas.top.Constants.TAG_IDINC;
 import static com.topmas.top.Constants.TAG_IDINCIDENCIA;
 import static com.topmas.top.Constants.TAG_IDOBS;
 import static com.topmas.top.Constants.TAG_IDPRODUCTO;
@@ -43,10 +46,11 @@ import static com.topmas.top.Constants.TAG_IDPRODUCTOFORMATOPRECIO;
 import static com.topmas.top.Constants.TAG_IDPROMOCION;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
+import static com.topmas.top.Constants.TAG_IMAGE;
 import static com.topmas.top.Constants.TAG_INCIDENCIA;
-import static com.topmas.top.Constants.TAG_INFO;
 import static com.topmas.top.Constants.TAG_INICIO;
 import static com.topmas.top.Constants.TAG_LATITUD;
+import static com.topmas.top.Constants.TAG_LEIDA;
 import static com.topmas.top.Constants.TAG_LONGITUD;
 import static com.topmas.top.Constants.TAG_NAME;
 import static com.topmas.top.Constants.TAG_NOMBRE;
@@ -61,6 +65,7 @@ import static com.topmas.top.Constants.TAG_PRECIOREGULAR;
 import static com.topmas.top.Constants.TAG_PROD;
 import static com.topmas.top.Constants.TAG_PROD_FTO;
 import static com.topmas.top.Constants.TAG_PROMO;
+import static com.topmas.top.Constants.TAG_RESPINCIDENCIA;
 import static com.topmas.top.Constants.TAG_RESPUESTA;
 import static com.topmas.top.Constants.TAG_RUTA;
 import static com.topmas.top.Constants.TAG_RUTA_ARCHIVO;
@@ -71,9 +76,7 @@ import static com.topmas.top.Constants.TAG_TIENDA;
 import static com.topmas.top.Constants.TAG_UDA;
 import static com.topmas.top.Constants.TAG_UDC;
 import static com.topmas.top.Constants.TAG_UPC;
-import static com.topmas.top.Constants.TAG_URL;
 import static com.topmas.top.Constants.TAG_USUARIO;
-import static com.topmas.top.Constants.TAG_VERSIONAPP;
 import static com.topmas.top.Constants.TAG_VISTA;
 import static com.topmas.top.Constants.TAG_alias;
 import static com.topmas.top.Constants.TAG_empaque;
@@ -82,8 +85,8 @@ import static com.topmas.top.Constants.TAG_ruta;
 import static com.topmas.top.Constants.TAG_solicita;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -131,7 +134,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity {
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
     Funciones funciones = new Funciones();
     private AlmacenaImagen almacenaImagen;
     private String versionapp = "";
-    private final Usuario usr = new Usuario();
+    // private final Usuario usr = new Usuario();
     private ListView lista;
     private int iLongitudArreglo;
     private int iLongitudArregloTiendas;
@@ -234,9 +236,25 @@ public class MainActivity extends AppCompatActivity {
     int[] solicita = new int[1];
     String[] descripcion_incidencia = new String[200];
 
+    // ********************************************
+    // Variables usadas en respuesta de incidencias
+    int[] idinc_ri = new int[200];
+    int[] idincidencia_ri = new int[200];
+    int[] idfoto_ri = new int[200];
+    int[] idpromotor_ri = new int[200];
+    int[] idruta_ri = new int[200];
+    String[] fechahora_ri = new String[200];
+    String[] observaciones_ri = new String[200];
+    String[] respuesta_ri = new String[200];
+    String[] fechahora_respuesta_ri = new String[200];
+    String[] image_ri = new String[200];
+    String[] leida_ri = new String[200];
+
+
     boolean bActualiza = false;
     AtomicBoolean isReady = new AtomicBoolean(false);
     Handler handler = new Handler();
+
 
     int progressStatus = 0;
     // products JSONArray
@@ -250,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
     int iErrores = 0;               // Errores
     int iCompetenciaPromocion = 0;  // Datos de competencia promoción
     int iCanjes = 0;                // Datos de canjes
-    int iIncidencias = 0;           // Datos de incidencias
+    int iIncidencia = 0;                // Datos de canjes
     int iSumaCuentas = 0;           // Total de imagenes por cargar
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -284,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
             // Api 29 Android 10
             // *******************************
             // Inicia la verificación de activación del GPS
-            funciones.locationStart(this);
+            // funciones.locationStart(this);
             // *******************************
 
             cmdIngresar = findViewById(R.id.cmdIngresar);
@@ -366,7 +384,6 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                // ********************
                 enableSubmitIfReady();
                 if (isReady.get()) {
                     // Procesos consulta y actualizacion
@@ -389,8 +406,51 @@ public class MainActivity extends AppCompatActivity {
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                almacenaImagen = new AlmacenaImagen(getApplicationContext());
-                almacenaImagen.muestradatosAlmacenados();
+                // almacenaImagen = new AlmacenaImagen(getApplicationContext());
+                // almacenaImagen.muestradatosAlmacenados();
+
+                int iCuenta = almacenaImagen.ObtenRegistros(0);
+                int iCuentaPreciosCambiados = almacenaImagen.ObtenRegistros(9);
+                int iCuentaRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
+                int iCuentaPromociones = almacenaImagen.ObtenRegistros(12);
+                int iCuentaCaducidad = almacenaImagen.ObtenRegistros(14);
+                int iCuentaErrores = almacenaImagen.ObtenRegistros(16);
+                int iCuentaCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);
+                int iCuentaCanjes = almacenaImagen.ObtenRegistros(20);
+                int iCuentaIncidencias = almacenaImagen.ObtenRegistros(22);
+
+                Log.e(TAG_ERROR, "Hay " + iMagenesGuardadas +  " imagenes guardadas");
+                Log.e(TAG_ERROR, "Hay " + iPreciosCambiados+  " precios cambiados");
+                Log.e(TAG_ERROR, "Hay " + iRegistrosCompetencia+  " registros competencia");
+                Log.e(TAG_ERROR, "Hay " + iPromociones +  " promociones");
+                Log.e(TAG_ERROR, "Hay " + iCaducidad +  " caducidades");
+                Log.e(TAG_ERROR, "Hay " + iErrores +  " errores");
+                Log.e(TAG_ERROR, "Hay " + iCompetenciaPromocion +  " competencia promociòn");
+                Log.e(TAG_ERROR, "Hay " + iCanjes +  " canjes");
+                Log.e(TAG_ERROR, "Hay " + iCuentaIncidencias +  " incidencias");
+
+                AlertDialog.Builder alerta = new AlertDialog.Builder(MainActivity.this);
+                String sMensaje = "Usted tiene " + "\n" + String.valueOf(iCuenta) + " imágenes almacenadas "  + "\n" +
+                        iCuentaPreciosCambiados + " precios cambiados, "  + "\n" +
+                        iCuentaPromociones + " promociones, "  + "\n" +
+                        iCuentaRegistrosCompetencia + " datos de competencia,"  + "\n" +
+                        iCuentaCaducidad  + " datos de caducidad, "  + "\n" +
+                        iCuentaCompetenciaPromocion + " datos de comparativa, "  + "\n" +
+                        iCuentaCanjes + " datos de canjes" + "\n" +
+                        iCuentaIncidencias + " datos de incidencias" + "\n" +
+                        iCuentaErrores  + " datos de error(es) "  + "\n" +
+                        "No olvide conectarse en cuanto tenga señal suficiente, para colocar sus fotos en plataforma" + "\n" +
+                        "(pulsar SI para salir)";
+
+                alerta.setMessage(sMensaje)
+                        .setCancelable(false)
+                        .setNegativeButton("SI", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                alerta.show();
             }
         });
 
@@ -407,6 +467,7 @@ public class MainActivity extends AppCompatActivity {
                 Date now = new Date();
                 String sHora = sdf.format(now);
                 // Log.i(TAG_INFO, "Hora actual " + sHora);
+                /*
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     boolean result = isAfter8PM(sHora);
                     if (!result){
@@ -414,6 +475,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
                 }
+                 */
 
                 almacenaImagen = new AlmacenaImagen(getApplicationContext());
                 iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
@@ -424,9 +486,9 @@ public class MainActivity extends AppCompatActivity {
                 iErrores = almacenaImagen.ObtenRegistros(16);
                 iCompetenciaPromocion = almacenaImagen.ObtenRegistros(18);
                 iCanjes = almacenaImagen.ObtenRegistros(20);
-                iIncidencias = almacenaImagen.ObtenRegistros(22);
+                iIncidencia = almacenaImagen.ObtenRegistros(22);
 
-                int iSumaCuentas = (iMagenesGuardadas + iPreciosCambiados + iRegistrosCompetencia + iPromociones + iCaducidad + iErrores + iCompetenciaPromocion + iCanjes + iIncidencias);
+                int iSumaCuentas = (iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes+iIncidencia);
 
                 if (iSumaCuentas > 0) {
                     // **************************************
@@ -548,9 +610,9 @@ public class MainActivity extends AppCompatActivity {
         iErrores = almacenaImagen.ObtenRegistros(16);
         iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
         iCanjes = almacenaImagen.ObtenRegistros(20);
-        iIncidencias= almacenaImagen.ObtenRegistros(22);
+        iIncidencia = almacenaImagen.ObtenRegistros(22);
 
-        iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes+iIncidencias);
+        iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes+iIncidencia);
 
         if (iSumaCuentas>0
                 && funciones.RevisarConexion(getApplicationContext()))
@@ -682,23 +744,20 @@ public class MainActivity extends AppCompatActivity {
         String sRuta = "";
         String data = "";
         String Error = null;
-
-
         String name = "";
         String email = "";
         String token = "";
         String expira = "";
 
-
         @Override
         protected void onPreExecute() {
-            // TODO /Promotor/obtenerpromotor_calendario.php
-            sRuta = TAG_SERVIDOR + "/Promotor/obtenerpromotor_calendario.php?"
+            // TODO /Promotor/obtenerpromotor2.php
+            sRuta = TAG_SERVIDOR + "/Promotor/obtenerpromotor2.php?"
                     + "idusuario=" + txtUsuario.getText().toString().trim()
                     + "&clave=" + txtPwd.getText().toString().trim()
                     + "&idempresa=" + pIdempresa;
 
-            // Log.e(TAG_URL, sRuta);
+            // Log.e(TAG_ERROR, sRuta);
             super.onPreExecute();
             pDialog = new ProgressDialog(MainActivity.this);
             pDialog.setMessage("Consultando en el servicio Web ...");
@@ -740,17 +799,11 @@ public class MainActivity extends AppCompatActivity {
                 // Append Server Response To Content String
                 sRespusta = sb.toString();
                 //Log.e(TAG_ERROR, sRespusta);
-            } catch (java.net.SocketException e0) {
-                    Error = e0.getMessage();
-                    funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService (java.net.SocketException e0)", e0, MainActivity.this, getApplicationContext());
-                    Log.e(TAG_ERROR, e0.toString());
-                    //Toast.makeText(getApplicationContext(), " Error al obtener los datos del promotor, favor de intentar nuevamente en un sitio con mayor señal" +  Error,Toast.LENGTH_LONG).show();
-                    this.cancel(true);
+
             } catch (Exception e) {
                 Error = e.getMessage();
                 funciones.RegistraError(txtUsuario.getText().toString().trim(), "MainActivity,ConsultaWebService", e, MainActivity.this, getApplicationContext());
-                Log.e(TAG_ERROR, e.toString());
-                //Toast.makeText(getApplicationContext(), " Error al obtener los datos del promotor, favor de intentar nuevamente en un sitio con mayor señal" +  Error,Toast.LENGTH_LONG).show();
+                // Toast.makeText(getApplicationContext(), " Error al obtener los datos del promotor, favor de intentar nuevamente en un sitio con mayor señal" +  Error,Toast.LENGTH_LONG).show();
                 this.cancel(true);
             } finally {
                 try {
@@ -842,7 +895,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Proceso de actualización concluido" ,Toast.LENGTH_LONG).show();
             }
 
-            /**/
         }
     }
 
@@ -906,7 +958,6 @@ public class MainActivity extends AppCompatActivity {
         cmdIngresar.setEnabled(isReady.get());
     }
 
-
     // ************************************
     // Función que valida si es después de la 8pm
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -921,7 +972,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
-        LocalTime eightPM = LocalTime.of(16, 0); // 20:00 in 24-hour format
+        LocalTime eightPM = LocalTime.of(20, 0); // 20:00 in 24-hour format
 
         return timeToCompare.isAfter(eightPM);
     }
@@ -945,7 +996,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             // TODO /CatalogoProductos/obtenerempresas.php
             sRuta = TAG_SERVIDOR + "/Promotor/obtenerempresas.php";
-            // Log.e(TAG_URL, sRuta);
+            // Log.e(TAG_ERROR, sRuta);
 
             super.onPreExecute();
             pDialog = new ProgressDialog(MainActivity.this);
@@ -1022,10 +1073,7 @@ public class MainActivity extends AppCompatActivity {
                                 nombreEmpresa[i] = jsonObjEmpresa.getString(TAG_nombreempresa);
                                 aliasEmpresa[i] = jsonObjEmpresa.getString(TAG_alias);
                                 almacenaImagen.inserta_empresa(pIdempresa[i], nombreEmpresa[i], aliasEmpresa[i]);
-//                                Log.e(TAG_ERROR, "valor de i " + i);
-//                                Log.e(TAG_ERROR, String.valueOf(pIdempresa[i]));
-//                                Log.e(TAG_ERROR, nombreEmpresa[i]);
-//                                Log.e(TAG_ERROR, aliasEmpresa[i]);
+                                // Log.e(TAG_ERROR, "j");
                             }
                         }
 
@@ -1081,18 +1129,16 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute()
         {
             // TODO ****************************
-            // TODO EN ESTA SECCIÓN SE DESCARGAN TODOS LOS DATOS DESDE LA PLATAFORMA USANDO EL API
-            // TODO /Promotor/obtenertiendaspromotor_calendario.php
-            // TODO Obtiene la de  informacion de todos los catalogos para luego compararla con los de sqlite  e insertar lo nuevo
+            // TODO EN ESTA SECCIÓN SE DESCARGAN TODOS LOS DATOS DESDE LA PLATAFORMA USANDO EL API /Promotor/obtenertiendaspromotor.php Obtiene la de  informacion de todos los catalogos para luego compararla con los de sqlite  e insertar lo nuevo
             // TODO ****************************
 
             if (sTienda.equals("")) {
-                sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor_calendario.php?idpromotor=" + pidPromotor + "&tienda=%&idempresa=" + pIdempresa;
+                sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor.php?idpromotor=" + pidPromotor + "&tienda=%&idempresa=" + pIdempresa;
             }
             else{
-                sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor_calendario.php?idpromotor=" + pidPromotor + "&tienda=" + sTienda + "&idempresa=" + pIdempresa;
+                sRuta = TAG_SERVIDOR + "/Promotor/obtenertiendaspromotor.php?idpromotor=" + pidPromotor + "&tienda=" + sTienda + "&idempresa=" + pIdempresa;
             }
-            // Log.e(TAG_URL, sRuta);
+            // Log.e(TAG_ERROR, "Consulta Tiendas " + sRuta);
 
             super.onPreExecute();
             pDialog = new ProgressDialog(MainActivity.this);
@@ -1134,7 +1180,7 @@ public class MainActivity extends AppCompatActivity {
                 // Append Server Response To Content String
                 sRespusta = sb.toString();
 
-                //Log.e(TAG_ERROR,"Respuesta recibida: " + sRespusta);
+                // Log.e(TAG_ERROR,"Respuesta recibida: " + sRespusta);
 
             } catch (Exception ex) {
                 Error = ex.getMessage();
@@ -1163,23 +1209,20 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 try {
                     JSONObject jsonResponse, jsonChidNode, jsonObjRuta, jsonObjProd, jsonObjProdFto;
-                    JSONObject jsonObjRutaCat, jsonObjVista, jsonObjCadena, jsonObjObs, jsonObjProm, jsonObjAct, jsonObjEmp, jsonObjConf,jsonIncidencia;
+                    JSONObject jsonObjRutaCat, jsonObjVista, jsonObjCadena, jsonObjObs, jsonObjProm, jsonObjAct, jsonObjEmp, jsonObjConf, jsonIncidencia, jsonRespIncidencia;
                     JSONArray jsonarray;
                     // Revisando la respuesta
                     assert sRespusta != null;
                     jsonResponse = new JSONObject(sRespusta);
                     jsonarray = jsonResponse.getJSONArray(TAG_RESPUESTA);       // Arreglo
-                    Log.e(TAG_INFO, String.valueOf(jsonarray));
                     iLongitudArreglo = jsonarray.length();
-                    //Log.e(TAG_INFO, "Longitud Arreglo "+String.valueOf(iLongitudArreglo));
 
                     // ******************************************
                     // Ciclo de obtención de datos del servicio web
-                    int jj = 0, k = 0, l = 0, m = 0, n = 0, o = 0, p = 0, q = 0, r = 0, s = 0, t = 0;
+                    int jj = 0, k = 0, l = 0, m = 0, n = 0, o = 0, p = 0, q = 0, r = 0, s = 0, t = 0, u = 0, v = 0;
                     for (int i = 0; i < iLongitudArreglo; i++) {
                         jsonChidNode = jsonarray.getJSONObject(i);
                         if (jsonChidNode.has(TAG_RUTA)){
-                            //Log.e(TAG_RUTA, TAG_RUTA);
                             // solicita información de rutas
                             jsonObjRuta = jsonChidNode.getJSONObject(TAG_RUTA);
                             // Colocacion de datos en los arreglos de la lista de rutas
@@ -1189,24 +1232,10 @@ public class MainActivity extends AppCompatActivity {
                             direccion[jj] = jsonObjRuta.getString(TAG_DIRECCION);
                             latitud[jj] = jsonObjRuta.getDouble(TAG_LATITUD);
                             longitud[jj] = jsonObjRuta.getDouble(TAG_LONGITUD);
-                            versionapp = jsonObjRuta.getString(TAG_VERSIONAPP);
                             fechavisita[jj] = jsonObjRuta.getString(TAG_FECHAVISITA);
                             jj++;
                         }
-                        else if(jsonChidNode.has(TAG_INCIDENCIA))
-                        {
-                            //Log.e(TAG_INCIDENCIA, TAG_INCIDENCIA);
-                            // Obtiene información de solicita inv
-                            jsonIncidencia = jsonChidNode.getJSONObject(TAG_INCIDENCIA);
-                            idincidencia[t] = Integer.parseInt(jsonIncidencia.getString(TAG_IDINCIDENCIA));
-                            descripcion_incidencia[t]= jsonIncidencia.getString(TAG_DESCRIPCIONINCIDENCIA);
-
-                            //Log.e(TAG_INCIDENCIA, String.valueOf(idincidencia[t]));
-                            //Log.e(TAG_INCIDENCIA,descripcion_incidencia[t]);
-                            t++;
-                        }
                         else if(jsonChidNode.has(TAG_PROD)){
-                            //Log.e(TAG_PROD, TAG_PROD);
                             // Solicita información de productos
                             jsonObjProd = jsonChidNode.getJSONObject(TAG_PROD);
                             // Colocacion de datos en los arreglos de la lista de productos
@@ -1229,7 +1258,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_PROD_FTO))
                         {
-                            //Log.e(TAG_PROD_FTO, TAG_PROD_FTO);
                             // solicita información de formatos
                             jsonObjProdFto = jsonChidNode.getJSONObject(TAG_PROD_FTO);
                             idproductoformatoprecio[l] =  Integer.parseInt(jsonObjProdFto.getString(TAG_IDPRODUCTOFORMATOPRECIO));
@@ -1245,7 +1273,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_RUTA_CAT))
                         {
-                            //Log.e(TAG_RUTA_CAT, TAG_RUTA_CAT);
                             // Solicita información de catálogos
                             jsonObjRutaCat = jsonChidNode.getJSONObject(TAG_RUTA_CAT);
                             idruta[m] = Integer.parseInt(jsonObjRutaCat.getString(TAG_IDRUTA));
@@ -1255,7 +1282,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_VISTA))
                         {
-                            //Log.e(TAG_VISTA, TAG_VISTA);
                             // Solicita información de vistas
                             jsonObjVista = jsonChidNode.getJSONObject(TAG_VISTA);
                             idproducto2[n] = Integer.parseInt(jsonObjVista.getString(TAG_IDPRODUCTO));
@@ -1266,7 +1292,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_CADENA))
                         {
-                            //Log.e(TAG_CADENA, TAG_CADENA);
                             // Solicita información de cadenas
                             jsonObjCadena = jsonChidNode.getJSONObject(TAG_CADENA);
                             idcadena[o] = Integer.parseInt(jsonObjCadena.getString(TAG_IDCADENA));
@@ -1276,7 +1301,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_OBSERV))
                         {
-                            //Log.e(TAG_OBSERV, TAG_OBSERV);
                             // Solicita información de observaciones
                             jsonObjObs = jsonChidNode.getJSONObject(TAG_OBSERV);
                             idobs[p] = Integer.parseInt(jsonObjObs.getString(TAG_IDOBS));
@@ -1285,7 +1309,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_PROMO))
                         {
-                            //Log.e(TAG_PROMO, TAG_PROMO);
                             // Solicita infomración de promo
                             jsonObjProm = jsonChidNode.getJSONObject(TAG_PROMO);
                             idpromocion[q] = jsonObjProm.getInt(TAG_IDPROMOCION);
@@ -1307,7 +1330,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_ACTIV))
                         {
-                            //Log.e(TAG_ACTIV, TAG_ACTIV);
                             // Solicita informacion de actividad
                             jsonObjAct = jsonChidNode.getJSONObject(TAG_ACTIV);
                             idactividad[r] = Integer.parseInt(jsonObjAct.getString(TAG_IDACTIVIDAD));
@@ -1316,14 +1338,51 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else if(jsonChidNode.has(TAG_EMPAQUE))
                         {
-                            //Log.e(TAG_EMPAQUE, TAG_EMPAQUE);
                             // Obtiene la información de los empaques
                             jsonObjEmp = jsonChidNode.getJSONObject(TAG_EMPAQUE);
                             idempaque[s] = Integer.parseInt(jsonObjEmp.getString(TAG_IDEMPAQUE));
                             empaque[s] = jsonObjEmp.getString(TAG_empaque);
                             s++;
                         }
+                        else if(jsonChidNode.has(TAG_SOLICITAINV))
+                        {
+                            // Obtiene información de solicita inv
+                            jsonObjConf = jsonChidNode.getJSONObject(TAG_SOLICITAINV);
+                            solicita[t] = Integer.parseInt(jsonObjConf.getString(TAG_solicita));
+                            t++;
+                        }
+                        else if(jsonChidNode.has(TAG_INCIDENCIA))
+                        {
+                            // Log.e(TAG_INCIDENCIA, TAG_INCIDENCIA);
+                            // Obtiene información de solicita inv
+                            jsonIncidencia = jsonChidNode.getJSONObject(TAG_INCIDENCIA);
+                            idincidencia[u] = Integer.parseInt(jsonIncidencia.getString(TAG_IDINCIDENCIA));
+                            descripcion_incidencia[u]= jsonIncidencia.getString(TAG_DESCRIPCIONINCIDENCIA);
 
+                            // Log.e(TAG_INCIDENCIA, String.valueOf(idincidencia[u]));
+                            // Log.e(TAG_INCIDENCIA,descripcion_incidencia[u]);
+                            u++;
+                        }
+                        else if(jsonChidNode.has(TAG_RESPINCIDENCIA))
+                        {
+                            // Log.e(TAG_RESPINCIDENCIA, TAG_RESPINCIDENCIA);
+                            jsonRespIncidencia = jsonChidNode.getJSONObject(TAG_RESPINCIDENCIA);
+                            // Log.e(TAG_RESPINCIDENCIA, String.valueOf(jsonRespIncidencia.length()));
+
+                            idinc_ri[v] = Integer.parseInt(jsonRespIncidencia.getString(TAG_IDINC));
+                            idincidencia_ri[v]= Integer.parseInt(jsonRespIncidencia.getString(TAG_IDINCIDENCIA));
+                            idfoto_ri[v] = Integer.parseInt(jsonRespIncidencia.getString(TAG_IDFOTO));
+                            idpromotor_ri[v]= Integer.parseInt(jsonRespIncidencia.getString(TAG_IDPROMOTOR));
+                            idruta_ri[v] = Integer.parseInt(jsonRespIncidencia.getString(TAG_IDRUTA));
+                            fechahora_ri[v]= jsonRespIncidencia.getString(TAG_FECHAHORA);
+                            observaciones_ri[v] = (jsonRespIncidencia.getString(TAG_OBSERVACIONES));
+                            respuesta_ri[v]= jsonRespIncidencia.getString(TAG_RESPUESTA);
+                            fechahora_respuesta_ri[v] = (jsonRespIncidencia.getString(TAG_FECHAHORARESPUESTA));
+                            image_ri[v] = (jsonRespIncidencia.getString(TAG_IMAGE));
+                            leida_ri[v]= (jsonRespIncidencia.getString(TAG_LEIDA));
+                            v++;
+                        }
+                        // Log.e(TAG_RESPINCIDENCIA, "Lecturas de incidencia " + String.valueOf(v));
                     }
 
                     int iCuenta = almacenaImagen.ObtenRegistrosTiendas(pidPromotor,sTienda);
@@ -1341,7 +1400,6 @@ public class MainActivity extends AppCompatActivity {
 
                     // ******************************************
                     // Inserciòn de tiendas si el numero de registros es diferente
-                    //Log.e(TAG_ERROR, "valor de iCuenta " + iCuenta + ", " + " valor de jj " + jj);
                     if (iCuenta != jj){
                         //pDialog.setMessage("Inserción de tiendas ...");
                         almacenaImagen.TruncarTablaTiendas(pidPromotor);
@@ -1437,15 +1495,24 @@ public class MainActivity extends AppCompatActivity {
                     // Log.e(TAG_ERROR, " conteo de incidencias " + t);
                     // ******************************************
                     // Inserción de cat_empaque
-                    // Log.e(TAG_ERROR, " conteo de incidencias " + iCuentaIncidencias);
-                    //  Log.e(TAG_ERROR, " valor de t " + t);
-                    if (iCuentaCatalIncidencias != t){
+                    Log.e(TAG_ERROR, " conteo de incidencias " + iCuentaCatalIncidencias);
+                    Log.e(TAG_ERROR, " valor de u " + u);
+                    if (iCuentaCatalIncidencias != u){
                         almacenaImagen.TruncarTabla(21);
-                        for (int a = 0; a < t; a++) {
+                        for (int a = 0; a < u; a++) {
                             almacenaImagen.inserta_incidencia(idincidencia[a],descripcion_incidencia[a]);
                         }
                         // Log.e(TAG_ERROR, " conteo de incidencias " + t);
                     }
+
+                    // ******************************************
+                    // Inserción de resp_incidencias que no hayan sido descargadas
+                    for (int a = 0; a < v; a++) {
+                        almacenaImagen.inserta_respuestaincidencia(idinc_ri[a], idincidencia_ri[a], idfoto_ri[a], idpromotor_ri[a], idruta_ri[a], fechahora_ri[a],
+                                observaciones_ri[a], respuesta_ri[a], fechahora_respuesta_ri[a], image_ri[a]);
+                    }
+                    Log.e(TAG_ERROR, " conteo de respuesta incidencias " + v);
+
                     // ******************************************
                     // Actualizaciòn de configuracion
                     if(solicita[0]> -1) {
@@ -1489,6 +1556,7 @@ public class MainActivity extends AppCompatActivity {
         int iErrores = 0;               // Errores
         int iCompetenciaPromocion = 0;  // Datos de competencia promoción
         int iCanjes = 0;                // Datos de canjes
+        int iIncidencias = 0;            // Datos de Incidencias
 
         protected Boolean doInBackground(Void... params) {
             progressStatus = 0;
@@ -1503,7 +1571,7 @@ public class MainActivity extends AppCompatActivity {
             iCanjes = almacenaImagen.ObtenRegistros(20);
             iIncidencias = almacenaImagen.ObtenRegistros(22);
 
-            int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes+iIncidencias);
+            int iSumaCuentas =(iMagenesGuardadas+iPreciosCambiados+iRegistrosCompetencia+iPromociones+iCaducidad+iErrores+iCompetenciaPromocion+iCanjes+iIncidencia);
 
             // Log.e(TAG_ERROR, "VALOR DE progressStatus e iSumaCuentas son " + progressStatus + " y " + iSumaCuentas);
             Log.e(TAG_ERROR, "Hay " + iSumaCuentas + " elementos de iSumaCuentas");
@@ -1511,58 +1579,97 @@ public class MainActivity extends AppCompatActivity {
             // TODO ****************************
             // TODO AQUI SE SUBIRAN TODAS LAS FOTOS Y REGISTROS EN A PETICION DEL PROMOTOR PARA QUE NO SE SATURE EL PROCESO
             // TODO ****************************
+            int h = 0;
+            iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
+            iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
+            iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
+            iPromociones = almacenaImagen.ObtenRegistros(12);
+            iCaducidad = almacenaImagen.ObtenRegistros(14);
+            iErrores = almacenaImagen.ObtenRegistros(16);
+            iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
+            iCanjes = almacenaImagen.ObtenRegistros(20);
+            iIncidencias = almacenaImagen.ObtenRegistros(22);
+
+            Log.e(TAG_ERROR, "Hay " + iMagenesGuardadas +  " imagenes guardadas");
+            Log.e(TAG_ERROR, "Hay " + iPreciosCambiados+  " precios cambiados");
+            Log.e(TAG_ERROR, "Hay " + iRegistrosCompetencia+  " registros competencia");
+            Log.e(TAG_ERROR, "Hay " + iPromociones +  " promociones");
+            Log.e(TAG_ERROR, "Hay " + iCaducidad +  " caducidades");
+            Log.e(TAG_ERROR, "Hay " + iErrores +  " errores");
+            Log.e(TAG_ERROR, "Hay " + iCompetenciaPromocion +  " competencia promociòn");
+            Log.e(TAG_ERROR, "Hay " + iCanjes +  " canjes");
+            Log.e(TAG_ERROR, "Hay " + iIncidencias +  " incidencias");
+
+            int  iMag = 0;
+            int  iPre = 0;
+            int  iReg = 0;
+            int  iPro = 0;
+            int  iCad = 0;
+            int  iErr = 0;
+            int  iCom = 0;
+            int  iCan = 0;
+            int  iInc = 0;
+
             do {
-                // progressBar.setProgress(progressStatus);
                 int i = 0;
                 int j = 0;
-
-                iMagenesGuardadas = almacenaImagen.ObtenRegistros(0);
-                iPreciosCambiados = almacenaImagen.ObtenRegistros(9);
-                iRegistrosCompetencia = almacenaImagen.ObtenRegistros(10);
-                iPromociones = almacenaImagen.ObtenRegistros(12);
-                iCaducidad = almacenaImagen.ObtenRegistros(14);
-                iErrores = almacenaImagen.ObtenRegistros(16);
-                iCompetenciaPromocion= almacenaImagen.ObtenRegistros(18);
-                iCanjes = almacenaImagen.ObtenRegistros(20);
-                iIncidencias = almacenaImagen.ObtenRegistros(22);
-
-                // Log.e(TAG_INFO, "Incidencias " + iIncidencias);
-
-                if (iMagenesGuardadas>0){
-                    // Sube imagenes upload1.php
+                if (iMagenesGuardadas>0 && iMagenesGuardadas>iMag){
+                    // Sube imagenes upload1a.php
                     i = almacenaImagen.Colocarfoto();
+                    Log.e(TAG_ERROR, "ColocarFoto " + h);
+                    iMag++;
                 }
+<<<<<<< HEAD
                 else if(iPreciosCambiados>0){
                     // Log.e(TAG_INFO, "precios cambiados " + iPreciosCambiados);
+=======
+                else if(iPreciosCambiados>0 && iPreciosCambiados>iPre){
+>>>>>>> development
                     i = almacenaImagen.ColocaPreciosCambiados();
+                    Log.e(TAG_ERROR, "ColocaPreciosCambiados "  + h);
+                    iPre++;
                 }
-                else if(iRegistrosCompetencia>0){
+                else if(iRegistrosCompetencia>0 && iRegistrosCompetencia>iReg){
                     // Sube imagenes upload_competencia.php
                     i = almacenaImagen.ColocaCompetencia();
+                    Log.e(TAG_ERROR, "ColocaCompetencia " + h);
+                    iReg++;
                 }
-                else if(iPromociones>0){
+                else if(iPromociones>0 && iPromociones>iPro){
                     i = almacenaImagen.ColocaPromocion();
+                    Log.e(TAG_ERROR, "ColocarPromocion " + h);
+                    iPro++;
                 }
-                else if(iCaducidad>0){
+                else if(iCaducidad>0 && iCaducidad>iCad){
                     // Sube imagenes upload_caducidad.php
                     i = almacenaImagen.ColocaCaducidad();
+                    Log.e(TAG_ERROR, "ColocarCaducidad " + h);
+                    iCad++;
                 }
-                else if(iErrores>0){
-                    i = almacenaImagen.ColocaErrores();
-                }
-                else if(iCompetenciaPromocion>0){
+                else if(iCompetenciaPromocion>0 && iCompetenciaPromocion>iCom){
                     i = almacenaImagen.ColocaCompetenciaPromocion();
+                    Log.e(TAG_ERROR, "ColocarCompetenciaPromocion " + h);
+                    iCom++;
                 }
-                else if(iCanjes>0){
+                else if(iCanjes>0 && iCanjes>iCan){
                     // Sube imagenes upload_canjes.php y upload_canjes_complemento.php
                     if (progressStatus <= iSumaCuentas) {
                         i = almacenaImagen.ColocaCanjes();
                         j = almacenaImagen.ColocaCanjesComplemento();
+                        Log.e(TAG_ERROR, "ColocarCanjes " + h);
+                        iCan++;
                     }
                 }
-                else if(iIncidencias>0){
+                else if(iIncidencias>0 && iIncidencias>iInc){
                     // Sube imagenes de incidencias upload_incidencia.php
                     i = almacenaImagen.ColocaIncidencias();
+                    Log.e(TAG_ERROR, "ColocarIncidencias " + h);
+                    iInc++;
+                }
+                else if(iErrores>0 && iErrores>iErr){
+                    i = almacenaImagen.ColocaErrores();
+                    Log.e(TAG_ERROR, "ColocarErrores " + h);
+                    iErr++;
                 }
 
                 try {
@@ -1573,9 +1680,10 @@ public class MainActivity extends AppCompatActivity {
 
                 publishProgress(progressStatus+1);
                 progressStatus += 1;
-
+                h++;
                 if(isCancelled())
                     break;
+
             }
             while (progressStatus < iSumaCuentas);
 

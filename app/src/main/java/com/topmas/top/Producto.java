@@ -1,5 +1,26 @@
 package com.topmas.top;
 
+import static com.topmas.top.Constants.TAG_CANTIDADCAJA;
+import static com.topmas.top.Constants.TAG_CATEGORIA1;
+import static com.topmas.top.Constants.TAG_CATEGORIA2;
+import static com.topmas.top.Constants.TAG_DESCRIPCION;
+import static com.topmas.top.Constants.TAG_DESCRIPCION1;
+import static com.topmas.top.Constants.TAG_IDEMPRESA;
+import static com.topmas.top.Constants.TAG_IDOBS;
+import static com.topmas.top.Constants.TAG_IDPRODUCTO;
+import static com.topmas.top.Constants.TAG_IDPROMOTOR;
+import static com.topmas.top.Constants.TAG_IDRUTA;
+import static com.topmas.top.Constants.TAG_INVFINAL;
+import static com.topmas.top.Constants.TAG_INVINICIAL;
+import static com.topmas.top.Constants.TAG_OBSERVACIONES;
+import static com.topmas.top.Constants.TAG_PRECIO;
+import static com.topmas.top.Constants.TAG_PRECIOREAL;
+import static com.topmas.top.Constants.TAG_PRODUCTO;
+import static com.topmas.top.Constants.TAG_RESPUESTA;
+import static com.topmas.top.Constants.TAG_SERVIDOR;
+import static com.topmas.top.Constants.TAG_UPC;
+import static com.topmas.top.Constants.TAG_USUARIO;
+
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -10,7 +31,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -37,30 +57,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
-
-import static com.topmas.top.Constants.TAG_CANTIDADCAJA;
-import static com.topmas.top.Constants.TAG_CATEGORIA1;
-import static com.topmas.top.Constants.TAG_CATEGORIA2;
-import static com.topmas.top.Constants.TAG_DESCRIPCION;
-import static com.topmas.top.Constants.TAG_DESCRIPCION1;
-import static com.topmas.top.Constants.TAG_ERROR;
-import static com.topmas.top.Constants.TAG_IDEMPRESA;
-import static com.topmas.top.Constants.TAG_IDOBS;
-import static com.topmas.top.Constants.TAG_IDPRODUCTO;
-import static com.topmas.top.Constants.TAG_IDPROMOTOR;
-import static com.topmas.top.Constants.TAG_IDRUTA;
-import static com.topmas.top.Constants.TAG_INVFINAL;
-import static com.topmas.top.Constants.TAG_INVINICIAL;
-import static com.topmas.top.Constants.TAG_OBSERVACIONES;
-import static com.topmas.top.Constants.TAG_POSICION;
-import static com.topmas.top.Constants.TAG_PRECIO;
-import static com.topmas.top.Constants.TAG_PRECIOREAL;
-import static com.topmas.top.Constants.TAG_PRODUCTO;
-import static com.topmas.top.Constants.TAG_RESPUESTA;
-import static com.topmas.top.Constants.TAG_SERVIDOR;
-import static com.topmas.top.Constants.TAG_UPC;
-import static com.topmas.top.Constants.TAG_USUARIO;
-import static com.topmas.top.Constants.TAG_imagen;
 
 public class Producto extends AppCompatActivity {
 
@@ -106,10 +102,15 @@ public class Producto extends AppCompatActivity {
         pName = preferences.getString(TAG_USUARIO, pName);
 
         Thread.setDefaultUncaughtExceptionHandler( (thread, throwable) -> {
+            //log(throwable.getMessage(), thread.getId());
             funciones.RegistraError(pName, "Producto setDefaultUncaughtExceptionHandler", (Exception) throwable, Producto.this, getApplicationContext());
         });
 
         imagenProducto = findViewById(R.id.imagenproducto1);
+
+        // Log.e(TAG_ERROR, "-- pidproducto " + (pidproducto));
+        // Log.e(TAG_ERROR, "-- pidruta " + (pidruta));
+        // Log.e(TAG_ERROR, "-- pUpc " + (pUpc));
 
         AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
         solicitainventario = almacenaImagen.consulta_configuracion();
@@ -277,7 +278,7 @@ public class Producto extends AppCompatActivity {
     // Consulta un producto
     public void ConsultaProducto(int pidproducto, int pidruta) {
         AlmacenaImagen almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
-        oProducto Producto = almacenaImagen.ObtenProducto(pidproducto, pidruta);
+        com.topmas.top.Objetos.oProducto Producto = almacenaImagen.ObtenProducto(pidproducto, pidruta);
         // Colocacion de datos en los arreglos
         descripcion = oProducto.get_descripcion();
         descripcion1 = oProducto.get_descripcion();

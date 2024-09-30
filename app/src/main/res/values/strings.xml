@@ -39,5 +39,9 @@
 
     <string name="username">username</string>
     <string name="password">password</string>
+    <string name="descarga">Descargar de la nube</string>
+    <string name="informacion">Información de datos almacenados</string>
+    <string name="regresar">Regresar</string>
+    <string name="buscar_incidencia">Buscar incidencia</string>
 
 </resources>

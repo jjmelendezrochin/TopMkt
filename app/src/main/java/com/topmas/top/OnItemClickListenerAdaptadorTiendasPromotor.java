@@ -1,11 +1,4 @@
-package com.topmas.top.Adaptadores;
-
-import static com.topmas.top.Constants.TAG_DIRECCION;
-import static com.topmas.top.Constants.TAG_IDPROMOTOR;
-import static com.topmas.top.Constants.TAG_IDRUTA;
-import static com.topmas.top.Constants.TAG_LATITUD;
-import static com.topmas.top.Constants.TAG_LONGITUD;
-import static com.topmas.top.Constants.TAG_TIENDA;
+package com.topmas.top;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,8 +6,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
-import com.topmas.top.R;
-import com.topmas.top.Usuario;
+import static com.topmas.top.Constants.TAG_DIRECCION;
+import static com.topmas.top.Constants.TAG_IDPROMOTOR;
+import static com.topmas.top.Constants.TAG_IDRUTA;
+import static com.topmas.top.Constants.TAG_LATITUD;
+import static com.topmas.top.Constants.TAG_LONGITUD;
+import static com.topmas.top.Constants.TAG_TIENDA;
 
 public class OnItemClickListenerAdaptadorTiendasPromotor implements AdapterView.OnItemClickListener {
 
@@ -31,9 +28,7 @@ public class OnItemClickListenerAdaptadorTiendasPromotor implements AdapterView.
 
         double latitud;
         // get the clicked item name
-        if (txtlatitud.getText().toString().isEmpty()
-                || txtlatitud.getText().toString().equals("null")
-        )
+        if (txtlatitud.getText().toString() == "" || txtlatitud.getText().toString() == null  || txtlatitud.getText().toString() == "null")
         {
             latitud = 0;
         }
@@ -42,8 +37,7 @@ public class OnItemClickListenerAdaptadorTiendasPromotor implements AdapterView.
         }
 
         double longitud;
-        if (txtlongitud.getText().toString().isEmpty()
-                || txtlongitud.getText().toString().equals("null")){
+        if (txtlongitud.getText().toString() == "" || txtlongitud.getText().toString() == null || txtlongitud.getText().toString() == "null" ){
             longitud = 0;
         }
         else{

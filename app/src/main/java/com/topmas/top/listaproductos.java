@@ -19,8 +19,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.topmas.top.Adaptadores.AdaptadorProductosTienda;
-import com.topmas.top.Adaptadores.OnItemClickListenerAdaptadorProductosTiendas;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,7 +48,6 @@ import static com.topmas.top.Constants.TAG_RESPUESTA;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
 import static com.topmas.top.Constants.TAG_TIENDA;
 import static com.topmas.top.Constants.TAG_UPC;
-import static com.topmas.top.Constants.TAG_URL;
 import static com.topmas.top.Constants.TAG_USUARIO;
 
 
@@ -200,7 +197,9 @@ public class listaproductos extends AppCompatActivity {
             } else {
                 sRuta = TAG_SERVIDOR + "/CatalogoProductos/obtenerproductostienda1.php?idruta=" + pidRuta + "&producto=%" + sProducto + "%&idempresa=" + pidEmpresa;
             }
-            // Log.e(TAG_URL, sRuta);
+            // Log.e(TAG_ERROR,  "La ruta de la api usada es:" + sRuta);
+
+            //Log.e("Error", "La ruta de la api usada es:" + sRuta);
             super.onPreExecute();
             pDialog = new ProgressDialog(listaproductos.this);
             pDialog.setMessage("Consultando en el servicio Web ...");
@@ -326,7 +325,7 @@ public class listaproductos extends AppCompatActivity {
     }
 
     //************************************
-    // Muestra la lista de las tiendas registradas en el teléfono
+    // Muestra la lista de las productos en el telefono
     public void MuestraProductosTelefono(int pidRuta) {
         int iNumProductos = almacenaImagen.ObtenRegistros(1);
 

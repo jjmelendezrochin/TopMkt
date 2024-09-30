@@ -28,12 +28,16 @@ import static com.topmas.top.Foto.UPLOAD_SINDATOS;
 import static com.topmas.top.Foto.UPLOAD_VERSION;
 import static com.topmas.top.Foto.rotateImage;
 
+
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -49,11 +53,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.topmas.top.Adaptadores.AdaptadorProductosTienda;
-import com.topmas.top.Adaptadores.OnItemClickListenerAdaptadorProductosCanjes;
 
 import java.io.File;
 import java.io.IOException;
@@ -108,6 +114,7 @@ public class Canjes extends AppCompatActivity {
     String ptienda = "";
     public static final String UPLOAD_CANJES = TAG_SERVIDOR + "/PhotoUpload/upload_canjes.php";
     public static final String UPLOAD_CANJES_COMPLEMENTO = TAG_SERVIDOR + "/PhotoUpload/upload_canjes_complemento.php";
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,8 +128,16 @@ public class Canjes extends AppCompatActivity {
         pidEmpresa = usr.getidempresa();
         almacenaImagen = new AlmacenaImagen(this.getApplicationContext());
         pidPromotor = usr.getid();
-        pLatitud = usr.getLatitud();
-        pLongitud = usr.getLongitud();
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        //FusedLocation loc = new FusedLocation();
+        // loc.getLastLocation();
+        // pLatitud = loc.latitud;
+        // pLongitud = loc.longitud;
+
+        //pLatitud = usr.getLatitud();
+        // pLongitud = usr.getLongitud();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         idUsuario = preferences.getString(TAG_USUARIO, idUsuario);
@@ -358,6 +373,32 @@ public class Canjes extends AppCompatActivity {
                 }
             }
         });
+
+        // *******************
+        // Obtiene geoposición
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+            .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        // Use the location object
+                        pLatitud = location.getLatitude();
+                        pLongitud = location.getLongitude();
+                        // Do something with the location data
+                    }
+                }
+            });
 
         almacenaImagen.consulta_total_canjes();
 
