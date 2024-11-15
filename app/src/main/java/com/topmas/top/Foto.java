@@ -9,6 +9,7 @@ import static com.topmas.top.Constants.TAG_FAKEGPS_MSG;
 import static com.topmas.top.Constants.TAG_IDPROMOTOR;
 import static com.topmas.top.Constants.TAG_IDRUTA;
 import static com.topmas.top.Constants.TAG_INFO;
+import static com.topmas.top.Constants.TAG_NO_SE_PUDO_CARGAR;
 import static com.topmas.top.Constants.TAG_OPERACION;
 import static com.topmas.top.Constants.TAG_RESPUESTA;
 import static com.topmas.top.Constants.TAG_SERVIDOR;
@@ -32,6 +33,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -61,10 +63,11 @@ import java.util.HashMap;
 
 
 public class Foto extends AppCompatActivity {
-    // TODO PhotoUpload/upload1a.php
+    // TODO PhotoUpload/upload1b.php
+    // TODO PhotoUpload/upload1_0.php
     // TODO PhotoUpload/upload_errores.php
 
-    public static final String UPLOAD_URL = TAG_SERVIDOR + "/PhotoUpload/upload1a.php";
+    public static final String UPLOAD_URL = TAG_SERVIDOR + "/PhotoUpload/upload1b.php";
     public static final String UPLOAD_URL_O = TAG_SERVIDOR + "/PhotoUpload/upload1_o.php";
     public static final String UPLOAD_ERRORES = TAG_SERVIDOR + "/PhotoUpload/upload_errores.php";
 
@@ -509,37 +512,54 @@ public class Foto extends AppCompatActivity {
                 super.onPostExecute(s);
                 pDialog.dismiss();
 
-                AlmacenaImagen almacenaImagen = new AlmacenaImagen(getApplicationContext());
-                int i = almacenaImagen.BorraFotoEnviada(iResp);
-
-                // **************************************
-                // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
-                if (s.equals(TAG_CARGA_FOTO_EXITOSA)) {
-                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
-                    imagenFoto.setImageResource(android.R.color.transparent);
-                    btnSubir.setVisibility(View.INVISIBLE);
-                    btnNoSubir.setVisibility(View.INVISIBLE);
-                    imgizq.setVisibility(View.INVISIBLE);
-                    imgder.setVisibility(View.INVISIBLE);
+                try {
+                    AlmacenaImagen almacenaImagen =
+                            new AlmacenaImagen(getApplicationContext());
+                    // **************************************
+                    // Si se pudo cargar la foto entonces debe de borrar la foto almacenada
+                    if (s.equals("1")) {
+                        // Borrado de imágen
+                        int i = almacenaImagen.BorraFotoEnviada(iResp);
+                        Toast.makeText(getApplicationContext(), TAG_CARGA_FOTO_EXITOSA, Toast.LENGTH_LONG).show();
+                        imagenFoto.setImageResource(android.R.color.transparent);
+                        btnSubir.setVisibility(View.INVISIBLE);
+                        btnNoSubir.setVisibility(View.INVISIBLE);
+                        imgizq.setVisibility(View.INVISIBLE);
+                        imgder.setVisibility(View.INVISIBLE);
+                    }
+                    else if (s.equals("-1")) {
+                        // Borrado de imágen
+                        int i = almacenaImagen.BorraFotoEnviada(iResp);
+                        Toast.makeText(getApplicationContext(), TAG_CARGA_FOTO_DISTANCIA, Toast.LENGTH_LONG).show();
+                        imagenFoto.setImageResource(android.R.color.transparent);
+                        btnSubir.setVisibility(View.VISIBLE);
+                        btnNoSubir.setVisibility(View.VISIBLE);
+                        imgizq.setVisibility(View.VISIBLE);
+                        imgder.setVisibility(View.VISIBLE);
+                    }
+                    else if (s.equals("0")){
+                        // En esta caso no se borra la imágen porque no se pudo cargar
+                        Toast.makeText(getApplicationContext(), TAG_NO_SE_PUDO_CARGAR , Toast.LENGTH_LONG).show();
+                        imagenFoto.setImageResource(android.R.color.transparent);
+                        btnSubir.setVisibility(View.VISIBLE);
+                        btnNoSubir.setVisibility(View.VISIBLE);
+                        imgizq.setVisibility(View.VISIBLE);
+                        imgder.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        // En esta caso no se borra la imágen porque no se pudo cargar
+                        Toast.makeText(getApplicationContext(), TAG_NO_SE_PUDO_CARGAR , Toast.LENGTH_LONG).show();
+                        imagenFoto.setImageResource(android.R.color.transparent);
+                        btnSubir.setVisibility(View.VISIBLE);
+                        btnNoSubir.setVisibility(View.VISIBLE);
+                        imgizq.setVisibility(View.VISIBLE);
+                        imgder.setVisibility(View.VISIBLE);
+                    }
+                    finish();
                 }
-                else if (s.equals(TAG_CARGA_FOTO_DISTANCIA)) {
-                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
-                    imagenFoto.setImageResource(android.R.color.transparent);
-                    btnSubir.setVisibility(View.VISIBLE);
-                    btnNoSubir.setVisibility(View.VISIBLE);
-                    imgizq.setVisibility(View.VISIBLE);
-                    imgder.setVisibility(View.VISIBLE);
+                catch (WindowManager.BadTokenException e) {
+                    finish();
                 }
-                else{
-                    Toast.makeText(getApplicationContext(), s , Toast.LENGTH_LONG).show();
-                    imagenFoto.setImageResource(android.R.color.transparent);
-                    btnSubir.setVisibility(View.VISIBLE);
-                    btnNoSubir.setVisibility(View.VISIBLE);
-                    imgizq.setVisibility(View.VISIBLE);
-                    imgder.setVisibility(View.VISIBLE);
-                }
-
-                finish();
                 // **************************************
             }
 
